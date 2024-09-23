@@ -1,4 +1,6 @@
-﻿using Infraestructure;
+﻿using Domain.Interfaces;
+using Infraestructure;
+using Infraestructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -20,10 +22,14 @@ public class Startup
         services.AddSwaggerGen();
 
         services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlite("Data Source=mydatabase.db",
-                  b => b.MigrationsAssembly("Infraestructure")));
+            options.UseSqlite("Data Source=mydatabase.db"));
 
-
+        services.AddScoped<IIncidentHistoryRepository, IncidentHistoryRepository>();
+        services.AddScoped<IIncidentRepository, IncidentRepository>();
+        services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddScoped<IUserFeedbackRepository, UserFeedbackRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IWorkLogsRepository, WorkLogsRepository>();
     }
 
     // Método para configurar el pipeline HTTP (antes era Configure)
