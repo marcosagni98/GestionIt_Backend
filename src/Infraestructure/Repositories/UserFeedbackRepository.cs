@@ -6,10 +6,10 @@ namespace Infraestructure.Repositories;
 
 public class UserFeedbackRepository : IUserFeedbackRepository
 {
-    private readonly DbContext _context;
+    private readonly AppDbContext _context;
     private DbSet<UserFeedback> _dbSet;
 
-    public UserFeedbackRepository(DbContext context)
+    public UserFeedbackRepository(AppDbContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _dbSet = _context.Set<UserFeedback>();

@@ -1,25 +1,30 @@
-using Infraestructure;
-using Microsoft.EntityFrameworkCore;
+using API;
+using log4net;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Agregar DbContext
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+public class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    private static readonly ILog _log = LogManager.GetLogger(typeof(Program));
 
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
-app.Run();
+    public static void Main(string[] args)
+    {
+        try
+        {
+            _log.Info("Starting application");
+            CreateHostBuilder(args).Build().Run();
+        }
+        catch (Exception ex)
+        {
+            _log.Error($"{ex.Message} for more information {ex.StackTrace}");
+        }
+    }
+
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+                webBuilder.UseUrls("https://localhost:5001;http://localhost:5000");
+            });
+}

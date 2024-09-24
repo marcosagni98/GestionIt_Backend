@@ -6,10 +6,10 @@ namespace Infraestructure.Repositories;
 
 public class WorkLogsRepository : IWorkLogsRepository
 {
-    private readonly DbContext _context;
+    private readonly AppDbContext _context;
     private DbSet<WorkLog> _dbSet;
 
-    public WorkLogsRepository(DbContext context)
+    public WorkLogsRepository(AppDbContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _dbSet = _context.Set<WorkLog>();

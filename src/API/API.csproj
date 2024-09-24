@@ -6,9 +6,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>17a31d6c-8975-4ccf-b54b-ef0b94ebb648</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="log4net" Version="3.0.1-preview.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -21,10 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Infraestructure\Infraestructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

@@ -5,12 +5,12 @@ namespace Infraestructure;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public DbSet<User> Users { get; set; }
-    public DbSet<Incident> Incidents { get; set; }
-    public DbSet<IncidentHistory> IncidentHistories { get; set; }
-    public DbSet<Message> Messages { get; set; }
-    public DbSet<WorkLog> WorkLogs { get; set; }
-    public DbSet<UserFeedback> UserFeedbacks { get; set; }
+    public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<Incident> Incidents { get; set; }
+    public virtual DbSet<IncidentHistory> IncidentHistories { get; set; }
+    public virtual DbSet<Message> Messages { get; set; }
+    public virtual DbSet<WorkLog> WorkLogs { get; set; }
+    public virtual DbSet<UserFeedback> UserFeedbacks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

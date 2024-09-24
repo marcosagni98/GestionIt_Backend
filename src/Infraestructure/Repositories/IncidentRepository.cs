@@ -6,10 +6,10 @@ namespace Infraestructure.Repositories;
 
 public class IncidentRepository : IIncidentRepository
 {
-    private readonly DbContext _context;
+    private readonly AppDbContext _context;
     private DbSet<Incident> _dbSet;
 
-    public IncidentRepository(DbContext context)
+    public IncidentRepository(AppDbContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _dbSet = _context.Set<Incident>();

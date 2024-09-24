@@ -6,10 +6,10 @@ namespace Infraestructure.Repositories;
 
 public class MessageRepository : IMessageRepository
 {
-    private readonly DbContext _context;
+    private readonly AppDbContext _context;
     private DbSet<Message> _dbSet;
 
-    public MessageRepository(DbContext context)
+    public MessageRepository(AppDbContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _dbSet = _context.Set<Message>();
