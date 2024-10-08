@@ -5,9 +5,10 @@ namespace Domain.Entities;
 public class Message : Entity
 {
     public long IncidentId { get; set; }
-    public Incident? Incident { get; set; }
     public long SenderId { get; set; }
-    public User? Sender { get; set; }
     public string Text { get; set; } = string.Empty;
     public DateTime SentAt { get; set; } = DateTime.UtcNow;
+
+    public User? Sender { get; set; }
+    public Incident? Incident { get; set; }
 }
