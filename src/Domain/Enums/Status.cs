@@ -2,6 +2,7 @@
 
 public enum Status
 {
+    Unassigned,
     Pending,
     InProgress,
     Review,

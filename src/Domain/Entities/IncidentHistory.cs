@@ -1,8 +1,9 @@
-﻿namespace Domain.Entities;
+﻿using Domain.Entities.Common;
 
-public class IncidentHistory
+namespace Domain.Entities;
+
+public class IncidentHistory : EntityId
 {
-    public long Id { get; set; }
     public long IncidentId { get; set; }
     public Incident? Incident { get; set; }
     public string Status { get; set; } = string.Empty;

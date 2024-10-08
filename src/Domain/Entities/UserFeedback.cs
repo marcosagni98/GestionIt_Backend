@@ -1,8 +1,9 @@
-﻿namespace Domain.Entities;
+﻿using Domain.Entities.Common;
 
-public class UserFeedback
+namespace Domain.Entities;
+
+public class UserFeedback : Entity
 {
-    public long Id { get; set; }
     public long IncidentId { get; set; } 
     public Incident? Incident { get; set; } 
     public long UserId { get; set; } 
@@ -10,6 +11,5 @@ public class UserFeedback
     public string Feedback { get; set; } = string.Empty;
     public int Rating { get; set; } 
     public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
-    public bool Active { get; set; } = true;
 }
 
