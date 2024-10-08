@@ -22,17 +22,17 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where T
     }
 
     /// <inheritdoc/>
-    public virtual async Task<Result<TEntity>> AddAsync(TEntity entity)
+    public virtual async Task<Result<Unit>> AddAsync(TEntity entity)
     {
         try
         {
             await _dbSet.AddAsync(entity);
             await _dbContext.SaveChangesAsync();
-            return Result<TEntity>.Success(entity);
+            return Result<Unit>.SuccessUnit();
         }
         catch (Exception ex)
         {
-            return Result<TEntity>.Failure($"Error adding the entity: {ex.Message}");
+            return Result<Unit>.Failure($"Error adding the entity: {ex.Message}");
         }
     }
 
@@ -92,28 +92,31 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where T
 
 
     /// <inheritdoc/>
-    public virtual async Task UpdateAsync(TEntity entity)
+    public virtual async Task<Result<Unit>> UpdateAsync(TEntity entity)
     {
         try
         {
             _dbSet.Update(entity);
             await _dbContext.SaveChangesAsync();
+
+            return Result<Unit>.SuccessUnit();
         }
-        catch
+        catch (Exception ex)
         {
-            throw;
+            // En caso de error, retornamos un resultado de fallo con el mensaje de error
+            return Result<Unit>.Failure($"Error updating entity: {ex.Message}");
         }
     }
 
     /// <inheritdoc/>
-    public virtual async Task<Result<bool>> DeleteAsync(long id)
+    public virtual async Task<Result<Unit>> DeleteAsync(long id)
     {
         try
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity == null)
             {
-                return Result<bool>.Failure("Entity not found");
+                return Result<Unit>.Failure("Entity not found");
             }
 
             if (entity is Entity entityToDeactivate)
@@ -122,11 +125,11 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where T
             }
 
             await _dbContext.SaveChangesAsync();
-            return Result<bool>.Success(true);
+            return Result<Unit>.SuccessUnit();
         }
         catch (Exception ex)
         {
-            return Result<bool>.Failure($"Error deleting the entity: {ex.Message}");
+            return Result<Unit>.Failure($"Error deleting the entity: {ex.Message}");
         }
     }
 

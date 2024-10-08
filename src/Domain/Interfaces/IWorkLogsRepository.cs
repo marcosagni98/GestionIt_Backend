@@ -1,5 +1,7 @@
-﻿namespace Domain.Interfaces;
+﻿using Domain.Entities;
 
-public interface IWorkLogsRepository : IDisposable
+namespace Domain.Interfaces;
+
+public interface IWorkLogsRepository : IBaseRepository<WorkLog>, IDisposable
 {
 }

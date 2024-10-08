@@ -1,4 +1,6 @@
 ﻿using API.Helpers;
+using Application.Interfaces;
+using Application.Services;
 using Domain.Interfaces;
 using Infraestructure;
 using Infraestructure.Repositories;
@@ -31,6 +33,8 @@ public class Startup(IConfiguration configuration)
         services.AddControllers();
         services.AddEndpointsApiExplorer();
 
+        services.AddAutoMapper(typeof(Startup));
+
 
         services.AddScoped<IIncidentHistoryRepository, IncidentHistoryRepository>();
         services.AddScoped<IIncidentRepository, IncidentRepository>();
@@ -38,6 +42,9 @@ public class Startup(IConfiguration configuration)
         services.AddScoped<IUserFeedbackRepository, UserFeedbackRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IWorkLogsRepository, WorkLogsRepository>();
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUserService, UserService>();
 
         var servicesProvider = services.BuildServiceProvider();
         services.AddCors(options =>

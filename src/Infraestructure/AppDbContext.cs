@@ -19,7 +19,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne(i => i.User)
             .WithMany(u => u.Incidents)
             .HasForeignKey(i => i.UserId)
-            .OnDelete(DeleteBehavior.Restrict); // Configura el comportamiento de eliminación según necesites
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Configurar la relación entre Incident y User (técnico asignado)
         modelBuilder.Entity<Incident>()

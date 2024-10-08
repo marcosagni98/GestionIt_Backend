@@ -1,5 +1,7 @@
-﻿namespace Domain.Interfaces;
+﻿using Domain.Entities;
 
-public interface IUserRepository : IDisposable
+namespace Domain.Interfaces;
+
+public interface IUserRepository : IDisposable, IBaseRepository<User>
 {
 }

@@ -18,6 +18,11 @@ public class Result<T>
         return new Result<T>(true, value, null);
     }
 
+    public static Result<Unit> SuccessUnit()
+    {
+        return new Result<Unit>(true, Unit.Value, null);
+    }
+
     public static Result<T> Failure(string error)
     {
         return new Result<T>(false, default, error);

@@ -1,5 +1,7 @@
-﻿namespace Domain.Interfaces;
+﻿using Domain.Entities;
 
-public interface IIncidentRepository : IDisposable
+namespace Domain.Interfaces;
+
+public interface IIncidentRepository : IBaseRepository<Incident>, IDisposable
 {
 }

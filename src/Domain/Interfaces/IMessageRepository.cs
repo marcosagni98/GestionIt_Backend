@@ -1,5 +1,7 @@
-﻿namespace Domain.Interfaces;
+﻿using Domain.Entities;
 
-public interface IMessageRepository : IDisposable
+namespace Domain.Interfaces;
+
+public interface IMessageRepository : IBaseRepository<Message>, IDisposable
 {
 }

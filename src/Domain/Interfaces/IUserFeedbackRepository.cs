@@ -1,5 +1,7 @@
-﻿namespace Domain.Interfaces;
+﻿using Domain.Entities;
 
-public interface IUserFeedbackRepository : IDisposable
+namespace Domain.Interfaces;
+
+public interface IUserFeedbackRepository : IBaseRepository<UserFeedback>, IDisposable
 {
 }

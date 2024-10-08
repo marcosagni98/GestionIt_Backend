@@ -1,5 +1,4 @@
-﻿using Application.Dtos.CommonDtos.Request;
-using Domain.Dtos.CommonDtos.Request;
+﻿using Domain.Dtos.CommonDtos.Request;
 using Domain.Entities.Common;
 using System.Linq.Expressions;
 using System.Reflection;

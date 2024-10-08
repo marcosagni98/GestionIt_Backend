@@ -10,7 +10,7 @@ public interface IBaseRepository<TEntity> where TEntity : class
     /// </summary>
     /// <param name="entity">The entity to be added.</param>
     /// <returns>A task representing the asynchronous add operation, with a <see cref="Result{TEntity}"/> indicating success or failure.</returns>
-    public Task<Result<TEntity>> AddAsync(TEntity entity);
+    public Task<Result<Unit>> AddAsync(TEntity entity);
 
     /// <summary>
     /// Retrieves all entities from the database based on the provided query filter.
@@ -24,21 +24,21 @@ public interface IBaseRepository<TEntity> where TEntity : class
     /// </summary>
     /// <param name="id">The id of the entity to retrieve.</param>
     /// <returns>A task representing the asynchronous operation, containing a <see cref="Result{TEntity}"/> if found.</returns>
-    public Task<Result<TEntity?>> GetByIdAsync(int id);
+    public Task<Result<TEntity>> GetByIdAsync(int id);
 
     /// <summary>
     /// Updates the entity in the database.
     /// </summary>
     /// <param name="entity">The data of the entity to be updated.</param>
     /// <returns>A task representing the asynchronous update operation, with a <see cref="Result{TEntity}"/> indicating success or failure.</returns>
-    public Task<Result<TEntity>> UpdateAsync(TEntity entity);
+    public Task<Result<Unit>> UpdateAsync(TEntity entity);
 
     /// <summary>
     /// Deletes the entity with the specified id.
     /// </summary>
     /// <param name="id">The id of the entity to be deleted.</param>
     /// <returns>A task representing the asynchronous delete operation, with a <see cref="Result{TEntity}"/> indicating success or failure.</returns>
-    public Task<Result<TEntity>> DeleteAsync(long id);
+    public Task<Result<Unit>> DeleteAsync(long id);
 
     /// <summary>
     /// Counts the number of entities in the database based on the provided filter.
