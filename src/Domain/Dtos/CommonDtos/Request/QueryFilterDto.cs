@@ -18,15 +18,15 @@ public class QueryFilterDto
     /// <summary>
     /// Searching: Search term
     /// </summary>
-    public string? Search { get; set; }
+    public string? Search { get; set; } = null!;
 
     /// <summary>
     /// Ordering: Paramter to order by
     /// </summary>
-    public string? OrderBy { get; set; }
+    public string? OrderBy { get; set; } = null!;
 
     /// <summary>
     /// Ordering: Order direction (asc/desc)
     /// </summary>
-    public string? OrderDirection { get; set; }
+    public string? OrderDirection { get; set; } = null!;
 }
