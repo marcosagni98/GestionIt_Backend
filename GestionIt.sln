@@ -3,25 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "src\API\API.csproj", "{F2051652-8837-418F-BA6C-3DF33D88EBB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "src\API\API.csproj", "{F2051652-8837-418F-BA6C-3DF33D88EBB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "src\Application\Application.csproj", "{3E8EEF88-7127-43D0-B76C-04A201CA28BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "src\Application\Application.csproj", "{3E8EEF88-7127-43D0-B76C-04A201CA28BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infraestructure", "src\Infraestructure\Infraestructure.csproj", "{2BBC378B-37CA-45AE-9528-106F240F4B01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infraestructure", "src\Infraestructure\Infraestructure.csproj", "{2BBC378B-37CA-45AE-9528-106F240F4B01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Domain.csproj", "{1C06E8D1-6E25-4CED-8DF6-B06CF2FD76F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Domain\Domain.csproj", "{1C06E8D1-6E25-4CED-8DF6-B06CF2FD76F4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5EA23B59-F68F-45FB-B2FB-754993387691}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{39C82104-1801-47C6-B0D4-8539D5055759}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainTests", "tests\DomainTests\DomainTests.csproj", "{D246C777-1285-4B06-92D3-4721E7284475}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainTests", "tests\DomainTests\DomainTests.csproj", "{D246C777-1285-4B06-92D3-4721E7284475}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTests", "tests\ApplicationTests\ApplicationTests.csproj", "{D5DB680C-A06C-4AF6-A88D-108F672EC0B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationTests", "tests\ApplicationTests\ApplicationTests.csproj", "{D5DB680C-A06C-4AF6-A88D-108F672EC0B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfrastructureTests", "tests\InfrastructureTests\InfrastructureTests.csproj", "{ED35457E-C3C0-4E03-BBC3-C55B5BA8A4C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfrastructureTests", "tests\InfrastructureTests\InfrastructureTests.csproj", "{ED35457E-C3C0-4E03-BBC3-C55B5BA8A4C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiTests", "tests\ApiTests\ApiTests.csproj", "{3E02CB51-40B9-4501-A211-70E82356FC07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiTests", "tests\ApiTests\ApiTests.csproj", "{3E02CB51-40B9-4501-A211-70E82356FC07}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{572EE264-13F6-4ADD-9296-AE3415330344}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,10 @@ Global
 		{3E02CB51-40B9-4501-A211-70E82356FC07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E02CB51-40B9-4501-A211-70E82356FC07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E02CB51-40B9-4501-A211-70E82356FC07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{572EE264-13F6-4ADD-9296-AE3415330344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{572EE264-13F6-4ADD-9296-AE3415330344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{572EE264-13F6-4ADD-9296-AE3415330344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{572EE264-13F6-4ADD-9296-AE3415330344}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

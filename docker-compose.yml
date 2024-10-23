@@ -1,0 +1,24 @@
+services:
+  apidb:
+    container_name: gestionIt_db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "8002:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=password@12345#
+
+  api:
+    image: ${DOCKER_REGISTRY-}api
+    build:
+      context: .
+      dockerfile: src/API/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    depends_on:
+      - apidb
+    environment:
+      - DB_HOST=apidb
+      - DB_NAME=gestionIt_db
+      - DB_PASSWORD=password@12345#
