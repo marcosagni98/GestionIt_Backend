@@ -1,9 +1,12 @@
 ﻿using Domain.Entities; 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data.Common;
 
 namespace Infraestructure;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class AppDbContext : DbContext
 {
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Incident> Incidents { get; set; }
@@ -11,6 +14,17 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public virtual DbSet<Message> Messages { get; set; }
     public virtual DbSet<WorkLog> WorkLogs { get; set; }
     public virtual DbSet<UserFeedback> UserFeedbacks { get; set; }
+
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    {
+        //Si no existe base de datos o tablas se crea
+        var databaseCreator = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
+        if(databaseCreator != null)
+        {
+            if (!databaseCreator.CanConnect()) databaseCreator.Create();
+            if (!databaseCreator.HasTables()) databaseCreator.CreateTables();
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
