@@ -10,65 +10,92 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
-
 namespace API;
 
 /// <summary>
 /// Class to configure the application's services and request pipeline
 /// </summary>
-/// <param name="configuration"></param>
-public class Startup(IConfiguration configuration)
+public class Startup
 {
-    public IConfiguration Configuration { get; }  = configuration;
+    public IConfiguration Configuration { get; }
 
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
+    }
 
-    //Method to add services to the container (before was ConfigureServices)
+    // Method to add services to the container
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddDbContext<AppDbContext>(options =>
-           options.UseSqlite("Data Source=mydatabase.db"));
+        // Build the connection string from environment variables
+        var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+        var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+        var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+        var connectionString = $"Data Source={dbHost}; Initial Catalog={dbName};User ID=sa;Password={dbPassword};TrustServerCertificate=True;";
 
+        // Configure DbContext with SQL Server
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlServer(connectionString));
+
+        // Configure logging
         services.AddSingleton<ILog>(provider => LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType));
 
-        services.AddControllers();
-        services.AddEndpointsApiExplorer();
+        // Add services
+        services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                });
 
+        services.AddEndpointsApiExplorer();
         services.AddAutoMapper(typeof(Startup));
 
+        // Register repositories
+        RegisterRepositories(services);
+        RegisterServices(services);
 
+        // CORS setup
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigins",
+                builder => builder.AllowAnyOrigin()
+                                  .AllowAnyMethod()
+                                  .AllowAnyHeader());
+        });
+
+        // Exception handling
+        services.AddExceptionHandler<ExceptionHandler>();
+
+        // Swagger configuration
+        ConfigureSwagger(services);
+    }
+
+    private void RegisterRepositories(IServiceCollection services)
+    {
         services.AddScoped<IIncidentHistoryRepository, IncidentHistoryRepository>();
         services.AddScoped<IIncidentRepository, IncidentRepository>();
         services.AddScoped<IMessageRepository, MessageRepository>();
         services.AddScoped<IUserFeedbackRepository, UserFeedbackRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IWorkLogsRepository, WorkLogsRepository>();
+        services.AddScoped<IWorkLogRepository, WorkLogsRepository>();
+    }
 
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+    private void RegisterServices(IServiceCollection services)
+    {
+        services.AddScoped<IIncidentHistoryService, IncidentHistoryService>();
+        services.AddScoped<IIncidentService, IncidentService>();
+        services.AddScoped<IMessageService, MessageService>();
+        services.AddScoped<IUserFeedbackService, UserFeedbackService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IWorkLogService, WorkLogService>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+    }
 
-        var servicesProvider = services.BuildServiceProvider();
-        services.AddCors(options =>
-        {
-            options.AddPolicy("AllowAllOrigins",
-                builder =>
-                {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
-                });
-        });
-        // Add this line to enable CORS
-        services.AddControllers()
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            });
-        services.AddExceptionHandler<ExceptionHandler>();
-
+    private void ConfigureSwagger(IServiceCollection services)
+    {
         services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Incident Management API", Version = "v1" });
-            //TODO: c.AddSecurityDefinition("Bearer", new
             var filePathApiXml = Path.Combine(AppContext.BaseDirectory, "API.xml");
             var filePathApplicationXml = Path.Combine(AppContext.BaseDirectory, "Application.xml");
             c.IncludeXmlComments(filePathApiXml);
@@ -76,10 +103,12 @@ public class Startup(IConfiguration configuration)
         });
     }
 
-    // Method to configure the HTTP request pipeline (before was Configure)
+    // Method to configure the HTTP request pipeline
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        // Middleware for exception handling
         app.UseExceptionHandler(opt => { });
+
         if (env.IsDevelopment())
         {
             app.UseSwagger();
@@ -87,9 +116,8 @@ public class Startup(IConfiguration configuration)
         }
 
         app.UseHttpsRedirection();
-
         app.UseRouting();
-        app.UseCors("AllowAllOrigins"); // Add this line to enable CORS
+        app.UseCors("AllowAllOrigins");
 
         app.UseAuthentication();
         app.UseAuthorization();
@@ -98,8 +126,5 @@ public class Startup(IConfiguration configuration)
         {
             endpoints.MapControllers();
         });
-        
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Incident Management API"));
     }
 }

@@ -1,30 +1,36 @@
-# Consulte https://aka.ms/customizecontainer para aprender a personalizar su contenedor de depuración y cómo Visual Studio usa este Dockerfile para compilar sus imágenes para una depuración más rápida.
 
-# Esta fase se usa cuando se ejecuta desde VS en modo rápido (valor predeterminado para la configuración de depuración)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
+# Usar la imagen base .NET runtime con Ubuntu
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy AS base
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 5000
+EXPOSE 5001
 
-
-# Esta fase se usa para compilar el proyecto de servicio
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Usar la imagen .NET SDK para construir la aplicación
+FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["API/API.csproj", "API/"]
-RUN dotnet restore "./API/API.csproj"
+COPY ["src/API/API.csproj", "src/API/"]
+COPY ["src/Application/Application.csproj", "src/Application/"]
+COPY ["src/Domain/Domain.csproj", "src/Domain/"]
+COPY ["src/Infraestructure/Infraestructure.csproj", "src/Infraestructure/"]
+RUN dotnet restore "./src/API/API.csproj"
 COPY . .
-WORKDIR "/src/API"
+WORKDIR "/src/src/API"
 RUN dotnet build "./API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# Esta fase se usa para publicar el proyecto de servicio que se copiará en la fase final.
+# Publicar la aplicación
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Esta fase se usa en producción o cuando se ejecuta desde VS en modo normal (valor predeterminado cuando no se usa la configuración de depuración)
+# Etapa final para ejecutar la aplicación
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Instalar paquetes requeridos para SQL Server
+RUN apt-get update && \
+    apt-get install -y \
+
+# Punto de entrada
 ENTRYPOINT ["dotnet", "API.dll"]

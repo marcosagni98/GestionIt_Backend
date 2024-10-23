@@ -2,6 +2,7 @@ using API;
 using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using System.Globalization;
 
 public class Program
 {
@@ -9,9 +10,15 @@ public class Program
 
     public static void Main(string[] args)
     {
+        // Set the environment variable for globalization support
+        Environment.SetEnvironmentVariable("DOTNET_SYSTEM_GLOBALIZATION_INVARIANT", "false");
+
         try
         {
             _log.Info("Starting application");
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
             CreateHostBuilder(args).Build().Run();
         }
         catch (Exception ex)
@@ -25,6 +32,5 @@ public class Program
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>();
-                webBuilder.UseUrls("https://localhost:5001;http://localhost:5000");
             });
 }
