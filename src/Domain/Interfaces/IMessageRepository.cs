@@ -2,6 +2,6 @@
 
 namespace Domain.Interfaces;
 
-public interface IMessageRepository : IBaseRepository<Message>, IDisposable
+public interface IMessageRepository : IGenericRepository<Message>
 {
 }

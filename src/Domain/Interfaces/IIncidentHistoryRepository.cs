@@ -2,6 +2,6 @@
 
 namespace Domain.Interfaces;
 
-public interface IIncidentHistoryRepository : IBaseRepository<IncidentHistory>, IDisposable
+public interface IIncidentHistoryRepository : IGenericRepository<IncidentHistory>
 {
 }

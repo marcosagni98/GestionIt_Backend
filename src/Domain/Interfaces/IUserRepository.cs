@@ -2,6 +2,6 @@
 
 namespace Domain.Interfaces;
 
-public interface IUserRepository : IDisposable, IBaseRepository<User>
+public interface IUserRepository : IGenericRepository<User>
 {
 }

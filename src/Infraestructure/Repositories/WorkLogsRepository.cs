@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories;
 
-public class WorkLogsRepository : BaseRepository<WorkLog>, IWorkLogsRepository
+public class WorkLogsRepository : GenericRepository<WorkLog>, IWorkLogRepository
 {
     private readonly AppDbContext _context;
     private DbSet<WorkLog> _dbSet;
@@ -17,22 +17,5 @@ public class WorkLogsRepository : BaseRepository<WorkLog>, IWorkLogsRepository
         _dbSet = _context.Set<WorkLog>();
         _mapper = mapper;
     }
-
-    #region Dispose
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-
-            _context?.Dispose();
-        }
-    }
-    #endregion
 }
 

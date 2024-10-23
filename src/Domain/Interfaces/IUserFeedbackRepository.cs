@@ -2,6 +2,6 @@
 
 namespace Domain.Interfaces;
 
-public interface IUserFeedbackRepository : IBaseRepository<UserFeedback>, IDisposable
+public interface IUserFeedbackRepository : IGenericRepository<UserFeedback>
 {
 }
