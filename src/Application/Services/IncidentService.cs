@@ -1,4 +1,5 @@
-﻿using Application.Dtos.CommonDtos.Response;
+﻿using Application.Dtos.CommonDtos;
+using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Incidents;
 using Application.Dtos.CRUD.Incidents.Request;
 using Application.Dtos.CRUD.Incidents.Response;
@@ -68,17 +69,17 @@ namespace Application.Services
         #endregion
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> AddAsync(IncidentAddRequestDto addRequestDto)
+        public async Task<Result<CreatedResponseDto>> AddAsync(IncidentAddRequestDto addRequestDto)
         {
             var incident = _mapper.Map<Incident>(addRequestDto); // Asumiendo que tienes un DTO de solicitud
             await _unitOfWork.IncidentRepository.AddAsync(incident);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result.Ok(new SuccessResponseDto { Message = "Incident added successfully.", StatusCode = StatusCodes.Status201Created });
+            return Result.Ok(new CreatedResponseDto { Id = incident.Id, Message = "Incident added successfully.", StatusCode = StatusCodes.Status201Created });
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> DeleteAsync(int id)
+        public async Task<Result<SuccessResponseDto>> DeleteAsync(long id)
         {
             var exists = await _unitOfWork.IncidentRepository.ExistsAsync(id);
             if (!exists)
@@ -108,7 +109,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<IncidentResponseDto>> GetByIdAsync(int id)
+        public async Task<Result<IncidentResponseDto>> GetByIdAsync(long id)
         {
             var incident = await _unitOfWork.IncidentRepository.GetByIdAsync(id);
             if (incident == null)
@@ -121,7 +122,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> UpdateAsync(int id, IncidentUpdateRequestDto updateRequestDto)
+        public async Task<Result<SuccessResponseDto>> UpdateAsync(long id, IncidentUpdateRequestDto updateRequestDto)
         {
             var incident = await _unitOfWork.IncidentRepository.GetByIdAsync(id);
             if (incident == null)

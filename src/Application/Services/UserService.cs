@@ -1,4 +1,5 @@
-﻿using Application.Dtos.CommonDtos.Response;
+﻿using Application.Dtos.CommonDtos;
+using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Users;
 using Application.Dtos.CRUD.Users.Request;
 using Application.Dtos.CRUD.Users.Response;
@@ -69,17 +70,17 @@ namespace Application.Services
         #endregion
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> AddAsync(UserAddRequestDto addRequestDto)
+        public async Task<Result<CreatedResponseDto>> AddAsync(UserAddRequestDto addRequestDto)
         {
             var user = _mapper.Map<User>(addRequestDto);
             await _unitOfWork.UserRepository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result.Ok(new SuccessResponseDto { Message = "User added successfully.", StatusCode = StatusCodes.Status201Created });
+            return Result.Ok(new CreatedResponseDto { Id = user.Id,  Message = "User added successfully.", StatusCode = StatusCodes.Status201Created });
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> DeleteAsync(int id)
+        public async Task<Result<SuccessResponseDto>> DeleteAsync(long id)
         {
             var exists = await _unitOfWork.UserRepository.ExistsAsync(id);
             if (!exists)
@@ -109,7 +110,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<UserResponseDto>> GetByIdAsync(int id)
+        public async Task<Result<UserResponseDto>> GetByIdAsync(long id)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
             if (user == null)
@@ -122,7 +123,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> UpdateAsync(int id, UserUpdateRequestDto updateRequestDto)
+        public async Task<Result<SuccessResponseDto>> UpdateAsync(long id, UserUpdateRequestDto updateRequestDto)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
             if (user == null)

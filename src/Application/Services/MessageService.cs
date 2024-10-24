@@ -1,4 +1,5 @@
-﻿using Application.Dtos.CommonDtos.Response;
+﻿using Application.Dtos.CommonDtos;
+using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Messages;
 using Application.Dtos.CRUD.Messages.Request;
 using Application.Dtos.CRUD.Messages.Response;
@@ -69,17 +70,17 @@ namespace Application.Services
         #endregion
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> AddAsync(MessageAddRequestDto addRequestDto)
+        public async Task<Result<CreatedResponseDto>> AddAsync(MessageAddRequestDto addRequestDto)
         {
             var message = _mapper.Map<Message>(addRequestDto); // Asegúrate de que el DTO y la entidad coincidan
             await _unitOfWork.MessageRepository.AddAsync(message);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result.Ok(new SuccessResponseDto { Message = "Message added successfully.", StatusCode = StatusCodes.Status201Created });
+            return Result.Ok(new CreatedResponseDto {Id = message.Id, Message = "Message added successfully.", StatusCode = StatusCodes.Status201Created });
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> DeleteAsync(int id)
+        public async Task<Result<SuccessResponseDto>> DeleteAsync(long id)
         {
             var exists = await _unitOfWork.MessageRepository.ExistsAsync(id);
             if (!exists)
@@ -109,7 +110,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<MessageResponseDto>> GetByIdAsync(int id)
+        public async Task<Result<MessageResponseDto>> GetByIdAsync(long id)
         {
             var message = await _unitOfWork.MessageRepository.GetByIdAsync(id);
             if (message == null)
@@ -122,7 +123,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> UpdateAsync(int id, MessageUpdateRequestDto updateRequestDto)
+        public async Task<Result<SuccessResponseDto>> UpdateAsync(long id, MessageUpdateRequestDto updateRequestDto)
         {
             var message = await _unitOfWork.MessageRepository.GetByIdAsync(id);
             if (message == null)

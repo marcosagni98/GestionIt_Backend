@@ -1,4 +1,5 @@
-﻿using Application.Dtos.CommonDtos.Response;
+﻿using Application.Dtos.CommonDtos;
+using Application.Dtos.CommonDtos.Response;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using FluentResults;
@@ -22,8 +23,8 @@ public interface IBaseService<TDto, TResponseDto, TAddRequestDto, TUpdateRequest
     /// Adds a new entity asynchronously.
     /// </summary>
     /// <param name="addRequestDto">The data for the new entity.</param>
-    /// <returns>A task representing the asynchronous operation, with a <see cref="Result{SuccessResponseDto}"/> indicating success or failure.</returns>
-    Task<Result<SuccessResponseDto>> AddAsync(TAddRequestDto addRequestDto);
+    /// <returns>A task representing the asynchronous operation, with a <see cref="Result{CreatedResponseDto}"/> indicating success or failure.</returns>
+    Task<Result<CreatedResponseDto>> AddAsync(TAddRequestDto addRequestDto);
 
     /// <summary>
     /// Retrieves a list of entities asynchronously.
@@ -37,7 +38,7 @@ public interface IBaseService<TDto, TResponseDto, TAddRequestDto, TUpdateRequest
     /// </summary>
     /// <param name="id">The ID of the entity to retrieve.</param>
     /// <returns>A task representing the asynchronous operation, with a <see cref="Result{TResponseDto}"/> containing the entity if found, or an error.</returns>
-    Task<Result<TResponseDto>> GetByIdAsync(int id);
+    Task<Result<TResponseDto>> GetByIdAsync(long id);
 
     /// <summary>
     /// Updates an existing entity asynchronously.
@@ -45,13 +46,13 @@ public interface IBaseService<TDto, TResponseDto, TAddRequestDto, TUpdateRequest
     /// <param name="id">The ID of the entity to update.</param>
     /// <param name="updateRequestDto">The updated data for the entity.</param>
     /// <returns>A task representing the asynchronous operation, with a <see cref="Result{SuccessResponseDto}"/> indicating success or failure.</returns>
-    Task<Result<SuccessResponseDto>> UpdateAsync(int id, TUpdateRequestDto updateRequestDto);
+    Task<Result<SuccessResponseDto>> UpdateAsync(long id, TUpdateRequestDto updateRequestDto);
 
     /// <summary>
     /// Deletes an entity by its ID asynchronously.
     /// </summary>
     /// <param name="id">The ID of the entity to be deleted.</param>
     /// <returns>A task representing the asynchronous operation, with a <see cref="Result{SuccessResponseDto}"/> indicating success or failure.</returns>
-    Task<Result<SuccessResponseDto>> DeleteAsync(int id);
+    Task<Result<SuccessResponseDto>> DeleteAsync(long id);
 }
 

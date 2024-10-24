@@ -39,7 +39,7 @@ namespace API.Controllers.v1
                 return BadRequest(result.Errors);
             }
 
-            return CreatedAtAction(nameof(GetByIdAsync), null, result.Value);
+            return Ok(result.Value);
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace API.Controllers.v1
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        public async Task<IActionResult> GetByIdAsync(long id)
         {
             var result = await _userService.GetByIdAsync(id);
             if (result.IsFailed)
@@ -87,7 +87,7 @@ namespace API.Controllers.v1
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] UserUpdateRequestDto updateRequestDto)
+        public async Task<IActionResult> UpdateAsync(long id, [FromBody] UserUpdateRequestDto updateRequestDto)
         {
             var result = await _userService.UpdateAsync(id, updateRequestDto);
             if (result.IsFailed)
@@ -106,7 +106,7 @@ namespace API.Controllers.v1
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync(long id)
         {
             var result = await _userService.DeleteAsync(id);
             if (result.IsFailed)

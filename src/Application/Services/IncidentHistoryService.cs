@@ -1,4 +1,5 @@
-﻿using Application.Dtos.CommonDtos.Response;
+﻿using Application.Dtos.CommonDtos;
+using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.IncidentHistories;
 using Application.Dtos.CRUD.IncidentHistories.Request;
 using Application.Dtos.CRUD.IncidentHistories.Response;
@@ -68,17 +69,17 @@ namespace Application.Services
         #endregion
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> AddAsync(IncidentHistoryAddRequestDto addRequestDto)
+        public async Task<Result<CreatedResponseDto>> AddAsync(IncidentHistoryAddRequestDto addRequestDto)
         {
             var incidentHistory = _mapper.Map<IncidentHistory>(addRequestDto);
             await _unitOfWork.IncidentHistoryRepository.AddAsync(incidentHistory);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result.Ok(new SuccessResponseDto { Message = "Incident history added successfully.", StatusCode = StatusCodes.Status201Created});
+            return Result.Ok(new CreatedResponseDto { Id = incidentHistory.Id, Message = "Incident history added successfully.", StatusCode = StatusCodes.Status201Created});
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> DeleteAsync(int id)
+        public async Task<Result<SuccessResponseDto>> DeleteAsync(long id)
         {
             var exists = await _unitOfWork.IncidentHistoryRepository.ExistsAsync(id);
             if (!exists)
@@ -108,7 +109,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<IncidentHistoryResponseDto>> GetByIdAsync(int id)
+        public async Task<Result<IncidentHistoryResponseDto>> GetByIdAsync(long id)
         {
             var incidentHistory = await _unitOfWork.IncidentHistoryRepository.GetByIdAsync(id);
             if (incidentHistory == null)
@@ -121,7 +122,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> UpdateAsync(int id, IncidentHistoryUpdateRequestDto updateRequestDto)
+        public async Task<Result<SuccessResponseDto>> UpdateAsync(long id, IncidentHistoryUpdateRequestDto updateRequestDto)
         {
             var incidentHistory = await _unitOfWork.IncidentHistoryRepository.GetByIdAsync(id);
             if (incidentHistory == null)

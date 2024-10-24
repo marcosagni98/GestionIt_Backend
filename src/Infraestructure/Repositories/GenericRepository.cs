@@ -26,7 +26,6 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     public virtual async Task AddAsync(TEntity entity)
     {
         await _dbSet.AddAsync(entity);
-        await _dbContext.SaveChangesAsync();
     }
 
     /// <inheritdoc/>
@@ -48,7 +47,7 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     }
 
     /// <inheritdoc/>
-    public virtual async Task<TEntity?> GetByIdAsync(int id)
+    public virtual async Task<TEntity?> GetByIdAsync(long id)
     {
         return await _dbSet
             .Where(x => (x as Entity).Active == true && (x as Entity).Id == id)
@@ -59,7 +58,6 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     public virtual async Task UpdateAsync(TEntity entity)
     {
         _dbSet.Update(entity);
-        await _dbContext.SaveChangesAsync();
     }
 
     /// <inheritdoc/>
@@ -72,12 +70,10 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
         {
             entityToDeactivate.Deactivate();
         }
-
-        await _dbContext.SaveChangesAsync();
     }
      
     /// <inheritdoc/>
-    public virtual async Task<bool> ExistsAsync(int id)
+    public virtual async Task<bool> ExistsAsync(long id)
     {
         return await _dbSet
             .Where(x => (x as Entity).Active == true && (x as Entity).Id == id)
@@ -95,6 +91,10 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
             .Where(searchParameters, queryFilter.Search)
             .Build();
         }
+        
+        query = new QueryFilterBuilder<TEntity>(_dbSet)
+        .WhereActive()
+        .Build();
         
         return await query.CountAsync();
     }

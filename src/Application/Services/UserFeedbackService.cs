@@ -1,4 +1,5 @@
-﻿using Application.Dtos.CommonDtos.Response;
+﻿using Application.Dtos.CommonDtos;
+using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.UserFeedbacks;
 using Application.Dtos.CRUD.UserFeedbacks.Request;
 using Application.Dtos.CRUD.UserFeedbacks.Response;
@@ -70,17 +71,17 @@ namespace Application.Services
         #endregion
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> AddAsync(UserFeedbackAddRequestDto addRequestDto)
+        public async Task<Result<CreatedResponseDto>> AddAsync(UserFeedbackAddRequestDto addRequestDto)
         {
             var userFeedback = _mapper.Map<UserFeedback>(addRequestDto);
             await _unitOfWork.UserFeedbackRepository.AddAsync(userFeedback);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result.Ok(new SuccessResponseDto { Message = "User feedback added successfully.", StatusCode = StatusCodes.Status201Created });
+            return Result.Ok(new CreatedResponseDto { Id = userFeedback.Id, Message = "User feedback added successfully.", StatusCode = StatusCodes.Status201Created });
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> DeleteAsync(int id)
+        public async Task<Result<SuccessResponseDto>> DeleteAsync(long id)
         {
             var exists = await _unitOfWork.UserFeedbackRepository.ExistsAsync(id);
             if (!exists)
@@ -110,7 +111,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<UserFeedbackResponseDto>> GetByIdAsync(int id)
+        public async Task<Result<UserFeedbackResponseDto>> GetByIdAsync(long id)
         {
             var userFeedback = await _unitOfWork.UserFeedbackRepository.GetByIdAsync(id);
             if (userFeedback == null)
@@ -123,7 +124,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> UpdateAsync(int id, UserFeedbackUpdateRequestDto updateRequestDto)
+        public async Task<Result<SuccessResponseDto>> UpdateAsync(long id, UserFeedbackUpdateRequestDto updateRequestDto)
         {
             var userFeedback = await _unitOfWork.UserFeedbackRepository.GetByIdAsync(id);
             if (userFeedback == null)

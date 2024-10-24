@@ -1,4 +1,5 @@
 ﻿using API.Helpers;
+using Application.Helpers.Mappers;
 using Application.Interfaces;
 using Application.Services;
 using Domain.Interfaces;
@@ -48,11 +49,12 @@ public class Startup
                 });
 
         services.AddEndpointsApiExplorer();
-        services.AddAutoMapper(typeof(Startup));
 
-        // Register repositories
+
+        RegisterAutomapper(services);
         RegisterRepositories(services);
         RegisterServices(services);
+        
 
         // CORS setup
         services.AddCors(options =>
@@ -68,6 +70,12 @@ public class Startup
 
         // Swagger configuration
         ConfigureSwagger(services);
+    }
+
+    private void RegisterAutomapper(IServiceCollection services)
+    {
+        services.AddAutoMapper(typeof(Startup));
+        services.AddAutoMapper(typeof(UserMapper));
     }
 
     private void RegisterRepositories(IServiceCollection services)

@@ -28,7 +28,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
     /// </summary>
     /// <param name="id">The unique identifier of the entity to retrieve.</param>
     /// <returns>A task representing the asynchronous operation, returning the entity if found, or null if not.</returns>
-    Task<TEntity?> GetByIdAsync(int id);
+    Task<TEntity?> GetByIdAsync(long id);
 
     /// <summary>
     /// Asynchronously updates an existing entity in the database.
@@ -57,5 +57,5 @@ public interface IGenericRepository<TEntity> where TEntity : class
     /// </summary>
     /// <param name="id">The unique identifier of the entity to check.</param>
     /// <returns>A task representing the asynchronous operation, returning true if the entity exists, otherwise false.</returns>
-    Task<bool> ExistsAsync(int id);
+    Task<bool> ExistsAsync(long id);
 }
