@@ -2,7 +2,6 @@
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.WorkLogs;
 using Application.Dtos.CRUD.WorkLogs.Request;
-using Application.Dtos.CRUD.WorkLogs.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
@@ -111,15 +110,15 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<WorkLogResponseDto>> GetByIdAsync(long id)
+        public async Task<Result<WorkLogDto>> GetByIdAsync(long id)
         {
             var workLog = await _unitOfWork.WorkLogRepository.GetByIdAsync(id);
             if (workLog == null)
             {
-                return Result.Fail<WorkLogResponseDto>("Work log not found.");
+                return Result.Fail<WorkLogDto>("Work log not found.");
             }
 
-            var response = _mapper.Map<WorkLogResponseDto>(workLog);
+            var response = _mapper.Map<WorkLogDto>(workLog);
             return Result.Ok(response);
         }
 

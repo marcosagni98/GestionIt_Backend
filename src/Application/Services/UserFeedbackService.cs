@@ -2,7 +2,6 @@
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.UserFeedbacks;
 using Application.Dtos.CRUD.UserFeedbacks.Request;
-using Application.Dtos.CRUD.UserFeedbacks.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
@@ -11,8 +10,6 @@ using Domain.Entities;
 using Domain.Interfaces;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -111,15 +108,15 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<UserFeedbackResponseDto>> GetByIdAsync(long id)
+        public async Task<Result<UserFeedbackDto>> GetByIdAsync(long id)
         {
             var userFeedback = await _unitOfWork.UserFeedbackRepository.GetByIdAsync(id);
             if (userFeedback == null)
             {
-                return Result.Fail<UserFeedbackResponseDto>("User feedback not found.");
+                return Result.Fail<UserFeedbackDto>("User feedback not found.");
             }
 
-            var response = _mapper.Map<UserFeedbackResponseDto>(userFeedback);
+            var response = _mapper.Map<UserFeedbackDto>(userFeedback);
             return Result.Ok(response);
         }
 

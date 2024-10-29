@@ -2,7 +2,6 @@
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.IncidentHistories;
 using Application.Dtos.CRUD.IncidentHistories.Request;
-using Application.Dtos.CRUD.IncidentHistories.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
@@ -81,16 +80,7 @@ namespace Application.Services
         /// <inheritdoc/>
         public async Task<Result<SuccessResponseDto>> DeleteAsync(long id)
         {
-            var exists = await _unitOfWork.IncidentHistoryRepository.ExistsAsync(id);
-            if (!exists)
-            {
-                return Result.Fail<SuccessResponseDto>("Incident history not found.");
-            }
-
-            await _unitOfWork.IncidentHistoryRepository.DeleteAsync(id);
-            await _unitOfWork.SaveChangesAsync();
-
-            return Result.Ok(new SuccessResponseDto { Message = "Incident history deleted successfully." });
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
@@ -109,15 +99,15 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<IncidentHistoryResponseDto>> GetByIdAsync(long id)
+        public async Task<Result<IncidentHistoryDto>> GetByIdAsync(long id)
         {
             var incidentHistory = await _unitOfWork.IncidentHistoryRepository.GetByIdAsync(id);
             if (incidentHistory == null)
             {
-                return Result.Fail<IncidentHistoryResponseDto>("Incident history not found.");
+                return Result.Fail<IncidentHistoryDto>("Incident history not found.");
             }
 
-            var response = _mapper.Map<IncidentHistoryResponseDto>(incidentHistory);
+            var response = _mapper.Map<IncidentHistoryDto>(incidentHistory);
             return Result.Ok(response);
         }
 

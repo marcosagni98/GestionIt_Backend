@@ -2,7 +2,6 @@
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Messages;
 using Application.Dtos.CRUD.Messages.Request;
-using Application.Dtos.CRUD.Messages.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
@@ -110,15 +109,15 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<MessageResponseDto>> GetByIdAsync(long id)
+        public async Task<Result<MessageDto>> GetByIdAsync(long id)
         {
             var message = await _unitOfWork.MessageRepository.GetByIdAsync(id);
             if (message == null)
             {
-                return Result.Fail<MessageResponseDto>("Message not found.");
+                return Result.Fail<MessageDto>("Message not found.");
             }
 
-            var response = _mapper.Map<MessageResponseDto>(message);
+            var response = _mapper.Map<MessageDto>(message);
             return Result.Ok(response);
         }
 

@@ -2,7 +2,6 @@
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Users;
 using Application.Dtos.CRUD.Users.Request;
-using Application.Dtos.CRUD.Users.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
@@ -110,15 +109,15 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<UserResponseDto>> GetByIdAsync(long id)
+        public async Task<Result<UserDto>> GetByIdAsync(long id)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
             if (user == null)
             {
-                return Result.Fail<UserResponseDto>("User not found.");
+                return Result.Fail<UserDto>("User not found.");
             }
 
-            var response = _mapper.Map<UserResponseDto>(user);
+            var response = _mapper.Map<UserDto>(user);
             return Result.Ok(response);
         }
 

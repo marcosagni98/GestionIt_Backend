@@ -2,7 +2,6 @@
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Incidents;
 using Application.Dtos.CRUD.Incidents.Request;
-using Application.Dtos.CRUD.Incidents.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
@@ -94,30 +93,30 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<PaginatedList<IncidentsDto>>> GetAsync(QueryFilterDto queryFilter)
+        public async Task<Result<PaginatedList<IncidentDto>>> GetAsync(QueryFilterDto queryFilter)
         {
             var paginatedList = await _unitOfWork.IncidentRepository.GetAsync(queryFilter);
 
             if (paginatedList == null || paginatedList.Items == null)
             {
-                return Result.Fail<PaginatedList<IncidentsDto>>("Error retrieving incidents.");
+                return Result.Fail<PaginatedList<IncidentDto>>("Error retrieving incidents.");
             }
 
-            var incidentDtos = _mapper.Map<List<IncidentsDto>>(paginatedList.Items);
+            var incidentDtos = _mapper.Map<List<IncidentDto>>(paginatedList.Items);
 
-            return Result.Ok(new PaginatedList<IncidentsDto>(incidentDtos, paginatedList.TotalCount));
+            return Result.Ok(new PaginatedList<IncidentDto>(incidentDtos, paginatedList.TotalCount));
         }
 
         /// <inheritdoc/>
-        public async Task<Result<IncidentResponseDto>> GetByIdAsync(long id)
+        public async Task<Result<IncidentDto>> GetByIdAsync(long id)
         {
             var incident = await _unitOfWork.IncidentRepository.GetByIdAsync(id);
             if (incident == null)
             {
-                return Result.Fail<IncidentResponseDto>("Incident not found.");
+                return Result.Fail<IncidentDto>("Incident not found.");
             }
 
-            var response = _mapper.Map<IncidentResponseDto>(incident);
+            var response = _mapper.Map<IncidentDto>(incident);
             return Result.Ok(response);
         }
 

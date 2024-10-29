@@ -13,9 +13,8 @@ namespace Application.Interfaces;
 /// <typeparam name="TResponseDto">The type of the response data transfer object.</typeparam>
 /// <typeparam name="TAddRequestDto">The type of the data transfer object used for adding new entities.</typeparam>
 /// <typeparam name="TUpdateRequestDto">The type of the data transfer object used for updating existing entities.</typeparam>
-public interface IBaseService<TDto, TResponseDto, TAddRequestDto, TUpdateRequestDto>
+public interface IBaseService<TDto, TAddRequestDto, TUpdateRequestDto>
     where TDto : class
-    where TResponseDto : class
     where TAddRequestDto : class
     where TUpdateRequestDto : class
 {
@@ -38,7 +37,7 @@ public interface IBaseService<TDto, TResponseDto, TAddRequestDto, TUpdateRequest
     /// </summary>
     /// <param name="id">The ID of the entity to retrieve.</param>
     /// <returns>A task representing the asynchronous operation, with a <see cref="Result{TResponseDto}"/> containing the entity if found, or an error.</returns>
-    Task<Result<TResponseDto>> GetByIdAsync(long id);
+    Task<Result<TDto>> GetByIdAsync(long id);
 
     /// <summary>
     /// Updates an existing entity asynchronously.

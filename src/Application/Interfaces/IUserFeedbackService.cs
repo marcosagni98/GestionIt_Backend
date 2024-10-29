@@ -1,9 +1,11 @@
 ﻿using Application.Dtos.CRUD.UserFeedbacks;
 using Application.Dtos.CRUD.UserFeedbacks.Request;
-using Application.Dtos.CRUD.UserFeedbacks.Response;
 
 namespace Application.Interfaces;
 
-public interface IUserFeedbackService : IBaseService<UserFeedbackDto, UserFeedbackResponseDto, UserFeedbackAddRequestDto, UserFeedbackUpdateRequestDto>, IDisposable
+/// <summary>
+/// UserFeedback Service Interface
+/// </summary>
+public interface IUserFeedbackService : IBaseService<UserFeedbackDto, UserFeedbackAddRequestDto, UserFeedbackUpdateRequestDto>, IDisposable
 {
 }
