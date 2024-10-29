@@ -76,6 +76,11 @@ public class Startup
     {
         services.AddAutoMapper(typeof(Startup));
         services.AddAutoMapper(typeof(UserMapper));
+        services.AddAutoMapper(typeof(IncidentHistoryMapper));
+        services.AddAutoMapper(typeof(IncidentMapper));
+        services.AddAutoMapper(typeof(UserFeedbackMapper));
+        services.AddAutoMapper(typeof(MessageMapper));
+        services.AddAutoMapper(typeof(WorkLogMapper));
     }
 
     private void RegisterRepositories(IServiceCollection services)
