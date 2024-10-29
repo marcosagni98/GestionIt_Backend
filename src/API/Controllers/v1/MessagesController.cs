@@ -1,6 +1,6 @@
 ﻿using Application.Dtos.CommonDtos.Response;
-using Application.Dtos.CRUD.Users;
-using Application.Dtos.CRUD.Users.Request;
+using Application.Dtos.CRUD.Messages;
+using Application.Dtos.CRUD.Messages.Request;
 using Application.Interfaces;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
@@ -9,28 +9,28 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers.v1;
 
 /// <summary>
-/// Controller for managing user-related operations.
+/// Controller for managing message-related operations.
 /// </summary>
 /// <remarks>
-/// Initializes a new instance of the <see cref="UserController"/> class.
+/// Initializes a new instance of the <see cref="MessageController"/> class.
 /// </remarks>
-/// <param name="userService">The user service.</param>
+/// <param name="messageService">The message service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class UserController(IUserService userService) : BaseApiController
+public class MessageController(IMessageService messageService) : BaseApiController
 {
-    private readonly IUserService _userService = userService;
+    private readonly IMessageService _messageService = messageService;
 
     /// <summary>
-    /// Adds a new user.
+    /// Adds a new message.
     /// </summary>
-    /// <param name="addRequestDto">The data for the new user.</param>
+    /// <param name="addRequestDto">The data for the new message.</param>
     /// <returns>A response indicating the result of the operation.</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(SuccessResponseDto))]
-    public async Task<IActionResult> AddAsync([FromBody] UserAddRequestDto addRequestDto)
+    public async Task<IActionResult> AddAsync([FromBody] MessageAddRequestDto addRequestDto)
     {
-        var result = await _userService.AddAsync(addRequestDto);
+        var result = await _messageService.AddAsync(addRequestDto);
         if (result.IsFailed)
         {
             return BadRequest(result.Errors);
@@ -40,14 +40,14 @@ public class UserController(IUserService userService) : BaseApiController
     }
 
     /// <summary>
-    /// Gets a list of users.
+    /// Gets a list of messages.
     /// </summary>
-    /// <returns>A list of users.</returns>
+    /// <returns>A list of messages.</returns>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<UserDto>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<MessageDto>))]
     public async Task<IActionResult> GetAsync([FromQuery] QueryFilterDto queryFilter)
     {
-        var result = await _userService.GetAsync(queryFilter);
+        var result = await _messageService.GetAsync(queryFilter);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -57,16 +57,16 @@ public class UserController(IUserService userService) : BaseApiController
     }
 
     /// <summary>
-    /// Gets a user by ID.
+    /// Gets a message by ID.
     /// </summary>
-    /// <param name="id">The ID of the user to retrieve.</param>
-    /// <returns>The requested user.</returns>
+    /// <param name="id">The ID of the message to retrieve.</param>
+    /// <returns>The requested message.</returns>
     [HttpGet("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MessageDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIdAsync(long id)
     {
-        var result = await _userService.GetByIdAsync(id);
+        var result = await _messageService.GetByIdAsync(id);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -76,17 +76,17 @@ public class UserController(IUserService userService) : BaseApiController
     }
 
     /// <summary>
-    /// Updates an existing user.
+    /// Updates an existing message.
     /// </summary>
-    /// <param name="id">The ID of the user to update.</param>
-    /// <param name="updateRequestDto">The updated data for the user.</param>
+    /// <param name="id">The ID of the message to update.</param>
+    /// <param name="updateRequestDto">The updated data for the message.</param>
     /// <returns>A response indicating the result of the operation.</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateAsync(long id, [FromBody] UserUpdateRequestDto updateRequestDto)
+    public async Task<IActionResult> UpdateAsync(long id, [FromBody] MessageUpdateRequestDto updateRequestDto)
     {
-        var result = await _userService.UpdateAsync(id, updateRequestDto);
+        var result = await _messageService.UpdateAsync(id, updateRequestDto);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -96,16 +96,16 @@ public class UserController(IUserService userService) : BaseApiController
     }
 
     /// <summary>
-    /// Deletes a user by ID.
+    /// Deletes a message by ID.
     /// </summary>
-    /// <param name="id">The ID of the user to delete.</param>
+    /// <param name="id">The ID of the message to delete.</param>
     /// <returns>A response indicating the result of the operation.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAsync(long id)
     {
-        var result = await _userService.DeleteAsync(id);
+        var result = await _messageService.DeleteAsync(id);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);

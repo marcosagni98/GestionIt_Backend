@@ -17,4 +17,13 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dtos\CRUD\IncidentHistories\Response\" />
+    <Folder Include="Dtos\CRUD\Incidents\Response\" />
+    <Folder Include="Dtos\CRUD\Messages\Response\" />
+    <Folder Include="Dtos\CRUD\UserFeedbacks\Response\" />
+    <Folder Include="Dtos\CRUD\Users\Response\" />
+    <Folder Include="Dtos\CRUD\WorkLogs\Response\" />
+  </ItemGroup>
+
 </Project>
