@@ -8,6 +8,11 @@ namespace Application.Dtos.CRUD.IncidentHistories;
 public class IncidentHistoryDto
 {
     /// <summary>
+    /// Incident history id
+    /// </summary>
+    public long Id { get; set; }
+
+    /// <summary>
     /// Id of the incident
     /// </summary>
     public long? IncidentId { get; set; }

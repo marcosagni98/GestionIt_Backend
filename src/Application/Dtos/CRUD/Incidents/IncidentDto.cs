@@ -5,8 +5,13 @@ namespace Application.Dtos.CRUD.Incidents;
 /// <summary>
 /// Incident
 /// </summary>
-public class IncidentsDto
+public class IncidentDto
 {
+    /// <summary>
+    /// Id of the incident
+    /// </summary>
+    public long Id { get; set; }
+
     /// <summary>
     /// Title of the incident
     /// </summary>

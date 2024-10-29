@@ -6,6 +6,11 @@
 public class MessageDto
 {
     /// <summary>
+    /// Message id
+    /// </summary>
+    public long Id { get; set; }
+
+    /// <summary>
     /// The id of the incident
     /// </summary>
     public long IncidentId { get; set; }
