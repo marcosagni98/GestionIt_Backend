@@ -1,4 +1,3 @@
-
 # Usar la imagen base .NET runtime con Ubuntu
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy AS base
 WORKDIR /app
@@ -30,7 +29,8 @@ COPY --from=publish /app/publish .
 
 # Instalar paquetes requeridos para SQL Server
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y curl apt-transport-https gnupg && \
+    rm -rf /var/lib/apt/lists/*
 
 # Punto de entrada
 ENTRYPOINT ["dotnet", "API.dll"]

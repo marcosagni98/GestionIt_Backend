@@ -1,7 +1,7 @@
 ﻿using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Incidents;
 using Application.Dtos.CRUD.Incidents.Request;
-using Application.Interfaces;
+using Application.Interfaces.Services;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +36,7 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
             return BadRequest(result.Errors);
         }
 
-        return Ok(result.Value);
+        return Created(string.Empty, result.Value);
     }
 
     /// <summary>

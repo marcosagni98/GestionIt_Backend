@@ -1,10 +1,14 @@
 ﻿using API.Helpers;
 using Application.Helpers.Mappers;
-using Application.Interfaces;
+using Application.Interfaces.Services;
+using Application.Interfaces.Utils;
 using Application.Services;
-using Domain.Interfaces;
+using Application.Utils;
+using Domain.Interfaces.Repositories;
+using Domain.Interfaces.Utils;
 using Infraestructure;
 using Infraestructure.Repositories;
+using Infraestructure.Utils;
 using log4net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -91,6 +95,7 @@ public class Startup
         services.AddScoped<IUserFeedbackRepository, UserFeedbackRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IWorkLogRepository, WorkLogsRepository>();
+        services.AddTransient<IEmailSender,EmailSender>();
     }
 
     private void RegisterServices(IServiceCollection services)
@@ -102,6 +107,8 @@ public class Startup
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWorkLogService, WorkLogService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IJwt, Jwt>();
     }
 
     private void ConfigureSwagger(IServiceCollection services)

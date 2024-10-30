@@ -1,7 +1,7 @@
 ﻿using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Messages;
 using Application.Dtos.CRUD.Messages.Request;
-using Application.Interfaces;
+using Application.Interfaces.Services;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -72,7 +72,7 @@ public class MessageController(IMessageService messageService) : BaseApiControll
             return NotFound(result.Errors);
         }
 
-        return Ok(result.Value);
+        return Created(string.Empty, result.Value);
     }
 
     /// <summary>
