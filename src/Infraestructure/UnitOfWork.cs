@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Domain.Interfaces;
+using Domain.Interfaces.Repositories;
 using Infraestructure.Repositories;
 
 

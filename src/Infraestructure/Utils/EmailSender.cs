@@ -19,7 +19,7 @@ public class EmailSender : IEmailSender
             UseDefaultCredentials = false,
         };
 
-        var url = $"https://miguelPasaLaUrl/reset-password?token={token}";
+        var url = $"https://AddTheRoutingToFrontEndHere/reset-password?token={token}";
         try {
             await smtpClient.SendMailAsync(
                 new MailMessage(
