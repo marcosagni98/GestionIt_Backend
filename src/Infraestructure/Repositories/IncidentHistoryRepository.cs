@@ -3,7 +3,7 @@ using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
 using Domain.Entities.Common;
-using Domain.Interfaces;
+using Domain.Interfaces.Repositories;
 using Infraestructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 

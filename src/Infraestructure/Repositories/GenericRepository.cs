@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Domain.Entities.Common;
-using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Infraestructure.Helpers;
 using Domain.Dtos.CommonDtos.Request;
 using Domain;
 using Domain.Dtos.CommonDtos.Response;
+using Domain.Interfaces.Repositories;
 
 namespace Infraestructure.Repositories;
 
