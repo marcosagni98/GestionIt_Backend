@@ -13,6 +13,12 @@ namespace Application.Dtos.CommonDtos;
 public class CreatedResponseDto
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="CreatedResponseDto"/> class.
+    /// </summary>
+    /// <param name="id">id of the new entity created</param>
+    public CreatedResponseDto(long id) => Id = id;
+
+    /// <summary>
     /// Id of the created entity
     /// </summary>
     public long Id { get; set; } = 0;
@@ -25,5 +31,5 @@ public class CreatedResponseDto
     /// <summary>
     /// Success message of the response
     /// </summary>
-    public string Message { get; set; } = "Success";
+    public string Message { get; set; } = "Created succesfully";
 }
