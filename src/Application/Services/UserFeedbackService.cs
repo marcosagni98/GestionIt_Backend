@@ -2,12 +2,12 @@
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.UserFeedbacks;
 using Application.Dtos.CRUD.UserFeedbacks.Request;
-using Application.Interfaces;
+using Application.Interfaces.Services;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
-using Domain.Interfaces;
+using Domain.Interfaces.Repositories;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 
@@ -74,7 +74,7 @@ namespace Application.Services
             await _unitOfWork.UserFeedbackRepository.AddAsync(userFeedback);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result.Ok(new CreatedResponseDto { Id = userFeedback.Id, Message = "User feedback added successfully.", StatusCode = StatusCodes.Status201Created });
+            return Result.Ok(new CreatedResponseDto (userFeedback.Id));
         }
 
         /// <inheritdoc/>

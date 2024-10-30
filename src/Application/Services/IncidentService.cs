@@ -2,12 +2,12 @@
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Incidents;
 using Application.Dtos.CRUD.Incidents.Request;
-using Application.Interfaces;
+using Application.Interfaces.Services;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
-using Domain.Interfaces;
+using Domain.Interfaces.Repositories;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 
@@ -74,7 +74,7 @@ namespace Application.Services
             await _unitOfWork.IncidentRepository.AddAsync(incident);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result.Ok(new CreatedResponseDto { Id = incident.Id, Message = "Incident added successfully.", StatusCode = StatusCodes.Status201Created });
+            return Result.Ok(new CreatedResponseDto (incident.Id));
         }
 
         /// <inheritdoc/>

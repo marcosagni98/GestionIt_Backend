@@ -1,13 +1,15 @@
-﻿using Application.Dtos.CommonDtos;
+﻿using Application.Dtos.Auth.Requests;
+using Application.Dtos.Auth.Response;
+using Application.Dtos.CommonDtos;
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Users;
 using Application.Dtos.CRUD.Users.Request;
-using Application.Interfaces;
+using Application.Interfaces.Services;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
-using Domain.Interfaces;
+using Domain.Interfaces.Repositories;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 
@@ -72,10 +74,14 @@ namespace Application.Services
         public async Task<Result<CreatedResponseDto>> AddAsync(UserAddRequestDto addRequestDto)
         {
             var user = _mapper.Map<User>(addRequestDto);
+            if(!await _unitOfWork.UserRepository.EmailExistsAsync(user.Email))
+            {
+                return Result.Fail<CreatedResponseDto>("Email already exists.");
+            }
             await _unitOfWork.UserRepository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result.Ok(new CreatedResponseDto { Id = user.Id,  Message = "User added successfully.", StatusCode = StatusCodes.Status201Created });
+            return Result.Ok(new CreatedResponseDto(user.Id));
         }
 
         /// <inheritdoc/>

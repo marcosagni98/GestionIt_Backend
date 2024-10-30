@@ -2,12 +2,12 @@
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.WorkLogs;
 using Application.Dtos.CRUD.WorkLogs.Request;
-using Application.Interfaces;
+using Application.Interfaces.Services;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
-using Domain.Interfaces;
+using Domain.Interfaces.Repositories;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
@@ -76,7 +76,7 @@ namespace Application.Services
             await _unitOfWork.WorkLogRepository.AddAsync(workLog);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result.Ok(new CreatedResponseDto { Id = workLog.Id, Message = "Work log added successfully.", StatusCode = StatusCodes.Status201Created });
+            return Result.Ok(new CreatedResponseDto(workLog.Id));
         }
 
         /// <inheritdoc/>

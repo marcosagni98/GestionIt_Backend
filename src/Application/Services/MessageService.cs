@@ -2,12 +2,12 @@
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Messages;
 using Application.Dtos.CRUD.Messages.Request;
-using Application.Interfaces;
+using Application.Interfaces.Services;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
-using Domain.Interfaces;
+using Domain.Interfaces.Repositories;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 
@@ -75,7 +75,7 @@ namespace Application.Services
             await _unitOfWork.MessageRepository.AddAsync(message);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result.Ok(new CreatedResponseDto {Id = message.Id, Message = "Message added successfully.", StatusCode = StatusCodes.Status201Created });
+            return Result.Ok(new CreatedResponseDto (message.Id));
         }
 
         /// <inheritdoc/>
