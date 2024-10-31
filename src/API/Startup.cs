@@ -10,6 +10,7 @@ using Infraestructure;
 using Infraestructure.Repositories;
 using Infraestructure.Utils;
 using log4net;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -36,7 +37,8 @@ public class Startup
         var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
         var dbName = Environment.GetEnvironmentVariable("DB_NAME");
         var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
-        var connectionString = $"Data Source={dbHost}; Initial Catalog={dbName};User ID=sa;Password={dbPassword};TrustServerCertificate=True;";
+        var dbUser = Environment.GetEnvironmentVariable("DB_USER");
+        var connectionString = $"Data Source={dbHost}; Initial Catalog={dbName};User ID={dbUser};Password={dbPassword};TrustServerCertificate=True;";
 
         // Configure DbContext with SQL Server
         services.AddDbContext<AppDbContext>(options =>
@@ -133,9 +135,8 @@ public class Startup
         {
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Incident Management API"));
+            
         }
-
-        app.UseHttpsRedirection();
         app.UseRouting();
         app.UseCors("AllowAllOrigins");
 
