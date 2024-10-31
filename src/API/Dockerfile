@@ -1,8 +1,7 @@
 # Usar la imagen base .NET runtime con Ubuntu
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy AS base
 WORKDIR /app
-EXPOSE 5000
-EXPOSE 5001
+EXPOSE 5000 
 
 # Usar la imagen .NET SDK para construir la aplicación
 FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS build
