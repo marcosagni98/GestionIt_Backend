@@ -136,5 +136,12 @@ namespace Application.Services
 
             return Result.Ok(new SuccessResponseDto { Message = "Message updated successfully." });
         }
+
+        /// <inheritdoc/>
+        public Task HandleMessageAsync(string user, string message)
+        {
+            // Aquí puede ir la lógica de negocio, como almacenar el mensaje o aplicar validaciones.
+            return Task.CompletedTask;
+        }
     }
 }

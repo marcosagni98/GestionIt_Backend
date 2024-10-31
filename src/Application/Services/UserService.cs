@@ -12,6 +12,7 @@ using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
+using System.Text.RegularExpressions;
 
 namespace Application.Services
 {
@@ -141,6 +142,24 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "User updated successfully." });
+        }
+
+        /// <inheritdoc/>
+        public async Task<Result<long>> VerifyUserAsync(string userId)
+        {
+            if (!long.TryParse(userId, out long parsedUserId))
+            {
+                return Result.Fail<long>("Invalid user ID.");
+            }
+
+            User? user = await _unitOfWork.UserRepository.GetByIdAsync(parsedUserId);
+
+            if (user == null)
+            {
+                return Result.Fail<long>("User not found.");
+            }
+            
+            return Result.Ok(parsedUserId);
         }
     }
 }

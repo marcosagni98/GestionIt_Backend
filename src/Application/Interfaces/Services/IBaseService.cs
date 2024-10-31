@@ -10,7 +10,6 @@ namespace Application.Interfaces.Services;
 /// Base service interface that implements the basic functions needed for the API.
 /// </summary>
 /// <typeparam name="TDto">The type of the entity data transfer object.</typeparam>
-/// <typeparam name="TResponseDto">The type of the response data transfer object.</typeparam>
 /// <typeparam name="TAddRequestDto">The type of the data transfer object used for adding new entities.</typeparam>
 /// <typeparam name="TUpdateRequestDto">The type of the data transfer object used for updating existing entities.</typeparam>
 public interface IBaseService<TDto, TAddRequestDto, TUpdateRequestDto>

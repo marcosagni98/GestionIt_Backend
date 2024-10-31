@@ -8,4 +8,5 @@ namespace Application.Interfaces.Services;
 /// </summary>
 public interface IMessageService : IBaseService<MessageDto, MessageAddRequestDto, MessageUpdateRequestDto>, IDisposable
 {
+    Task HandleMessageAsync(string user, string message);
 }

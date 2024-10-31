@@ -1,4 +1,5 @@
 ﻿using API.Helpers;
+using API.Hubs;
 using Application.Helpers.Mappers;
 using Application.Interfaces.Services;
 using Application.Interfaces.Utils;
@@ -53,6 +54,8 @@ public class Startup
                 {
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 });
+
+        services.AddSignalR();
 
         services.AddEndpointsApiExplorer();
 
@@ -146,6 +149,7 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
+            endpoints.MapHub<ChatHub>("/messagehub");
         });
     }
 }
