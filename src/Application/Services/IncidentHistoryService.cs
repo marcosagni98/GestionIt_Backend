@@ -78,7 +78,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> DeleteAsync(long id)
+        public Task<Result<SuccessResponseDto>> DeleteAsync(long id)
         {
             throw new NotImplementedException();
         }
@@ -121,7 +121,7 @@ namespace Application.Services
             }
 
             _mapper.Map(updateRequestDto, incidentHistory);
-            await _unitOfWork.IncidentHistoryRepository.UpdateAsync(incidentHistory);
+            _unitOfWork.IncidentHistoryRepository.Update(incidentHistory);
             await _unitOfWork.SaveChangesAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "Incident history updated successfully." });

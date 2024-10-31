@@ -34,8 +34,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
     /// Asynchronously updates an existing entity in the database.
     /// </summary>
     /// <param name="entity">The updated data of the entity.</param>
-    /// <returns>A task representing the asynchronous update operation.</returns>
-    Task UpdateAsync(TEntity entity);
+    void Update(TEntity entity);
 
     /// <summary>
     /// Asynchronously deletes an entity from the database by its unique identifier.

@@ -61,7 +61,7 @@ public class AuthController(IAuthService authService) : BaseApiController
     /// <summary>
     /// Recover password
     /// </summary>
-    /// <param name="registerRequestDto">The data to be able to recover a password of the user.</param>
+    /// <param name="forgotPasswordRequestDto">The data to be able to recover a password of the user.</param>
     /// <returns>a <see cref="SuccessResponseDto"/> indicating if it was able to recover password.</returns>
     [HttpPost("forgot-password")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]

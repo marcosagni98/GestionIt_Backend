@@ -132,7 +132,7 @@ namespace Application.Services
             }
 
             _mapper.Map(updateRequestDto, workLog);
-            await _unitOfWork.WorkLogRepository.UpdateAsync(workLog);
+            _unitOfWork.WorkLogRepository.Update(workLog);
             await _unitOfWork.SaveChangesAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "Work log updated successfully." });

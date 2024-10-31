@@ -130,7 +130,7 @@ namespace Application.Services
             }
 
             _mapper.Map(updateRequestDto, userFeedback);
-            await _unitOfWork.UserFeedbackRepository.UpdateAsync(userFeedback);
+            _unitOfWork.UserFeedbackRepository.Update(userFeedback);
             await _unitOfWork.SaveChangesAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "User feedback updated successfully." });

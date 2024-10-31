@@ -55,7 +55,7 @@ public class IncidentHistoryRepository : IIncidentHistoryRepository
     }
 
     /// <inheritdoc/>
-    public async Task UpdateAsync(IncidentHistory entity)
+    public void Update(IncidentHistory entity)
     {
         _dbSet.Update(entity);
     }

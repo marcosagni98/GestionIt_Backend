@@ -32,8 +32,7 @@ public interface IIncidentHistoryRepository
     /// Asynchronously updates an existing entity in the database.
     /// </summary>
     /// <param name="entity">The updated data of the entity.</param>
-    /// <returns>A task representing the asynchronous update operation.</returns>
-    public Task UpdateAsync(IncidentHistory entity);
+    public void Update(IncidentHistory entity);
 
     /// <summary>
     /// Asynchronously counts the number of entities in the database based on optional filtering criteria.

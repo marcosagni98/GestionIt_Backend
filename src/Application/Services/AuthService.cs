@@ -91,7 +91,7 @@ public class AuthService : IAuthService
     public async Task<Result<CreatedResponseDto>> RegisterAsync(RegisterRequestDto registerRequestDto)
     {
         var user = _mapper.Map<User>(registerRequestDto);
-        if (!await _unitOfWork.UserRepository.EmailExistsAsync(user.Email))
+        if (await _unitOfWork.UserRepository.EmailExistsAsync(user.Email))
         {
             return Result.Fail<CreatedResponseDto>("Email already exists.");
         }
@@ -113,7 +113,7 @@ public class AuthService : IAuthService
             return Result.Fail<SuccessResponseDto>("User does not exists.");
         }
         var token = _jwt.GenerateJwtToken(user).Token;
-        _emailSender.SendRecoverPasswordAsync(user.Email, token);
+        await _emailSender.SendRecoverPasswordAsync(user.Email, token);
         return Result.Ok(new SuccessResponseDto());
     }
 
@@ -124,9 +124,9 @@ public class AuthService : IAuthService
         {
             return Result.Fail<SuccessResponseDto>("User not found.");
         }
-        User user = await _unitOfWork.UserRepository.GetUserByEmailAsync(resetPasswordRequestDto.Email);
-        user.Password = resetPasswordRequestDto.Password;
-        await _unitOfWork.UserRepository.UpdateAsync(user);
+        User? user = await _unitOfWork.UserRepository.GetUserByEmailAsync(resetPasswordRequestDto.Email);
+        user!.Password = resetPasswordRequestDto.Password;
+        _unitOfWork.UserRepository.Update(user);
         await _unitOfWork.SaveChangesAsync();
 
         return Result.Ok(new SuccessResponseDto());
