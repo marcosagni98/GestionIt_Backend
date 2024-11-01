@@ -131,7 +131,7 @@ namespace Application.Services
             }
 
             _mapper.Map(updateRequestDto, message);
-            await _unitOfWork.MessageRepository.UpdateAsync(message);
+            _unitOfWork.MessageRepository.Update(message);
             await _unitOfWork.SaveChangesAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "Message updated successfully." });

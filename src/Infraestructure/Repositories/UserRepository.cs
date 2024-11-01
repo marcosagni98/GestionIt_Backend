@@ -21,7 +21,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     /// <inheritdoc/>
     public Task<bool> EmailExistsAsync(string email)
     {
-        return _dbSet.Select(x => x.Email == email && x.Active == true).AnyAsync();
+        return _dbSet.Where(x => x.Email == email && x.Active == true).AnyAsync();
     }
 
     /// <inheritdoc/>

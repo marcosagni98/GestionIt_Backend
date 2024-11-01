@@ -75,7 +75,8 @@ namespace Application.Services
         public async Task<Result<CreatedResponseDto>> AddAsync(UserAddRequestDto addRequestDto)
         {
             var user = _mapper.Map<User>(addRequestDto);
-            if(!await _unitOfWork.UserRepository.EmailExistsAsync(user.Email))
+            var result = await _unitOfWork.UserRepository.EmailExistsAsync(user.Email);
+            if (result)
             {
                 return Result.Fail<CreatedResponseDto>("Email already exists.");
             }
@@ -88,8 +89,7 @@ namespace Application.Services
         /// <inheritdoc/>
         public async Task<Result<SuccessResponseDto>> DeleteAsync(long id)
         {
-            var exists = await _unitOfWork.UserRepository.ExistsAsync(id);
-            if (!exists)
+            if (!await _unitOfWork.UserRepository.ExistsAsync(id))
             {
                 return Result.Fail<SuccessResponseDto>("User not found.");
             }
@@ -138,7 +138,7 @@ namespace Application.Services
             }
 
             _mapper.Map(updateRequestDto, user);
-            await _unitOfWork.UserRepository.UpdateAsync(user);
+            _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangesAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "User updated successfully." });

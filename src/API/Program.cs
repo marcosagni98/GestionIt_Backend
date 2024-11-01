@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.Globalization;
 
+#pragma warning disable CS1591 // Falta el comentario XML para el tipo o miembro visible públicamente
 public class Program
+
 {
     private static readonly ILog _log = LogManager.GetLogger(typeof(Program));
 
@@ -35,3 +37,4 @@ public class Program
                 webBuilder.UseUrls("http://0.0.0.0:5000");
             });
 }
+#pragma warning restore CS1591 // Falta el comentario XML para el tipo o miembro visible públicamente

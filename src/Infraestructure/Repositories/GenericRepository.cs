@@ -50,12 +50,12 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     public virtual async Task<TEntity?> GetByIdAsync(long id)
     {
         return await _dbSet
-            .Where(x => (x as Entity).Active == true && (x as Entity).Id == id)
+            .Where(x => (x as Entity)!.Active == true && (x as Entity)!.Id == id)
             .FirstOrDefaultAsync();
     }
 
     /// <inheritdoc/>
-    public virtual async Task UpdateAsync(TEntity entity)
+    public virtual void Update(TEntity entity)
     {
         _dbSet.Update(entity);
     }
@@ -76,7 +76,7 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     public virtual async Task<bool> ExistsAsync(long id)
     {
         return await _dbSet
-            .Where(x => (x as Entity).Active == true && (x as Entity).Id == id)
+            .Where(x => (x as Entity)!.Active == true && (x as Entity)!.Id == id)
             .AnyAsync();
     }
 

@@ -130,7 +130,7 @@ namespace Application.Services
             }
 
             _mapper.Map(updateRequestDto, incident);
-            await _unitOfWork.IncidentRepository.UpdateAsync(incident);
+            _unitOfWork.IncidentRepository.Update(incident);
             await _unitOfWork.SaveChangesAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
