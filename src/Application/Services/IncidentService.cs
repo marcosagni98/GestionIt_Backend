@@ -135,5 +135,17 @@ namespace Application.Services
 
             return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
         }
+
+        /// <inheritdoc/>
+        public async Task<Result<List<long>>> GetIncidentIdsByUserIdAsync(long userId)
+        {
+            List<Incident>? incidentList = await _unitOfWork.IncidentRepository.GetByUserIdAsync(userId);
+            if (incidentList == null || incidentList.Count == 0)
+            {
+                return Result.Fail<List<long>>($"Not incidents found for user {userId}");
+            }
+
+            return Result.Ok(incidentList.Select(i => i!.Id).ToList());
+        }
     }
 }

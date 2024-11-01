@@ -8,6 +8,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dtos\CRUD\IncidentHistories\Response\**" />
+    <Compile Remove="Dtos\CRUD\Incidents\Response\**" />
+    <Compile Remove="Dtos\CRUD\Messages\Response\**" />
+    <Compile Remove="Dtos\CRUD\UserFeedbacks\Response\**" />
+    <Compile Remove="Dtos\CRUD\Users\Response\**" />
+    <Compile Remove="Dtos\CRUD\WorkLogs\Response\**" />
+    <EmbeddedResource Remove="Dtos\CRUD\IncidentHistories\Response\**" />
+    <EmbeddedResource Remove="Dtos\CRUD\Incidents\Response\**" />
+    <EmbeddedResource Remove="Dtos\CRUD\Messages\Response\**" />
+    <EmbeddedResource Remove="Dtos\CRUD\UserFeedbacks\Response\**" />
+    <EmbeddedResource Remove="Dtos\CRUD\Users\Response\**" />
+    <EmbeddedResource Remove="Dtos\CRUD\WorkLogs\Response\**" />
+    <None Remove="Dtos\CRUD\IncidentHistories\Response\**" />
+    <None Remove="Dtos\CRUD\Incidents\Response\**" />
+    <None Remove="Dtos\CRUD\Messages\Response\**" />
+    <None Remove="Dtos\CRUD\UserFeedbacks\Response\**" />
+    <None Remove="Dtos\CRUD\Users\Response\**" />
+    <None Remove="Dtos\CRUD\WorkLogs\Response\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="FluentResults" Version="3.16.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
@@ -19,12 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Dtos\CRUD\IncidentHistories\Response\" />
-    <Folder Include="Dtos\CRUD\Incidents\Response\" />
-    <Folder Include="Dtos\CRUD\Messages\Response\" />
-    <Folder Include="Dtos\CRUD\UserFeedbacks\Response\" />
-    <Folder Include="Dtos\CRUD\Users\Response\" />
-    <Folder Include="Dtos\CRUD\WorkLogs\Response\" />
     <Folder Include="Dtos\Stats\Request\" />
   </ItemGroup>
 
