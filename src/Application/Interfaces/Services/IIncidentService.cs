@@ -14,7 +14,7 @@ public interface IIncidentService : IBaseService<IncidentDto, IncidentAddRequest
     /// </summary>
     /// <param name="userId">The ID of the user whose incident IDs are to be retrieved.</param>
     /// <returns>
-    /// An asynchronous task representing a <see cref="{Result{List{long}}}"/> containing the IDs of incidents 
+    /// An asynchronous task representing a <see cref="Result{List{long}}"/> containing the IDs of incidents 
     /// associated with the specified user ID.
     /// </returns>
     public Task<Result<List<long>>> GetIncidentIdsByUserIdAsync(long userId);
