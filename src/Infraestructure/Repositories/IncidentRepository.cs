@@ -84,5 +84,11 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         return averageResolutionTime; // Devuelve el promedio en horas (o minutos)
     }
+    public async Task<List<Incident>?> GetByUserIdAsync(long userId)
+    {
+        return await _dbSet
+            .Where(x => x.UserId == userId)
+            .ToListAsync();
+    }
 }
 
