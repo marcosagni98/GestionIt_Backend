@@ -29,7 +29,9 @@ public class Jwt : IJwt
         List<Claim> claims =
         [
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.UserType.ToString())
+            new Claim(ClaimTypes.Role, ((int)user.UserType).ToString()),
+            new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
         ];
 
         var tokenDescriptor = new JwtSecurityToken
