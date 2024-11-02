@@ -21,9 +21,19 @@ public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeed
     public async Task<int> GetUserHappinessAsync(DateTime startDate, DateTime endDate)
     {
         var averageRating = await _dbSet
-            .Where(f => f.SubmittedAt >= startDate && f.SubmittedAt <= endDate)
+            .Where(f => f.SubmittedAt >= startDate && f.SubmittedAt <= endDate && f.Active == true)
             .Select(f => (double?)f.Rating)
             .AverageAsync();
+
+        return averageRating.HasValue ? (int)Math.Round(averageRating.Value) : 0;
+    }
+
+    public async Task<int> GetUserHappinessAsync(DateTime startDate, DateTime endDate, long id)
+    {
+        var averageRating = await _dbSet
+           .Where(f => f.SubmittedAt >= startDate && f.SubmittedAt <= endDate && f.UserId == id && f.Active == true)
+           .Select(f => (double?)f.Rating)
+           .AverageAsync();
 
         return averageRating.HasValue ? (int)Math.Round(averageRating.Value) : 0;
     }

@@ -28,6 +28,13 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     }
 
     /// <inheritdoc/>
+    public Task<int> CountByPriorityAsync(Priority priority, long tecnitianId)
+    {
+        return _dbSet
+            .CountAsync(x => x.Priority == priority && x.Active == true && (x.Status != Status.Completed || x.Status != Status.Closed) && x.Technician.Id == tecnitianId );
+    }
+
+    /// <inheritdoc/>
     public Task<int> CountByStatusAsync(Status status)
     {
         return _dbSet
@@ -42,6 +49,13 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     }
 
     /// <inheritdoc/>
+    public async Task<int> CountAsync(DateTime startDate, DateTime endDate, long id)
+    {
+        return await _dbSet
+            .CountAsync(f => f.CreatedAt >= startDate && f.CreatedAt <= endDate && f.Active == true && f.Technician.Id == id);
+    }
+
+    /// <inheritdoc/>
     public async Task<List<Incident>?> GetByUserIdAsync(long userId)
     {
         return await _dbSet
@@ -53,7 +67,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     public async Task<double> GetAverageResolutionTimeAsync(DateTime startDate, DateTime endDate)
     {
         var incidents = await _dbContext.Incidents
-            .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate)
+            .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate && i.Active == true)
             .Include(i => i.IncidentHistories)
             .ToListAsync();
 
@@ -72,7 +86,40 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
             .ToList();
 
-        // Calcular el tiempo de resolución
+        var resolutionTimes = completedIncidents
+            .Select(i => (i.CompletedAt.ChangedAt - i.CreatedAt).TotalHours)
+            .ToList();
+
+        double averageResolutionTime = resolutionTimes.Count > 0
+            ? resolutionTimes.Average()
+            : 0;
+
+        return averageResolutionTime;
+    }
+
+    /// <inheritdoc/>
+    public async Task<double> GetAverageResolutionTimeAsync(DateTime startDate, DateTime endDate, long id)
+    {
+        var incidents = await _dbContext.Incidents
+            .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate && i.Technician.Id == id && i.Active == true)
+            .Include(i => i.IncidentHistories)
+            .ToListAsync();
+
+
+        var completedIncidents = incidents
+            .Where(i => i.IncidentHistories.Any(ih => ih.Status == Status.Completed))
+            .Select(i => new
+            {
+                CreatedAt = i.CreatedAt,
+                CompletedAt = i.IncidentHistories
+                                .Where(ih => ih.Status == Status.Completed)
+                                .OrderBy(ih => ih.ChangedAt)
+                                .FirstOrDefault()
+            })
+            .Where(i => i.CompletedAt != null)
+
+            .ToList();
+
         var resolutionTimes = completedIncidents
             .Select(i => (i.CompletedAt.ChangedAt - i.CreatedAt).TotalHours)
             .ToList();

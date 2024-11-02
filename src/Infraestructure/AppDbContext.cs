@@ -77,6 +77,10 @@ public class AppDbContext : DbContext
             .HasForeignKey(w => w.IncidentId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<WorkLog>()
+            .Property(w => w.MinWorked)
+            .HasPrecision(18, 2);
+
         // Configurar la relación entre WorkLog y User (técnico)
         modelBuilder.Entity<WorkLog>()
             .HasOne(w => w.Technician)
