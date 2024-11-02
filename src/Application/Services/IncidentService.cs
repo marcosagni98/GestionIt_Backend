@@ -70,7 +70,7 @@ namespace Application.Services
         /// <inheritdoc/>
         public async Task<Result<CreatedResponseDto>> AddAsync(IncidentAddRequestDto addRequestDto)
         {
-            var incident = _mapper.Map<Incident>(addRequestDto); // Asumiendo que tienes un DTO de solicitud
+            var incident = _mapper.Map<Incident>(addRequestDto); 
             await _unitOfWork.IncidentRepository.AddAsync(incident);
             await _unitOfWork.SaveChangesAsync();
 
@@ -131,6 +131,33 @@ namespace Application.Services
 
             _mapper.Map(updateRequestDto, incident);
             _unitOfWork.IncidentRepository.Update(incident);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
+        }
+
+        /// <inheritdoc/>
+        public async Task<Result<SuccessResponseDto>> UpdateStatusAsync(long id, IncidentUpdateStatusRequestDto statusRequest)
+        {
+            var incident = await _unitOfWork.IncidentRepository.GetByIdAsync(id);
+            if (incident == null)
+            {
+                return Result.Fail<SuccessResponseDto>("Incident not found.");
+            }
+
+            IncidentHistory incidentHistory = new IncidentHistory
+            {
+                IncidentId = id,
+                Status = statusRequest.StatusId,
+                ChangedBy = statusRequest.ChangedBy,
+            };
+            if (statusRequest.ResolutionDetails != null)
+            {
+                incidentHistory.ResolutionDetails = statusRequest.ResolutionDetails;
+            }
+
+            await _unitOfWork.IncidentRepository.UpdateIncidentStatusAsync(id, statusRequest.StatusId);
+            await _unitOfWork.IncidentHistoryRepository.AddAsync(incidentHistory);
             await _unitOfWork.SaveChangesAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });

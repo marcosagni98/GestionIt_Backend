@@ -19,9 +19,4 @@ public class WorkLogAddRequestDto
     /// The time worked on the incident
     /// </summary>
     public decimal MinWorked { get; set; }
-
-    /// <summary>
-    /// Date of the log
-    /// </summary>
-    public DateTime LogDate { get; set; }
 }

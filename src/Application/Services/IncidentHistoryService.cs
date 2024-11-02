@@ -7,6 +7,7 @@ using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
 using Microsoft.AspNetCore.Http;

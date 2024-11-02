@@ -96,6 +96,31 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     }
 
     /// <summary>
+    /// Updates the status of an incident.
+    /// </summary>
+    /// <param name="id">The ID of the incident to update.</param>
+    /// <param name="updateRequestDto">The updated data for the incident.</param>
+    /// <returns>A response indicating the result of the operation.</returns>
+    [HttpPut("UpdateStatus/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateStatusAsync(long id, [FromBody] IncidentUpdateStatusRequestDto updateStatusRequestDto)
+    {
+        if (updateStatusRequestDto == null)
+        {
+            return BadRequest("The updateStatusRequestDto field is required.");
+        }
+        var result = await _incidentService.UpdateStatusAsync(id, updateStatusRequestDto);
+        if (result.IsFailed)
+        {
+            return NotFound(result.Errors);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
     /// Deletes a incident by ID.
     /// </summary>
     /// <param name="id">The ID of the incident to delete.</param>

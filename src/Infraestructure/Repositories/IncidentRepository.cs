@@ -1,8 +1,8 @@
-﻿
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces.Repositories;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories;
@@ -21,14 +21,14 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     }
 
     /// <inheritdoc/>
-    public Task<int> CountByPriority(Priority priority)
+    public Task<int> CountByPriorityAsync(Priority priority)
     {
         return _dbSet
             .CountAsync(x => x.Priority == priority && x.Active == true && (x.Status != Status.Completed || x.Status != Status.Closed));
     }
 
     /// <inheritdoc/>
-    public Task<int> CountByStatus(Status status)
+    public Task<int> CountByStatusAsync(Status status)
     {
         return _dbSet
             .CountAsync(x => x.Status == status && x.Active == true && (x.Status != Status.Completed || x.Status != Status.Closed));
@@ -52,13 +52,12 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public async Task<double> GetAverageResolutionTimeAsync(DateTime startDate, DateTime endDate)
     {
-        // Obtener todas las incidencias creadas entre las fechas especificadas
         var incidents = await _dbContext.Incidents
             .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate)
-            .Include(i => i.IncidentHistories) // Asegúrate de incluir las historias de la incidencia
+            .Include(i => i.IncidentHistories)
             .ToListAsync();
 
-        // Filtrar las incidencias que tienen un historial de estado 'Completed'
+
         var completedIncidents = incidents
             .Where(i => i.IncidentHistories.Any(ih => ih.Status == Status.Completed))
             .Select(i => new
@@ -67,28 +66,29 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
                 CompletedAt = i.IncidentHistories
                                 .Where(ih => ih.Status == Status.Completed)
                                 .OrderBy(ih => ih.ChangedAt)
-                                .FirstOrDefault() // Obtiene la primera fecha en que se completó
+                                .FirstOrDefault()
             })
-            .Where(i => i.CompletedAt != null) // Filtrar para asegurar que tenemos un 'CompletedAt'
+            .Where(i => i.CompletedAt != null) 
+
             .ToList();
 
         // Calcular el tiempo de resolución
         var resolutionTimes = completedIncidents
-            .Select(i => (i.CompletedAt.ChangedAt - i.CreatedAt).TotalHours) // o TotalMinutes según lo que necesites
+            .Select(i => (i.CompletedAt.ChangedAt - i.CreatedAt).TotalHours)
             .ToList();
 
-        // Calcular el promedio
         double averageResolutionTime = resolutionTimes.Count > 0
             ? resolutionTimes.Average()
             : 0;
 
-        return averageResolutionTime; // Devuelve el promedio en horas (o minutos)
+        return averageResolutionTime;
     }
-    public async Task<List<Incident>?> GetByUserIdAsync(long userId)
+
+    /// <inheritdoc/>
+    public async Task UpdateIncidentStatusAsync(long id, Status newStatus)
     {
-        return await _dbSet
-            .Where(x => x.UserId == userId)
-            .ToListAsync();
+        var incident = await _dbSet.FindAsync(id) ?? throw new KeyNotFoundException($"Incident with ID {id} not found.");
+        incident.Status = newStatus;
     }
 }
 

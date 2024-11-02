@@ -18,11 +18,6 @@ public class IncidentHistoryAddRequestDto
     public Status? Status { get; set; }
 
     /// <summary>
-    /// Date and time the incident was changed
-    /// </summary>
-    public DateTime? ChangedAt { get; set; }
-
-    /// <summary>
     /// User id that changed the incident
     /// </summary>
     public long? ChangedBy { get; set; }

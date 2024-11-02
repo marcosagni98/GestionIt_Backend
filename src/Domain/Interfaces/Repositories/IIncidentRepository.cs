@@ -24,14 +24,14 @@ public interface IIncidentRepository : IGenericRepository<Incident>
     /// </summary>
     /// <param name="priority">The priority level to filter incidents by.</param>
     /// <returns>A task representing the asynchronous operation, containing the count of incidents with the specified priority.</returns>
-    public Task<int> CountByPriority(Priority priority);
+    public Task<int> CountByPriorityAsync(Priority priority);
 
     /// <summary>
     /// Counts the number of incidents with the specified status.
     /// </summary>
     /// <param name="status"><see cref="Status"/> of the incidents</param>
     /// <returns>A task representing the asynchronous operation, containing the count of incidents with the specified status.</returns>
-    public Task<int> CountByStatus(Status status);
+    public Task<int> CountByStatusAsync(Status status);
 
     /// <summary>
     /// Asynchronously counts the number of entities in the database in a period of time.
@@ -48,4 +48,12 @@ public interface IIncidentRepository : IGenericRepository<Incident>
     /// <param name="endDate">end date</param>
     /// <returns>A task representing the asynchronous count operation, returning the time of resolution</returns>
     public Task<double> GetAverageResolutionTimeAsync(DateTime startDate, DateTime endDate);
+
+    /// <summary>
+    /// Asynchronously updates the status of an incident by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the incident to update.</param>
+    /// <param name="newStatus">The new status to set for the incident.</param>
+    /// <returns>A task representing the asynchronous update operation.</returns>
+    public Task UpdateIncidentStatusAsync(long id, Status newStatus);
 }
