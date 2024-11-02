@@ -14,7 +14,7 @@ public interface IUserService : IBaseService<UserDto, UserAddRequestDto, UserUpd
     /// </summary>
     /// <param name="userId">The ID of the user to verify.</param>
     /// <returns>
-    /// An asynchronous task representing a <see cref="{Result{long}}"/> containing the verified user ID 
+    /// An asynchronous task representing a <see cref="Result{long}"/> containing the verified user ID 
     /// if the verification is successful; otherwise, an error result.
     /// </returns>
     public Task<Result<long>> VerifyUserAsync(string userId);

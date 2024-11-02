@@ -1,4 +1,3 @@
-﻿
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
@@ -70,6 +69,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
                                 .FirstOrDefault()
             })
             .Where(i => i.CompletedAt != null) 
+
             .ToList();
 
         // Calcular el tiempo de resolución

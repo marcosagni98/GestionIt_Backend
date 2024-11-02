@@ -173,6 +173,6 @@ namespace Application.Services
             }
 
             return Result.Ok(incidentList.Select(i => i!.Id).ToList());
-        }        
+        }
     }
 }
