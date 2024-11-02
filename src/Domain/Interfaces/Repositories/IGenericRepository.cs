@@ -49,7 +49,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
     /// <param name="queryFilter">Query filter data for sorting, searching, and pagination.</param>
     /// <param name="filterParameter">Additional parameters to filter the count operation.</param>
     /// <returns>A task representing the asynchronous count operation, returning the total count of entities.</returns>
-    Task<int> CountAsync(QueryFilterDto queryFilter, List<string>? filterParameter);
+    Task<int> CountAsync(QueryFilterDto? queryFilter, List<string>? filterParameter);
 
     /// <summary>
     /// Asynchronously checks whether an entity with the specified identifier exists in the database.
