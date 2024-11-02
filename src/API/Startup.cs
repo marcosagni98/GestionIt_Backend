@@ -102,6 +102,7 @@ public class Startup
         services.AddScoped<IUserFeedbackRepository, UserFeedbackRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IWorkLogRepository, WorkLogsRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddTransient<IEmailSender,EmailSender>();
     }
 
@@ -113,7 +114,7 @@ public class Startup
         services.AddScoped<IUserFeedbackService, UserFeedbackService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWorkLogService, WorkLogService>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IStatisticsService, StatisticsService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwt, Jwt>();
     }

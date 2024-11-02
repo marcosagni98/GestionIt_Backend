@@ -81,11 +81,11 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     }
 
     /// <inheritdoc/>
-    public virtual async Task<int> CountAsync(QueryFilterDto queryFilter, List<string>? searchParameters)
+    public virtual async Task<int> CountAsync(QueryFilterDto? queryFilter, List<string>? searchParameters)
     {
         IQueryable<TEntity> query = _dbSet.AsQueryable();
 
-        if(!string.IsNullOrEmpty(queryFilter.Search))
+        if(queryFilter != null && !string.IsNullOrEmpty(queryFilter.Search))
         {
             query = new QueryFilterBuilder<TEntity>(_dbSet)
             .Where(searchParameters, queryFilter.Search)
