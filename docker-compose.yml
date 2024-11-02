@@ -1,14 +1,17 @@
+
+version: '3.8'
+
 services:
   apidb:
     container_name: gestionIt_db
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
-        - "8002:1433"
+      - "8002:1433"
     environment:
-        - ACCEPT_EULA=Y
-        - SA_PASSWORD=password@12345#
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=password@12345#
     volumes:
-    - db_data:/var/opt/mssql
+      - db_data:/var/opt/mssql
   
   api:
     image: 840110/gestionit_api:latest
@@ -19,14 +22,12 @@ services:
       - "5000:5000"
     depends_on:
       - apidb
+    env_file:
+      - .env
     environment:
       - DB_HOST=apidb
       - DB_NAME=gestionIt_db
-      - DB_USER=${DB_USER} 
-      - DB_PASSWORD=${DB_PASSWORD}
-      - EMAIL=${EMAIL}
-      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
       - ASPNETCORE_ENVIRONMENT=Development
+
 volumes:
   db_data:
-

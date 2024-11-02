@@ -31,9 +31,10 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// <returns>he count and severity of active incidents</returns>
     [HttpGet("Active-incidents")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActiveIncidentsStatsResponseDto))]
-    public async Task<IActionResult> GetActiveIncidentsSevirityCount(long id)
+    public async Task<IActionResult> GetActiveIncidentsSevirityCount()
     {
-        var result = await _statisticsService.GetActiveIncidentsSevirityCount(id);
+        //Todo: Get the user id from the jwt
+        var result = await _statisticsService.GetActiveIncidentsSevirityCount(1);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -45,13 +46,13 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// <summary>
     /// Gets the average resolution time of the incidents.
     /// </summary>
-    /// <param name="id">The ID of the user.</param>
     /// <returns>The count and severity of active incidents</returns>
     [HttpGet("Average-incident-resolution-time")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AverageIncidencesResolutionTimeResponseDto))]
-    public async Task<IActionResult> GetAverageResolutionTime(long id)
+    public async Task<IActionResult> GetAverageResolutionTime()
     {
-        var result = await _statisticsService.GetAverageResolutionTime(id);
+        //Todo: Get the user id from the jwt
+        var result = await _statisticsService.GetAverageResolutionTime(1);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -67,9 +68,10 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// <returns>The user happiness statistics including the happiness ratio and change ratio from the last month.</returns>
     [HttpGet("User-happiness")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserHappinessResponseDto))]
-    public async Task<IActionResult> GetUserHappiness(long id)
+    public async Task<IActionResult> GetUserHappiness()
     {
-        var result = await _statisticsService.GetUserHappinessAsync(id);
+        //Todo: Get the user id from the jwt
+        var result = await _statisticsService.GetUserHappinessAsync(1);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -87,6 +89,23 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     public async Task<IActionResult> GetIncidencesResumeAsync()
     {
         var result = await _statisticsService.GetIncidencesResumeAsync();
+        if (result.IsFailed)
+        {
+            return BadRequest(result.Errors);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Gets the summary of incidences.
+    /// </summary>
+    /// <returns>The total number of incidences in each type (open, closed, unassinged)</returns>
+    [HttpGet("incidences-monthly-resume")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesMonthlyResumeRequestDto))]
+    public async Task<IActionResult> GetIncidencesMonthlyResumeAsync()
+    {
+        var result = await _statisticsService.GetIncidencesMonthlyResumeAsync();
         if (result.IsFailed)
         {
             return BadRequest(result.Errors);

@@ -42,4 +42,10 @@ public interface IStatisticsService : IDisposable
     /// An asynchronous task representing a <see cref="Result{IncidencesResumeRequestDto}"/> containing the summary of incidences.
     /// </returns>
     public Task<Result<IncidencesResumeRequestDto>> GetIncidencesResumeAsync();
+
+    /// <summary>
+    /// Gets the monthly resume of incidences.
+    /// </summary>
+    /// <returns>An asynchronous task representing a <see cref="Result{IncidencesMonthlyResumeRequestDto}"/> containing the summary of incidences.</returns>
+    public Task<Result<IncidencesMonthlyResumeRequestDto>> GetIncidencesMonthlyResumeAsync();
 }
