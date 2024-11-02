@@ -7,6 +7,7 @@ using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
@@ -93,11 +94,22 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<PaginatedList<IncidentDto>>> GetAsync(QueryFilterDto queryFilter)
+        public async Task<Result<PaginatedList<IncidentDto>>> GetAsync(QueryFilterDto queryFilter, long userId)
         {
-            var paginatedList = await _unitOfWork.IncidentRepository.GetAsync(queryFilter);
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            if (user == null) return Result.Fail("User not found");
 
-            if (paginatedList == null || paginatedList.Items == null)
+            PaginatedList<Incident> paginatedList = new([], 0);
+            if(user.UserType == UserType.Admin)
+            {
+                paginatedList = await _unitOfWork.IncidentRepository.GetAsync(queryFilter);
+            }
+            else
+            {
+                paginatedList = await _unitOfWork.IncidentRepository.GetIncidentsOfUserAsync(queryFilter, userId);
+            }
+
+            if (paginatedList.Items == null)
             {
                 return Result.Fail<PaginatedList<IncidentDto>>("Error retrieving incidents.");
             }
@@ -105,6 +117,12 @@ namespace Application.Services
             var incidentDtos = _mapper.Map<List<IncidentDto>>(paginatedList.Items);
 
             return Result.Ok(new PaginatedList<IncidentDto>(incidentDtos, paginatedList.TotalCount));
+        }
+
+        /// <inheritdoc/>
+        public Task<Result<PaginatedList<IncidentDto>>> GetAsync(QueryFilterDto queryFilter)
+        {
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
@@ -173,6 +191,19 @@ namespace Application.Services
             }
 
             return Result.Ok(incidentList.Select(i => i!.Id).ToList());
+        }
+
+        /// <inheritdoc/>
+        public async Task<Result<SuccessResponseDto>> UpdateTechnitianAsync(long id, IncidentUpdateTechnitianRequestDto incidentUpdateTechnitianRequestDto)
+        {
+            Incident? incident = await _unitOfWork.IncidentRepository.GetByIdAsync(id);
+            if (incident == null) return Result.Fail("Incident not found");
+
+            incident.TechnicianId = incidentUpdateTechnitianRequestDto.TechnitianId;
+            _unitOfWork.IncidentRepository.Update(incident);
+            await _unitOfWork.SaveChangesAsync();
+            
+            return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
         }
     }
 }

@@ -74,24 +74,4 @@ public class IncidentHistoryController(IIncidentHistoryService incidentHistorySe
 
         return Ok(result.Value);
     }
-
-    /// <summary>
-    /// Updates an existing incidenthistory.
-    /// </summary>
-    /// <param name="id">The ID of the incidenthistory to update.</param>
-    /// <param name="updateRequestDto">The updated data for the incidenthistory.</param>
-    /// <returns>A response indicating the result of the operation.</returns>
-    [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateAsync(long id, [FromBody] IncidentHistoryUpdateRequestDto updateRequestDto)
-    {
-        var result = await _incidentHistoryService.UpdateAsync(id, updateRequestDto);
-        if (result.IsFailed)
-        {
-            return NotFound(result.Errors);
-        }
-
-        return Ok(result.Value);
-    }
 }

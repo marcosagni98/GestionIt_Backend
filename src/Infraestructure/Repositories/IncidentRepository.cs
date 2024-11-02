@@ -1,8 +1,12 @@
 using AutoMapper;
+using Domain.Dtos.CommonDtos.Request;
+using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
+using Domain.Entities.Common;
 using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
+using Infraestructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories;
@@ -136,6 +140,22 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     {
         var incident = await _dbSet.FindAsync(id) ?? throw new KeyNotFoundException($"Incident with ID {id} not found.");
         incident.Status = newStatus;
+    }
+
+    public async Task<PaginatedList<Incident>> GetIncidentsOfUserAsync(QueryFilterDto queryFilter, long userId)
+    {
+        List<string> searchParameters = new List<string>();
+
+        var totalCount = await CountAsync(queryFilter, searchParameters);
+
+        var query = new QueryFilterBuilder<Incident>(_dbSet
+            .Where(x => x.UserId == userId || x.TechnicianId == userId))
+        .ApplyQueryFilterAndActive(queryFilter, searchParameters)
+        .Build();
+
+        var items = await query.ToListAsync();
+
+        return new PaginatedList<Incident>(items, totalCount);
     }
 }
 

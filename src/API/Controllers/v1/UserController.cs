@@ -4,6 +4,7 @@ using Application.Dtos.CRUD.Users.Request;
 using Application.Interfaces.Services;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
+using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.v1;
@@ -76,17 +77,17 @@ public class UserController(IUserService userService) : BaseApiController
     }
 
     /// <summary>
-    /// Updates an existing user.
+    /// Updates an existing user userType.
     /// </summary>
     /// <param name="id">The ID of the user to update.</param>
-    /// <param name="updateRequestDto">The updated data for the user.</param>
+    /// <param name="userType">The new usertype.</param>
     /// <returns>A response indicating the result of the operation.</returns>
-    [HttpPut("{id}")]
+    [HttpPut("update-user-type/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateAsync(long id, [FromBody] UserUpdateRequestDto updateRequestDto)
+    public async Task<IActionResult> UpdateUserTypeAsync(long id, [FromBody] int userType)
     {
-        var result = await _userService.UpdateAsync(id, updateRequestDto);
+        var result = await _userService.UpdateUserTypeAsync(id, userType);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);

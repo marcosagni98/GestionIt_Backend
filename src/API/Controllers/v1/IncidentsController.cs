@@ -47,7 +47,9 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<IncidentDto>))]
     public async Task<IActionResult> GetAsync([FromQuery] QueryFilterDto queryFilter)
     {
-        var result = await _incidentService.GetAsync(queryFilter);
+
+        //TODO: Añadir obtner el usertype id del jwt
+        var result = await _incidentService.GetAsync(queryFilter, 1);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -75,33 +77,14 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
         return Ok(result.Value);
     }
 
-    /// <summary>
-    /// Updates an existing incident.
-    /// </summary>
-    /// <param name="id">The ID of the incident to update.</param>
-    /// <param name="updateRequestDto">The updated data for the incident.</param>
-    /// <returns>A response indicating the result of the operation.</returns>
-    [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateAsync(long id, [FromBody] IncidentUpdateRequestDto updateRequestDto)
-    {
-        var result = await _incidentService.UpdateAsync(id, updateRequestDto);
-        if (result.IsFailed)
-        {
-            return NotFound(result.Errors);
-        }
-
-        return Ok(result.Value);
-    }
 
     /// <summary>
     /// Updates the status of an incident.
     /// </summary>
     /// <param name="id">The ID of the incident to update.</param>
-    /// <param name="updateRequestDto">The updated data for the incident.</param>
+    /// <param name="updateStatusRequestDto">The updated data for the incident.</param>
     /// <returns>A response indicating the result of the operation.</returns>
-    [HttpPut("UpdateStatus/{id}")]
+    [HttpPut("update-status/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -112,6 +95,26 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
             return BadRequest("The updateStatusRequestDto field is required.");
         }
         var result = await _incidentService.UpdateStatusAsync(id, updateStatusRequestDto);
+        if (result.IsFailed)
+        {
+            return NotFound(result.Errors);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Updates the tecnitian assigned to a incident.
+    /// </summary>
+    /// <param name="id">The ID of the incident to update.</param>
+    /// <param name="updateTechnitianRequestDto">The data to be updated.</param>
+    /// <returns>A response indicating the result of the operation.</returns>
+    [HttpPut("set-tecnitian/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateTechnitian(long id, [FromBody] IncidentUpdateTechnitianRequestDto updateTechnitianRequestDto)
+    {
+        var result = await _incidentService.UpdateTechnitianAsync(id, updateTechnitianRequestDto);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);

@@ -76,26 +76,6 @@ public class MessageController(IMessageService messageService) : BaseApiControll
     }
 
     /// <summary>
-    /// Updates an existing message.
-    /// </summary>
-    /// <param name="id">The ID of the message to update.</param>
-    /// <param name="updateRequestDto">The updated data for the message.</param>
-    /// <returns>A response indicating the result of the operation.</returns>
-    [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateAsync(long id, [FromBody] MessageUpdateRequestDto updateRequestDto)
-    {
-        var result = await _messageService.UpdateAsync(id, updateRequestDto);
-        if (result.IsFailed)
-        {
-            return NotFound(result.Errors);
-        }
-
-        return Ok(result.Value);
-    }
-
-    /// <summary>
     /// Deletes a message by ID.
     /// </summary>
     /// <param name="id">The ID of the message to delete.</param>

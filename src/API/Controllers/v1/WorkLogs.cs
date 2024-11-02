@@ -76,26 +76,6 @@ public class WorkLogController(IWorkLogService worklogService) : BaseApiControll
     }
 
     /// <summary>
-    /// Updates an existing worklog.
-    /// </summary>
-    /// <param name="id">The ID of the worklog to update.</param>
-    /// <param name="updateRequestDto">The updated data for the worklog.</param>
-    /// <returns>A response indicating the result of the operation.</returns>
-    [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateAsync(long id, [FromBody] WorkLogUpdateRequestDto updateRequestDto)
-    {
-        var result = await _worklogService.UpdateAsync(id, updateRequestDto);
-        if (result.IsFailed)
-        {
-            return NotFound(result.Errors);
-        }
-
-        return Ok(result.Value);
-    }
-
-    /// <summary>
     /// Deletes a worklog by ID.
     /// </summary>
     /// <param name="id">The ID of the worklog to delete.</param>
