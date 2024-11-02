@@ -1,6 +1,7 @@
 using API;
 using log4net;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
 using System.Globalization;
 
@@ -34,6 +35,13 @@ public class Program
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>();
+                webBuilder.ConfigureKestrel(serverOptions =>
+                {
+                    serverOptions.ConfigureEndpointDefaults(endpointOptions =>
+                    {
+                        endpointOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
+                    });
+                });
                 webBuilder.UseUrls("http://0.0.0.0:5000");
             });
 }
