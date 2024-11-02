@@ -8,7 +8,7 @@ public class Incident : Entity
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public Priority Priority { get; set; } = Priority.Low;
-    public Status Status { get; set; } = Status.Pending;
+    public Status Status { get; set; } = Status.Unassigned;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public long UserId { get; set; }
     public long? TechnicianId { get; set; } = null;

@@ -1,6 +1,7 @@
 ﻿using Application.Dtos.Stats;
 using Application.Interfaces.Services;
 using AutoMapper;
+using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
@@ -66,18 +67,57 @@ public class StatisticsService : IStatisticsService
     #endregion
 
     /// <inheritdoc/>
-    public async Task<Result<ActiveIncidentsStatsResponseDto>> GetActiveIncidentsSevirityCount()
+    public async Task<Result<ActiveIncidentsStatsResponseDto>> GetActiveIncidentsSevirityCount(long id)
     {
-        int totalCount = await _unitOfWork.IncidentRepository.CountAsync(null, null);
-        int lowCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Low);
-        int mediumCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Medium);
-        int highCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.High);
-        double VariationFromLastMonth = await CalculateRatioOfNewIncidentsFromLastMonth();
+        User? user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+        if(user == null)
+        {
+            return Result.Fail<ActiveIncidentsStatsResponseDto>("User not found");
+        }
+
+        int totalCount, lowCount, mediumCount, highCount;
+        double VariationFromLastMonth;
+        if (user.UserType == UserType.Admin )
+        {
+            totalCount = await _unitOfWork.IncidentRepository.CountAsync(null, null);
+            lowCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Low);
+            mediumCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Medium);
+            highCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.High);
+            VariationFromLastMonth = await CalculateRatioOfNewIncidentsFromLastMonth();
+        }
+        else if (user.UserType == UserType.Technician)
+        {
+            totalCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Low, id);
+            lowCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Low, id);
+            mediumCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Medium, id);
+            highCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.High, id);
+            VariationFromLastMonth = await CalculateRatioOfNewIncidentsFromLastMonth(id);
+        }
+        else
+        {
+            return Result.Fail<ActiveIncidentsStatsResponseDto>("User not authorized");
+        }
 
         return Result.Ok(new ActiveIncidentsStatsResponseDto(totalCount, highCount, mediumCount, lowCount, VariationFromLastMonth));
     }
 
     #region GetActiveIncidentsSevirityCount private methods
+
+    /// <summary>
+    /// Calculates the ratio of new incidents created in the current month compared to the previous month.
+    /// </summary>
+    /// <returns>A asyncronous task that represnts the variation of new incidents created current month to last month</returns>
+    private async Task<double> CalculateRatioOfNewIncidentsFromLastMonth(long id)
+    {
+        var (startOfLast30Days, endOfLast30Days) = GetDateRange(30, 0);
+        var (startOfPrevious30Days, endOfPrevious30Days) = GetDateRange(60, 31);
+
+        int currentMonthIncidents = await _unitOfWork.IncidentRepository.CountAsync(startOfLast30Days, endOfLast30Days, id);
+        int previousMonthIncidents = await _unitOfWork.IncidentRepository.CountAsync(startOfPrevious30Days, endOfPrevious30Days, id);
+
+        double VariationFromLastMonth = CalculateChangeRatio(currentMonthIncidents, previousMonthIncidents);
+        return VariationFromLastMonth;
+    }
 
     /// <summary>
     /// Calculates the ratio of new incidents created in the current month compared to the previous month.
@@ -98,13 +138,31 @@ public class StatisticsService : IStatisticsService
     #endregion
 
     /// <inheritdoc/>
-    public async Task<Result<AverageIncidencesResolutionTimeResponseDto>> GetAverageResolutionTime()
+    public async Task<Result<AverageIncidencesResolutionTimeResponseDto>> GetAverageResolutionTime(long id)
     {
+        User? user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+        if (user == null)
+        {
+            return Result.Fail<AverageIncidencesResolutionTimeResponseDto>("User not found");
+        }
         var (startOfLast30Days, endOfLast30Days) = GetDateRange(30, 0);
         var (startOfPrevious30Days, endOfPrevious30Days) = GetDateRange(60, 31);
 
-        var currentMonthResolutionTime = await _unitOfWork.IncidentRepository.GetAverageResolutionTimeAsync(startOfLast30Days, endOfLast30Days);
-        var previousMonthResolutionTime = await _unitOfWork.IncidentRepository.GetAverageResolutionTimeAsync(startOfPrevious30Days, endOfPrevious30Days);
+        double currentMonthResolutionTime, previousMonthResolutionTime;
+        if (user.UserType == UserType.Admin)
+        {
+            currentMonthResolutionTime = await _unitOfWork.IncidentRepository.GetAverageResolutionTimeAsync(startOfLast30Days, endOfLast30Days);
+            previousMonthResolutionTime = await _unitOfWork.IncidentRepository.GetAverageResolutionTimeAsync(startOfPrevious30Days, endOfPrevious30Days);
+        }
+        else if(user.UserType == UserType.Technician)
+        {
+            currentMonthResolutionTime = await _unitOfWork.IncidentRepository.GetAverageResolutionTimeAsync(startOfLast30Days, endOfLast30Days, id);
+            previousMonthResolutionTime = await _unitOfWork.IncidentRepository.GetAverageResolutionTimeAsync(startOfPrevious30Days, endOfPrevious30Days, id);
+        }
+        else
+        {
+            return Result.Fail<AverageIncidencesResolutionTimeResponseDto>("User not authorized");
+        }
 
         double changeRatio = CalculateChangeRatio(currentMonthResolutionTime, previousMonthResolutionTime);
 
@@ -112,13 +170,32 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc/>
-    public async Task<Result<UserHappinessResponseDto>> GetUserHappinessAsync()
+    public async Task<Result<UserHappinessResponseDto>> GetUserHappinessAsync(long id)
     {
+        User? user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+        if (user == null)
+        {
+            return Result.Fail<UserHappinessResponseDto>("User not found");
+        }
+
         var (startOfLast30Days, endOfLast30Days) = GetDateRange(30, 0);
         var (startOfPrevious30Days, endOfPrevious30Days) = GetDateRange(60, 31);
 
-        double currentMonthRatio = await GetUserHappinessForMonth(startOfLast30Days, endOfLast30Days);
-        double previousMonthRatio = await GetUserHappinessForMonth(startOfPrevious30Days, endOfPrevious30Days);
+        double currentMonthRatio, previousMonthRatio;
+        if (user.UserType == UserType.Admin)
+        {
+            currentMonthRatio = await GetUserHappinessForMonth(startOfLast30Days, endOfLast30Days);
+            previousMonthRatio = await GetUserHappinessForMonth(startOfPrevious30Days, endOfPrevious30Days);
+        }
+        else if (user.UserType == UserType.Technician)
+        {
+            currentMonthRatio = await GetUserHappinessForMonth(startOfLast30Days, endOfLast30Days, id);
+            previousMonthRatio = await GetUserHappinessForMonth(startOfPrevious30Days, endOfPrevious30Days, id);
+        }
+        else
+        {
+            return Result.Fail<UserHappinessResponseDto>("User not authorized");
+        }
 
         double changeRatio = CalculateChangeRatio(currentMonthRatio, previousMonthRatio);
 
@@ -137,7 +214,33 @@ public class StatisticsService : IStatisticsService
         return happinessValue / 100.0;
     }
 
+    /// <summary>
+    /// Retrieves the average happiness score within a specified date range, normalized to a ratio between 0 and 1.
+    /// </summary>
+    /// <param name="start">The start date of the period for which to calculate happiness.</param>
+    /// <param name="end">The end date of the period for which to calculate happiness.</param>
+    /// <param name="id">The ID of the user whose happiness is to be calculated.</param>
+    /// <returns>A double representing the average happiness ratio for the specified period, normalized between 0 and 1.</returns>
+    private async Task<double> GetUserHappinessForMonth(DateTime start, DateTime end, long id)
+    {
+        int happinessValue = await _unitOfWork.UserFeedbackRepository.GetUserHappinessAsync(start, end, id);
+        return happinessValue / 100.0;
+    }
+
     #endregion
+
+    /// <inheritdoc/>
+    public async Task<Result<IncidencesResumeRequestDto>> GetIncidencesResumeAsync()
+    {
+        var unassigned = await _unitOfWork.IncidentRepository.CountByStatusAsync(Status.Unassigned);
+        var closed = await _unitOfWork.IncidentRepository.CountByStatusAsync(Status.Completed);
+        var pending = await _unitOfWork.IncidentRepository.CountByStatusAsync(Status.Pending);
+        var inProgress = await _unitOfWork.IncidentRepository.CountByStatusAsync(Status.InProgress);
+        var review = await _unitOfWork.IncidentRepository.CountByStatusAsync(Status.Review);
+       
+        var open =  pending + inProgress + review;
+        return Result.Ok(new IncidencesResumeRequestDto(open, closed, unassigned));
+    }
 
     #region private methods
     /// <summary>

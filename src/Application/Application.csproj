@@ -42,8 +42,4 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dtos\Stats\Request\" />
-  </ItemGroup>
-
 </Project>
