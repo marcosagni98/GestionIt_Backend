@@ -69,9 +69,9 @@ public class StatisticsService : IStatisticsService
     public async Task<Result<ActiveIncidentsStatsResponseDto>> GetActiveIncidentsSevirityCount()
     {
         int totalCount = await _unitOfWork.IncidentRepository.CountAsync(null, null);
-        int lowCount = await _unitOfWork.IncidentRepository.CountByPriority(Priority.Low);
-        int mediumCount = await _unitOfWork.IncidentRepository.CountByPriority(Priority.Medium);
-        int highCount = await _unitOfWork.IncidentRepository.CountByPriority(Priority.High);
+        int lowCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Low);
+        int mediumCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Medium);
+        int highCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.High);
         double VariationFromLastMonth = await CalculateRatioOfNewIncidentsFromLastMonth();
 
         return Result.Ok(new ActiveIncidentsStatsResponseDto(totalCount, highCount, mediumCount, lowCount, VariationFromLastMonth));

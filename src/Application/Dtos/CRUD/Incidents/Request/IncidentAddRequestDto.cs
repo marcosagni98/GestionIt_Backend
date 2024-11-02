@@ -23,22 +23,7 @@ public class IncidentAddRequestDto
     public Priority? Priority { get; set; }
 
     /// <summary>
-    /// Status of the incident
-    /// </summary>
-    public Status? Status { get; set; }
-
-    /// <summary>
-    /// When the incident was created
-    /// </summary>
-    public DateTime? CreatedAt { get; set; }
-
-    /// <summary>
     /// User id that created the incident
     /// </summary>
     public long? UserId { get; set; }
-
-    /// <summary>
-    /// Id of the technician assigned to the incident
-    /// </summary>
-    public long? TechnicianId { get; set; }
 }

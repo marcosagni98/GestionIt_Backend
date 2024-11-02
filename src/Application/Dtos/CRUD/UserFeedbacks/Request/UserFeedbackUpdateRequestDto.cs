@@ -24,9 +24,4 @@ public class UserFeedbackUpdateRequestDto
     /// Rating of the resolution of the incident
     /// </summary>
     public int Rating { get; set; }
-
-    /// <summary>
-    /// Date and time the feedback was submitted
-    /// </summary>
-    public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
 }

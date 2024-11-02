@@ -11,13 +11,13 @@ public class Incident : Entity
     public Status Status { get; set; } = Status.Pending;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public long UserId { get; set; }
-    public long? TechnicianId { get; set; }
+    public long? TechnicianId { get; set; } = null;
 
     public User User { get; set; } = null!;
     public User Technician { get; set; } = null!;
-    public ICollection<IncidentHistory> IncidentHistories { get; set; } = new List<IncidentHistory>();
-    public ICollection<Message> Messages { get; set; } = new List<Message>();
-    public ICollection<WorkLog> WorkLogs { get; set; } = new List<WorkLog>();
-    public ICollection<UserFeedback> UserFeedbacks { get; set; } = new List<UserFeedback>(); 
+    public ICollection<IncidentHistory> IncidentHistories { get; set; } = [];
+    public ICollection<Message> Messages { get; set; } = [];
+    public ICollection<WorkLog> WorkLogs { get; set; } = [];
+    public ICollection<UserFeedback> UserFeedbacks { get; set; } = []; 
 }
 

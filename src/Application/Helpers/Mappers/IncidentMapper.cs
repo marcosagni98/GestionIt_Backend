@@ -17,5 +17,6 @@ public class IncidentMapper : Profile
         CreateMap<Incident, IncidentDto>().ReverseMap();
         CreateMap<IncidentAddRequestDto, Incident>().ReverseMap();
         CreateMap<IncidentUpdateRequestDto, Incident>().ReverseMap();
+        CreateMap<IncidentUpdateStatusRequestDto, Incident>().ReverseMap();
     }
 }
