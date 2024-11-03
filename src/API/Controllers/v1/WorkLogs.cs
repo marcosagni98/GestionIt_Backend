@@ -76,6 +76,25 @@ public class WorkLogController(IWorkLogService worklogService) : BaseApiControll
     }
 
     /// <summary>
+    /// Gets a worklog by incidentId.
+    /// </summary>
+    /// <param name="incidentId">The ID of the incident id related to worklog to retrieve.</param>
+    /// <returns>The requested worklogs.</returns>
+    [HttpGet("{incidentId}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<WorkLogDto>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetByIncidentIdAsync(long incidentId)
+    {
+        var result = await _worklogService.GetByIncidentIdAsync(incidentId);
+        if (result.IsFailed)
+        {
+            return NotFound(result.Errors);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
     /// Deletes a worklog by ID.
     /// </summary>
     /// <param name="id">The ID of the worklog to delete.</param>

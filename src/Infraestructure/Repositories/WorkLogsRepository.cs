@@ -17,5 +17,11 @@ public class WorkLogsRepository : GenericRepository<WorkLog>, IWorkLogRepository
         _dbSet = _context.Set<WorkLog>();
         _mapper = mapper;
     }
+
+    /// <inheritdoc/>
+    public Task<List<WorkLog>> GetByIncidentIdAsync(long incidentId)
+    {
+        return _dbSet.Where(x => x.IncidentId == incidentId).ToListAsync();
+    }
 }
 
