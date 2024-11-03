@@ -123,6 +123,20 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
         return Ok(result.Value);
     }
 
+    [HttpPut("update-title-description/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateTitleAndDescription(long id, [FromBody] IncidentUpdateTitleDescriptionRequestDto updateTitleDescriptionRequestDto)
+    {
+        var result = await _incidentService.UpdateTitleAndDescription(id, updateTitleDescriptionRequestDto);
+        if (result.IsFailed)
+        {
+            return NotFound(result.Errors);
+        }
+
+        return Ok(result.Value);
+    }
+
     /// <summary>
     /// Deletes a incident by ID.
     /// </summary>

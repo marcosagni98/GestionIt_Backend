@@ -205,5 +205,37 @@ namespace Application.Services
             
             return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
         }
+
+        /// <inheritdoc/>
+        public async Task<Result<SuccessResponseDto>> UpdateTitleAndDescription(long id, IncidentUpdateTitleDescriptionRequestDto updateTitleDescriptionRequestDto)
+        {
+            Incident? incident = await _unitOfWork.IncidentRepository.GetByIdAsync(id);
+            if (incident == null) return Result.Fail("Incident not found");
+
+            UpdateValuesOfIncident(updateTitleDescriptionRequestDto, incident);
+
+            _unitOfWork.IncidentRepository.Update(incident);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
+        }
+        #region UpdateTitleAndDescription private methods
+        /// <summary>
+        /// Updates the title and description of an incident.
+        /// </summary>
+        /// <param name="updateTitleDescriptionRequestDto">The new values of the incident</param>
+        /// <param name="incident">The incident</param>
+        private static void UpdateValuesOfIncident(IncidentUpdateTitleDescriptionRequestDto updateTitleDescriptionRequestDto, Incident incident)
+        {
+            if (!string.IsNullOrEmpty(updateTitleDescriptionRequestDto.Title))
+            {
+                incident.Title = updateTitleDescriptionRequestDto.Title;
+            }
+            if (!string.IsNullOrEmpty(updateTitleDescriptionRequestDto.Description))
+            {
+                incident.Description = updateTitleDescriptionRequestDto.Description;
+            }
+        }
+        #endregion
     }
 }

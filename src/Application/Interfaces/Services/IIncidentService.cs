@@ -52,4 +52,14 @@ public interface IIncidentService : IBaseService<IncidentDto, IncidentAddRequest
     /// An asynchronous task representing a <see cref="Result{SuccessResponseDto}"/> indicating the success or failure of the operation.
     /// </returns>
     public Task<Result<SuccessResponseDto>> UpdateTechnitianAsync(long id, IncidentUpdateTechnitianRequestDto technitianRequestDto);
+
+    /// <summary>
+    /// Updates the title and description of an incident.
+    /// </summary>
+    /// <param name="id">The ID of the incident to update.</param>
+    /// <param name="updateTitleDescriptionRequestDto">The data transfer object containing the new title and description.</param>
+    /// <returns>
+    /// An asynchronous task representing a <see cref="Result{SuccessResponseDto}"/> indicating the success or failure of the operation.
+    /// </returns>
+    public Task<Result<SuccessResponseDto>> UpdateTitleAndDescription(long id, IncidentUpdateTitleDescriptionRequestDto updateTitleDescriptionRequestDto);
 }
