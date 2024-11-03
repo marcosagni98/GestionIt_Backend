@@ -6,7 +6,7 @@ namespace Application.Interfaces.Services;
 /// <summary>
 /// Message Service Interface
 /// </summary>
-public interface IMessageService : IBaseService<MessageDto, MessageAddRequestDto, MessageUpdateRequestDto>, IDisposable
+public interface IMessageService : IDisposable
 {
-    Task HandleMessageAsync(string user, string message);
+    
 }
