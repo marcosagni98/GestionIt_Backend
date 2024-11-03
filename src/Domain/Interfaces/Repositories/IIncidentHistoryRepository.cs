@@ -22,6 +22,13 @@ public interface IIncidentHistoryRepository
     public Task<PaginatedList<IncidentHistory>> GetAsync(QueryFilterDto queryFilter);
 
     /// <summary>
+    /// Asynchronously retrieves a list of incident history records by the specified incident ID.
+    /// </summary>
+    /// <param name="incidentId">The unique identifier of the incident.</param>
+    /// <returns>A task representing the asynchronous operation, returning a list of incident history records.</returns>
+    public Task<List<IncidentHistory>> GetByIncidentIdAsync(long incidentId);
+
+    /// <summary>
     /// Asynchronously retrieves a specific entity by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the entity to retrieve.</param>

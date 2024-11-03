@@ -1,9 +1,5 @@
-﻿using Application.Dtos.CommonDtos.Response;
-using Application.Dtos.CRUD.IncidentHistories;
-using Application.Dtos.CRUD.IncidentHistories.Request;
+﻿using Application.Dtos.CRUD.IncidentHistories;
 using Application.Interfaces.Services;
-using Domain.Dtos.CommonDtos.Request;
-using Domain.Dtos.CommonDtos.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.v1;
@@ -22,51 +18,16 @@ public class IncidentHistoryController(IIncidentHistoryService incidentHistorySe
     private readonly IIncidentHistoryService _incidentHistoryService = incidentHistoryService;
 
     /// <summary>
-    /// Adds a new incidenthistory.
-    /// </summary>
-    /// <param name="addRequestDto">The data for the new incidenthistory.</param>
-    /// <returns>A response indicating the result of the operation.</returns>
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(SuccessResponseDto))]
-    public async Task<IActionResult> AddAsync([FromBody] IncidentHistoryAddRequestDto addRequestDto)
-    {
-        var result = await _incidentHistoryService.AddAsync(addRequestDto);
-        if (result.IsFailed)
-        {
-            return BadRequest(result.Errors);
-        }
-
-        return Created(string.Empty, result.Value);
-    }
-
-    /// <summary>
-    /// Gets a list of incidenthistorys.
-    /// </summary>
-    /// <returns>A list of incidenthistorys.</returns>
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<IncidentHistoryDto>))]
-    public async Task<IActionResult> GetAsync([FromQuery] QueryFilterDto queryFilter)
-    {
-        var result = await _incidentHistoryService.GetAsync(queryFilter);
-        if (result.IsFailed)
-        {
-            return NotFound(result.Errors);
-        }
-
-        return Ok(result.Value);
-    }
-
-    /// <summary>
     /// Gets a incidenthistory by ID.
     /// </summary>
-    /// <param name="id">The ID of the incidenthistory to retrieve.</param>
+    /// <param name="incidentId">The ID of the incident of the incidents stories to retrieve.</param>
     /// <returns>The requested incidenthistory.</returns>
-    [HttpGet("{id}")]
+    [HttpGet("{incidentId}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidentHistoryDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByIdAsync(long id)
+    public async Task<IActionResult> GetByIncidentIdAsync(long incidentId)
     {
-        var result = await _incidentHistoryService.GetByIdAsync(id);
+        var result = await _incidentHistoryService.GetByIncidentIdAsync(incidentId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);

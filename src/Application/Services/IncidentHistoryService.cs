@@ -1,16 +1,9 @@
-﻿using Application.Dtos.CommonDtos;
-using Application.Dtos.CommonDtos.Response;
-using Application.Dtos.CRUD.IncidentHistories;
-using Application.Dtos.CRUD.IncidentHistories.Request;
+﻿using Application.Dtos.CRUD.IncidentHistories;
 using Application.Interfaces.Services;
 using AutoMapper;
-using Domain.Dtos.CommonDtos.Request;
-using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
-using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
-using Microsoft.AspNetCore.Http;
 
 namespace Application.Services
 {
@@ -69,63 +62,13 @@ namespace Application.Services
         #endregion
 
         /// <inheritdoc/>
-        public async Task<Result<CreatedResponseDto>> AddAsync(IncidentHistoryAddRequestDto addRequestDto)
+        public async Task<Result<List<IncidentHistoryDto>>> GetByIncidentIdAsync(long incidentId)
         {
-            var incidentHistory = _mapper.Map<IncidentHistory>(addRequestDto);
-            await _unitOfWork.IncidentHistoryRepository.AddAsync(incidentHistory);
-            await _unitOfWork.SaveChangesAsync();
+            Incident? incident = await _unitOfWork.IncidentRepository.GetByIdAsync(incidentId);
+            if (incident == null) return Result.Fail("Incident not found");
 
-            return Result.Ok(new CreatedResponseDto (incidentHistory.Id));
+            return _mapper.Map<List<IncidentHistoryDto>>(await _unitOfWork.IncidentHistoryRepository.GetByIncidentIdAsync(incidentId));
         }
 
-        /// <inheritdoc/>
-        public Task<Result<SuccessResponseDto>> DeleteAsync(long id)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
-        public async Task<Result<PaginatedList<IncidentHistoryDto>>> GetAsync(QueryFilterDto queryFilter)
-        {
-            var paginatedList = await _unitOfWork.IncidentHistoryRepository.GetAsync(queryFilter);
-
-            if (paginatedList == null || paginatedList.Items == null)
-            {
-                return Result.Fail<PaginatedList<IncidentHistoryDto>>("Error retrieving incident histories.");
-            }
-
-            var incidentHistoryDtos = _mapper.Map<List<IncidentHistoryDto>>(paginatedList.Items);
-
-            return Result.Ok(new PaginatedList<IncidentHistoryDto>(incidentHistoryDtos, paginatedList.TotalCount));
-        }
-
-        /// <inheritdoc/>
-        public async Task<Result<IncidentHistoryDto>> GetByIdAsync(long id)
-        {
-            var incidentHistory = await _unitOfWork.IncidentHistoryRepository.GetByIdAsync(id);
-            if (incidentHistory == null)
-            {
-                return Result.Fail<IncidentHistoryDto>("Incident history not found.");
-            }
-
-            var response = _mapper.Map<IncidentHistoryDto>(incidentHistory);
-            return Result.Ok(response);
-        }
-
-        /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> UpdateAsync(long id, IncidentHistoryUpdateRequestDto updateRequestDto)
-        {
-            var incidentHistory = await _unitOfWork.IncidentHistoryRepository.GetByIdAsync(id);
-            if (incidentHistory == null)
-            {
-                return Result.Fail<SuccessResponseDto>("Incident history not found.");
-            }
-
-            _mapper.Map(updateRequestDto, incidentHistory);
-            _unitOfWork.IncidentHistoryRepository.Update(incidentHistory);
-            await _unitOfWork.SaveChangesAsync();
-
-            return Result.Ok(new SuccessResponseDto { Message = "Incident history updated successfully." });
-        }
     }
 }
