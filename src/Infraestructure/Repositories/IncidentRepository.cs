@@ -60,6 +60,24 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     }
 
     /// <inheritdoc/>
+    public async Task<PaginatedList<Incident>?> GetHistoricAsync(QueryFilterDto queryFilter)
+    {
+        List<string> searchParameters = new List<string>();
+
+        var query = _dbSet.Where(x => (x.Status == Status.Completed || x.Status == Status.Closed) && x.Active == true);
+
+        var totalCount = await CountAsync(query);
+
+        query = new QueryFilterBuilder<Incident>(query)
+            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
+            .Build();
+
+        var items = await query.ToListAsync();
+
+        return new PaginatedList<Incident>(items, totalCount);
+    }
+
+    /// <inheritdoc/>
     public async Task<List<Incident>?> GetByUserIdAsync(long userId)
     {
         return await _dbSet
@@ -149,7 +167,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
         var totalCount = await CountAsync(queryFilter, searchParameters);
 
         var query = new QueryFilterBuilder<Incident>(_dbSet
-            .Where(x => x.UserId == userId || x.TechnicianId == userId))
+            .Where(x => (x.UserId == userId || x.TechnicianId == userId) && x.Active == true))
         .ApplyQueryFilterAndActive(queryFilter, searchParameters)
         .Build();
 

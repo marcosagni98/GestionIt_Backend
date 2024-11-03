@@ -2,6 +2,7 @@
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Incidents;
 using Application.Dtos.CRUD.Incidents.Request;
+using Application.Dtos.CRUD.Users;
 using Application.Interfaces.Services;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
@@ -126,6 +127,18 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
+        public async Task<Result<PaginatedList<IncidentDto>>> GetHistoricAsync(QueryFilterDto queryFilter)
+        {
+            var paginatedList = await _unitOfWork.IncidentRepository.GetHistoricAsync(queryFilter);
+            if (paginatedList == null || paginatedList.Items == null)
+            {
+                return Result.Fail<PaginatedList<IncidentDto>>("Error retrieving incidnets.");
+            }
+            var incidetnsDtos = _mapper.Map<List<IncidentDto>>(paginatedList.Items);
+            return Result.Ok(new PaginatedList<IncidentDto>(incidetnsDtos, paginatedList.TotalCount));
+        }
+
+        /// <inheritdoc/>
         public async Task<Result<IncidentDto>> GetByIdAsync(long id)
         {
             var incident = await _unitOfWork.IncidentRepository.GetByIdAsync(id);
@@ -236,6 +249,8 @@ namespace Application.Services
                 incident.Description = updateTitleDescriptionRequestDto.Description;
             }
         }
+
+        
         #endregion
     }
 }

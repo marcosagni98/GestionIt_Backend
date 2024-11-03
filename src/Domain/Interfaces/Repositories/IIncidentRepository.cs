@@ -61,6 +61,13 @@ public interface IIncidentRepository : IGenericRepository<Incident>
     public Task<int> CountAsync(DateTime startDate, DateTime endDate, long id);
 
     /// <summary>
+    /// Retrieves the historical (closed and completed) list of incidents.
+    /// </summary>
+    /// <param name="queryFilter">The query filter containing pagination, sorting, and search criteria.</param>
+    /// <returns>A task representing the asynchronous operation, containing a list of historical incidents.</returns>
+    public Task<PaginatedList<Incident>?> GetHistoricAsync(QueryFilterDto queryFilter);
+
+    /// <summary>
     /// Asynchronously retrieves the average resolution time of incidents within a specified date range.
     /// </summary>
     /// <param name="startDate">Start date</param>

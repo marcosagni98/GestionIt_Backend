@@ -59,6 +59,23 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     }
 
     /// <summary>
+    /// Gets a list of incidents.
+    /// </summary>
+    /// <returns>A list of incidents.</returns>
+    [HttpGet("Historic")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<IncidentDto>))]
+    public async Task<IActionResult> GetHistoricAsync([FromQuery] QueryFilterDto queryFilter)
+    {
+        var result = await _incidentService.GetHistoricAsync(queryFilter);
+        if (result.IsFailed)
+        {
+            return NotFound(result.Errors);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
     /// Gets a incident by ID.
     /// </summary>
     /// <param name="id">The ID of the incident to retrieve.</param>
