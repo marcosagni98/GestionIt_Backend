@@ -60,7 +60,37 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedList<Incident>?> GetHistoricAsync(QueryFilterDto queryFilter)
+    public override async Task<PaginatedList<Incident>> GetAsync(QueryFilterDto queryFilter)
+    {
+        List<string> searchParameters = new List<string>();
+
+        var totalCount = await CountAsync(queryFilter, searchParameters);
+
+        IQueryable<Incident> query = _dbSet.AsQueryable();
+
+        query = new QueryFilterBuilder<Incident>(_dbSet)
+            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
+            .Build()
+            .Include(i => i.User)
+            .Include(i => i.Technician);
+
+        var items = await query.ToListAsync();
+
+        return new PaginatedList<Incident>(items, totalCount);
+    }
+
+    /// <inheritdoc/>
+    public override async Task<Incident?> GetByIdAsync(long id)
+    {
+        return await _dbSet
+            .Where(x => x.Active == true && x.Id == id)
+            .Include(i => i.User)
+            .Include(i => i.Technician)
+            .FirstOrDefaultAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task<PaginatedList<Incident>> GetHistoricAsync(QueryFilterDto queryFilter)
     {
         List<string> searchParameters = new List<string>();
 
@@ -70,7 +100,9 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         query = new QueryFilterBuilder<Incident>(query)
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build();
+            .Build()
+            .Include(i => i.User)
+            .Include(i => i.Technician);
 
         var items = await query.ToListAsync();
 
@@ -82,6 +114,8 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     {
         return await _dbSet
             .Where(x => x.UserId == userId && x.Active == true)
+            .Include(i => i.User)
+            .Include(i => i.Technician)
             .ToListAsync();
     }
 
@@ -170,7 +204,9 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
         var query = new QueryFilterBuilder<Incident>(_dbSet
             .Where(x => (x.UserId == userId || x.TechnicianId == userId) && x.Active == true))
         .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-        .Build();
+        .Build()
+        .Include(i => i.User)
+        .Include(i => i.Technician);
 
         var items = await query.ToListAsync();
 
@@ -188,7 +224,9 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         query = new QueryFilterBuilder<Incident>(query)
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build();
+            .Build()
+            .Include(i => i.User)
+            .Include(i => i.Technician);
 
         var items = await query.ToListAsync();
 
@@ -206,7 +244,9 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         query = new QueryFilterBuilder<Incident>(query)
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build();
+            .Build()
+            .Include(i => i.User)
+            .Include(i => i.Technician);
 
         var items = await query.ToListAsync();
 
