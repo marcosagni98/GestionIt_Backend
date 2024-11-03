@@ -14,7 +14,9 @@ public class UserFeedbackMapper : Profile
     /// </summary>
     public UserFeedbackMapper()
     {
-        CreateMap<UserFeedback, UserFeedbackDto>().ReverseMap();
+        CreateMap<UserFeedback, UserFeedbackDto>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : string.Empty))
+            .ReverseMap();
         CreateMap<UserFeedbackAddRequestDto, UserFeedback>().ReverseMap();
         CreateMap<UserFeedbackUpdateRequestDto, UserFeedback>().ReverseMap();
     }

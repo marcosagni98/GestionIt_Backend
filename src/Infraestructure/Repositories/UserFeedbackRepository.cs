@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using Domain.Dtos.CommonDtos.Request;
+using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
+using Infraestructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories;
@@ -16,6 +19,34 @@ public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeed
         _dbContext = context;
         _mapper = mapper;
         _dbSet = _dbContext.Set<UserFeedback>();
+    }
+
+    /// <inheritdoc/>
+    public override async Task<PaginatedList<UserFeedback>> GetAsync(QueryFilterDto queryFilter)
+    {
+        List<string> searchParameters = new List<string>();
+
+        var totalCount = await CountAsync(queryFilter, searchParameters);
+
+        IQueryable<UserFeedback> query = _dbSet.AsQueryable();
+
+        query = new QueryFilterBuilder<UserFeedback>(_dbSet)
+            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
+            .Build()
+            .Include(x => x.User);
+
+        var items = await query.ToListAsync();
+
+        return new PaginatedList<UserFeedback>(items, totalCount);
+    }
+
+    /// <inheritdoc/>
+    public override async Task<UserFeedback?> GetByIdAsync(long id)
+    {
+        return await _dbSet
+            .Where(x => x.Active == true && x.Id == id)
+            .Include(x => x.User)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<int> GetUserHappinessAsync(DateTime startDate, DateTime endDate)

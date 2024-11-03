@@ -53,7 +53,10 @@ public class WorkLogsRepository : GenericRepository<WorkLog>, IWorkLogRepository
     /// <inheritdoc/>
     public Task<List<WorkLog>> GetByIncidentIdAsync(long incidentId)
     {
-        return _dbSet.Where(x => x.IncidentId == incidentId).Include(x => x.Technician).ToListAsync();
+        return _dbSet
+            .Where(x => x.IncidentId == incidentId)
+            .Include(x => x.Technician)
+            .ToListAsync();
     }
 }
 
