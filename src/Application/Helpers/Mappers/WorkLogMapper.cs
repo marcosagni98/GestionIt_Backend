@@ -14,7 +14,10 @@ public class WorkLogMapper : Profile
     /// </summary>
     public WorkLogMapper()
     {
-        CreateMap<WorkLog, WorkLogDto>().ReverseMap();
+        CreateMap<WorkLog, WorkLogDto>()
+            .ForMember(dest => dest.TechnicianName, opt => opt.MapFrom(src => src.Technician != null ? src.Technician.Name : string.Empty))
+            .ReverseMap();
+        
         CreateMap<WorkLogAddRequestDto, WorkLog>().ReverseMap();
         CreateMap<WorkLogUpdateRequestDto, WorkLog>().ReverseMap();
     }

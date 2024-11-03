@@ -43,7 +43,17 @@ public class IncidentDto
     public long? UserId { get; set; }
 
     /// <summary>
+    /// User name that created the incident
+    /// </summary>
+    public string? UserName { get; set; }
+
+    /// <summary>
     /// Id of the technician assigned to the incident
     /// </summary>
     public long? TechnicianId { get; set; }
+
+    /// <summary>
+    /// Name of the technician assigned to the incident
+    /// </summary>
+    public string? TechnicianName { get; set; }
 }

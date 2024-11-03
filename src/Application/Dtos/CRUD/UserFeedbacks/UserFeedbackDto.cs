@@ -21,6 +21,11 @@ public class UserFeedbackDto
     public long UserId { get; set; }
 
     /// <summary>
+    /// Name of the user that submitted the feeback
+    /// </summary>
+    public string? UserName { get; set; }
+
+    /// <summary>
     /// The feedback text
     /// </summary>
     public string Feedback { get; set; } = string.Empty;

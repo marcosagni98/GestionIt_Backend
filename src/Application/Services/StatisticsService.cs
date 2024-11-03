@@ -79,7 +79,7 @@ public class StatisticsService : IStatisticsService
         double VariationFromLastMonth;
         if (user.UserType == UserType.Admin )
         {
-            totalCount = await _unitOfWork.IncidentRepository.CountAsync(null, null);
+            totalCount = await _unitOfWork.IncidentRepository.CountAsync(null, null, null);
             lowCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Low);
             mediumCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Medium);
             highCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.High);
@@ -230,12 +230,12 @@ public class StatisticsService : IStatisticsService
     #endregion
 
     /// <inheritdoc/>
-    public async Task<Result<IncidencesResumeRequestDto>> GetIncidencesResumeAsync()
+    public async Task<Result<IncidencesResumeResponseDto>> GetIncidencesResumeAsync()
     {
         var unassigned = await _unitOfWork.IncidentRepository.CountByStatusAsync(Status.Unassigned);
         var closed = await _unitOfWork.IncidentRepository.CountByStatusAsync(Status.Completed);
         int open = await GetOpenIncidentsAsync();
-        return Result.Ok(new IncidencesResumeRequestDto(open, closed, unassigned));
+        return Result.Ok(new IncidencesResumeResponseDto(open, closed, unassigned));
     }
     #region GetIncidencesResumeAsync private methods
     /// <summary>
@@ -254,43 +254,100 @@ public class StatisticsService : IStatisticsService
     #endregion
 
     /// <inheritdoc/>
-    public async Task<Result<IncidencesMonthlyResumeRequestDto>> GetIncidencesMonthlyResumeAsync()
+    public async Task<Result<IncidencesMonthlyResumeResponseDto>> GetIncidencesMonthlyResumeAsync()
     {
-        // Define the start date as six months ago and the current date as the end date
         var endDate = DateTime.Now;
         var startDate = endDate.AddMonths(-6);
 
-        // Fetch incidents count by month
-        var incidencesByMonth = new Dictionary<int, int>();
-        for (int i = 0; i < 6; i++)
-        {
-            var monthStart = endDate.AddMonths(-i).Date;
-            var monthEnd = new DateTime(monthStart.Year, monthStart.Month, DateTime.DaysInMonth(monthStart.Year, monthStart.Month));
-            var count = await _unitOfWork.IncidentRepository.CountAsync(monthStart, monthEnd);
-            incidencesByMonth[monthStart.Month] = count;
-        }
+        // Obtener incidencias por mes para los últimos 6 meses
+        var incidencesByMonth = await GetIncidencesByMonthAsync(endDate, 6);
 
-        // Calculate the total count of incidents in the last 6 months
         int totalIncidences = incidencesByMonth.Values.Sum();
 
-        // Calculate the change ratio by comparing counts from the previous 6 months with the current 6 months
-        var previousStartDate = startDate.AddMonths(-6);
-        var previousEndDate = startDate;
-        var previousCount = await _unitOfWork.IncidentRepository.CountAsync(previousStartDate, previousEndDate);
+        // Calcular el ratio de cambio en los últimos 6 meses comparado con el período anterior
+        decimal changeRatioLast6Months = await CalculateChangeRatioAsync(startDate, totalIncidences);
 
-        // Avoid division by zero in case previous count is zero
-        decimal changeRatioLast6Months = previousCount > 0
-            ? (decimal)(totalIncidences - previousCount) / previousCount
-            : 0;
-
-        // Create and return the DTO
-        var resultDto = new IncidencesMonthlyResumeRequestDto(
+        var resultDto = new IncidencesMonthlyResumeResponseDto(
             IncidencesByMonth: incidencesByMonth,
             ChangeRatioLast6Months: changeRatioLast6Months,
             Count: totalIncidences
         );
 
         return Result.Ok(resultDto);
+    }
+
+    #region GetIncidencesMonthlyResumeAsync private methods
+
+    /// <summary>
+    /// Retrieves the number of incidents grouped by month over a specified number of months,
+    /// starting from a given end date and moving backwards.
+    /// </summary>
+    /// <param name="endDate">The end date for the data retrieval, typically the current date.</param>
+    /// <param name="months">The number of months to retrieve data for, counting backwards from the end date.</param>
+    /// <returns>A dictionary where each key is a month (represented as an integer) and each value is the count of incidents for that month.</returns>
+    private async Task<Dictionary<int, int>> GetIncidencesByMonthAsync(DateTime endDate, int months)
+    {
+        var incidencesByMonth = new Dictionary<int, int>();
+
+        for (int i = 0; i < months; i++)
+        {
+            var monthStart = endDate.AddMonths(-i).Date;
+            var monthEnd = new DateTime(monthStart.Year, monthStart.Month, DateTime.DaysInMonth(monthStart.Year, monthStart.Month));
+            int count = await _unitOfWork.IncidentRepository.CountAsync(monthStart, monthEnd);
+            incidencesByMonth[monthStart.Month] = count;
+        }
+
+        return incidencesByMonth;
+    }
+
+    /// <summary>
+    /// Calculates the change ratio of incidents between a current period and a previous period of equal length.
+    /// </summary>
+    /// <param name="startDate">The start date of the current period to calculate incidents for (usually 6 months before the current date).</param>
+    /// <param name="totalIncidences">The total number of incidents counted in the current period.</param>
+    /// <returns>
+    /// The change ratio as a decimal, calculated as the difference in incident counts between the current period and the previous period,
+    /// divided by the count of the previous period. Returns 0 if there are no incidents in the previous period.
+    /// </returns>
+    private async Task<decimal> CalculateChangeRatioAsync(DateTime startDate, int totalIncidences)
+    {
+        var previousStartDate = startDate.AddMonths(-6);
+        var previousEndDate = startDate;
+        int previousCount = await _unitOfWork.IncidentRepository.CountAsync(previousStartDate, previousEndDate);
+
+        return previousCount > 0
+            ? (decimal)(totalIncidences - previousCount) / previousCount
+            : 0;
+    }
+
+    #endregion
+
+    /// <inheritdoc/>
+    public async Task<Result<List<IncidencesDailyResumeResponseDto>>> GetIncidencesDayResumeAsync()
+    {
+        var currentDate = DateTime.Now;
+        var year = currentDate.Year;
+        var dailyIncidences = new List<IncidencesDailyResumeResponseDto>();
+
+        for (int month = 1; month <= currentDate.Month; month++)
+        {
+            int daysInMonth = DateTime.DaysInMonth(year, month);
+
+            for (int day = 1; day <= (month == currentDate.Month ? currentDate.Day : daysInMonth); day++)
+            {
+                var date = new DateTime(year, month, day);
+                int count = await _unitOfWork.IncidentRepository.GetIncidentCountByDateAsync(date);
+
+                dailyIncidences.Add(new IncidencesDailyResumeResponseDto(
+                    Date: date,
+                    Count: count
+                ));
+            }
+        }
+
+        return Result.Ok(dailyIncidences);
+
+        return Result.Ok(dailyIncidences);
     }
 
     #region private methods

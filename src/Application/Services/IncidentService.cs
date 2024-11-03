@@ -250,7 +250,34 @@ namespace Application.Services
             }
         }
 
-        
+
+
         #endregion
+
+        /// <inheritdoc/>
+        public async Task<Result<PaginatedList<IncidentDto>>> GetByPriorityAsync(QueryFilterDto queryFilter, Priority priorityId, long userId)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            if (user == null) return Result.Fail("User not found");
+
+            PaginatedList<Incident> paginatedList = new([], 0);
+            if (user.UserType == UserType.Admin)
+            {
+                paginatedList = await _unitOfWork.IncidentRepository.GetByPriorityAsync(queryFilter, priorityId);
+            }
+            else
+            {
+                paginatedList = await _unitOfWork.IncidentRepository.GetIncidentsOfByPriorityUserAsync(queryFilter, priorityId, userId);
+            }
+
+            if (paginatedList.Items == null)
+            {
+                return Result.Fail<PaginatedList<IncidentDto>>("Error retrieving incidents.");
+            }
+
+            var incidentDtos = _mapper.Map<List<IncidentDto>>(paginatedList.Items);
+
+            return Result.Ok(new PaginatedList<IncidentDto>(incidentDtos, paginatedList.TotalCount));
+        }
     }
 }

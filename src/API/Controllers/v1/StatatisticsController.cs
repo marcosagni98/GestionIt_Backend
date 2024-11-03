@@ -80,7 +80,7 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// </summary>
     /// <returns>The total number of incidences in each type (open, closed, unassinged)</returns>
     [HttpGet("incidences-resume")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesResumeRequestDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesResumeResponseDto))]
     public async Task<IActionResult> GetIncidencesResumeAsync()
     {
         var result = await _statisticsService.GetIncidencesResumeAsync();
@@ -97,10 +97,27 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// </summary>
     /// <returns>The total number of incidences in each type (open, closed, unassinged)</returns>
     [HttpGet("incidences-monthly-resume")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesMonthlyResumeRequestDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesMonthlyResumeResponseDto))]
     public async Task<IActionResult> GetIncidencesMonthlyResumeAsync()
     {
         var result = await _statisticsService.GetIncidencesMonthlyResumeAsync();
+        if (result.IsFailed)
+        {
+            return BadRequest(result.Errors);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Get number of incidents by day.
+    /// </summary>
+    /// <returns>The total number of incidences created each day</returns>
+    [HttpGet("incidences-by-day")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesDailyResumeResponseDto))]
+    public async Task<IActionResult> GetIncidencesDayResumeAsync()
+    {
+        var result = await _statisticsService.GetIncidencesDayResumeAsync();
         if (result.IsFailed)
         {
             return BadRequest(result.Errors);

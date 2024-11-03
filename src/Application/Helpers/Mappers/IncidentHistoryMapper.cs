@@ -14,6 +14,8 @@ public class IncidentHistoryMapper : Profile
     /// </summary>
     public IncidentHistoryMapper()
     {
-        CreateMap<IncidentHistory, IncidentHistoryDto>().ReverseMap();
+        CreateMap<IncidentHistory, IncidentHistoryDto>()
+            .ForMember(dest => dest.ChangeByUserName, opt => opt.MapFrom(src => src.ChangedByUser != null ? src.ChangedByUser.Name : string.Empty))
+            .ReverseMap();
     }
 }

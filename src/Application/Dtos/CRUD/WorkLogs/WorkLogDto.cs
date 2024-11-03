@@ -21,6 +21,11 @@ public class WorkLogDto
     public long TechnicianId { get; set; }
 
     /// <summary>
+    /// Name of the technitian
+    /// </summary>
+    public string? TechnicianName { get; set; }
+
+    /// <summary>
     /// The time worked on the incident
     /// </summary>
     public decimal MinWorked { get; set; }

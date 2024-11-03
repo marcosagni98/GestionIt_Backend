@@ -80,7 +80,7 @@ public class WorkLogController(IWorkLogService worklogService) : BaseApiControll
     /// </summary>
     /// <param name="incidentId">The ID of the incident id related to worklog to retrieve.</param>
     /// <returns>The requested worklogs.</returns>
-    [HttpGet("{incidentId}")]
+    [HttpGet("Incident/{incidentId}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<WorkLogDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIncidentIdAsync(long incidentId)

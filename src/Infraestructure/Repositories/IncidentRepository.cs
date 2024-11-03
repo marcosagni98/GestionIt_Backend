@@ -60,17 +60,49 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedList<Incident>?> GetHistoricAsync(QueryFilterDto queryFilter)
+    public override async Task<PaginatedList<Incident>> GetAsync(QueryFilterDto queryFilter)
+    {
+        List<string> searchParameters = new List<string>();
+
+        var totalCount = await CountAsync(queryFilter, searchParameters);
+
+        IQueryable<Incident> query = _dbSet.AsQueryable();
+
+        query = new QueryFilterBuilder<Incident>(_dbSet)
+            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
+            .Build()
+            .Include(i => i.User)
+            .Include(i => i.Technician);
+
+        var items = await query.ToListAsync();
+
+        return new PaginatedList<Incident>(items, totalCount);
+    }
+
+    /// <inheritdoc/>
+    public override async Task<Incident?> GetByIdAsync(long id)
+    {
+        return await _dbSet
+            .Where(x => x.Active == true && x.Id == id)
+            .Include(i => i.User)
+            .Include(i => i.Technician)
+            .FirstOrDefaultAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task<PaginatedList<Incident>> GetHistoricAsync(QueryFilterDto queryFilter)
     {
         List<string> searchParameters = new List<string>();
 
         var query = _dbSet.Where(x => (x.Status == Status.Completed || x.Status == Status.Closed) && x.Active == true);
 
-        var totalCount = await CountAsync(query);
+        var totalCount = await CountAsync(query, queryFilter, searchParameters);
 
         query = new QueryFilterBuilder<Incident>(query)
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build();
+            .Build()
+            .Include(i => i.User)
+            .Include(i => i.Technician);
 
         var items = await query.ToListAsync();
 
@@ -82,6 +114,8 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     {
         return await _dbSet
             .Where(x => x.UserId == userId && x.Active == true)
+            .Include(i => i.User)
+            .Include(i => i.Technician)
             .ToListAsync();
     }
 
@@ -160,6 +194,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
         incident.Status = newStatus;
     }
 
+    /// <inheritdoc/>
     public async Task<PaginatedList<Incident>> GetIncidentsOfUserAsync(QueryFilterDto queryFilter, long userId)
     {
         List<string> searchParameters = new List<string>();
@@ -169,11 +204,64 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
         var query = new QueryFilterBuilder<Incident>(_dbSet
             .Where(x => (x.UserId == userId || x.TechnicianId == userId) && x.Active == true))
         .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-        .Build();
+        .Build()
+        .Include(i => i.User)
+        .Include(i => i.Technician);
 
         var items = await query.ToListAsync();
 
         return new PaginatedList<Incident>(items, totalCount);
+    }
+
+    /// <inheritdoc/>
+    public async Task<PaginatedList<Incident>> GetByPriorityAsync(QueryFilterDto queryFilter, Priority priority)
+    {
+        List<string> searchParameters = new List<string>();
+
+        var query = _dbSet.Where(x => (x.Priority == priority));
+
+        var totalCount = await CountAsync(query, queryFilter, searchParameters);
+
+        query = new QueryFilterBuilder<Incident>(query)
+            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
+            .Build()
+            .Include(i => i.User)
+            .Include(i => i.Technician);
+
+        var items = await query.ToListAsync();
+
+        return new PaginatedList<Incident>(items, totalCount);
+    }
+
+    /// <inheritdoc/>
+    public async Task<PaginatedList<Incident>> GetIncidentsOfByPriorityUserAsync(QueryFilterDto queryFilter, Priority priority, long userId)
+    {
+        List<string> searchParameters = new List<string>();
+
+        var query = _dbSet.Where(x => (x.Priority == priority) );
+
+        var totalCount = await CountAsync(query, queryFilter, searchParameters);
+
+        query = new QueryFilterBuilder<Incident>(query)
+            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
+            .Build()
+            .Include(i => i.User)
+            .Include(i => i.Technician);
+
+        var items = await query.ToListAsync();
+
+        return new PaginatedList<Incident>(items, totalCount);
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> GetIncidentCountByDateAsync(DateTime date)
+    {
+        var startOfDay = date.Date;
+        var endOfDay = date.Date.AddDays(1).AddTicks(-1);
+
+        return await _dbSet
+            .Where(i => i.CreatedAt >= startOfDay && i.CreatedAt <= endOfDay)
+            .CountAsync();
     }
 }
 
