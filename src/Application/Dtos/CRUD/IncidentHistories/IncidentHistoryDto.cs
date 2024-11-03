@@ -33,6 +33,11 @@ public class IncidentHistoryDto
     public long? ChangedBy { get; set; }
 
     /// <summary>
+    /// User name that changed the incident
+    /// </summary>
+    public string? ChangeByUserName { get; set; }
+
+    /// <summary>
     /// Details of the resolution
     /// </summary>
     public string? ResolutionDetails { get; set; }

@@ -23,7 +23,7 @@ public class MessageDto
     /// <summary>
     /// Name of the sender
     /// </summary>
-    public string SenderName { get; set; }
+    public string? SenderName { get; set; }
 
     /// <summary>
     /// Text of the message

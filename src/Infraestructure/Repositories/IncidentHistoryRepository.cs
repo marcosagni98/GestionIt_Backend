@@ -58,6 +58,7 @@ public class IncidentHistoryRepository : IIncidentHistoryRepository
     public Task<List<IncidentHistory>> GetByIncidentIdAsync(long incidentId)
     {
         return _dbSet.Where(x => x.IncidentId == incidentId)
+            .Include(x => x.ChangedByUser)
             .ToListAsync();
     }
 
