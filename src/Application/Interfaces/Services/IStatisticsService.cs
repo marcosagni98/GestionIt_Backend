@@ -41,11 +41,17 @@ public interface IStatisticsService : IDisposable
     /// <returns>
     /// An asynchronous task representing a <see cref="Result{IncidencesResumeRequestDto}"/> containing the summary of incidences.
     /// </returns>
-    public Task<Result<IncidencesResumeRequestDto>> GetIncidencesResumeAsync();
+    public Task<Result<IncidencesResumeResponseDto>> GetIncidencesResumeAsync();
 
     /// <summary>
     /// Gets the monthly resume of incidences.
     /// </summary>
     /// <returns>An asynchronous task representing a <see cref="Result{IncidencesMonthlyResumeRequestDto}"/> containing the summary of incidences.</returns>
-    public Task<Result<IncidencesMonthlyResumeRequestDto>> GetIncidencesMonthlyResumeAsync();
+    public Task<Result<IncidencesMonthlyResumeResponseDto>> GetIncidencesMonthlyResumeAsync();
+
+    /// <summary>
+    /// Gets the daily resume of incidences.
+    /// </summary>
+    /// <returns>An asynchronous task representing a <see cref="Result{List{IncidencesDailyResumeResponseDto}}"/> containing the daily summary of incidences.</returns>
+    public Task<Result<List<IncidencesDailyResumeResponseDto>>> GetIncidencesDayResumeAsync();
 }

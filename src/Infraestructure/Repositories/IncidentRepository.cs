@@ -252,5 +252,16 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         return new PaginatedList<Incident>(items, totalCount);
     }
+
+    /// <inheritdoc/>
+    public async Task<int> GetIncidentCountByDateAsync(DateTime date)
+    {
+        var startOfDay = date.Date;
+        var endOfDay = date.Date.AddDays(1).AddTicks(-1);
+
+        return await _dbSet
+            .Where(i => i.CreatedAt >= startOfDay && i.CreatedAt <= endOfDay)
+            .CountAsync();
+    }
 }
 
