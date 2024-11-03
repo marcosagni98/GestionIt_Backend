@@ -1,11 +1,8 @@
 ﻿using Application.Dtos.CommonDtos;
-using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Messages;
 using Application.Dtos.CRUD.Messages.Request;
 using Application.Interfaces.Services;
 using AutoMapper;
-using Domain.Dtos.CommonDtos.Request;
-using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using FluentResults;
@@ -65,8 +62,29 @@ namespace Application.Services
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+
         #endregion
 
-        
+        /// <inheritdoc/>
+        public async Task<Result<CreatedResponseDto>> AddAsync(MessageAddRequestDto addRequestDto)
+        {
+            var message = _mapper.Map<Message>(addRequestDto); // Asegúrate de que el DTO y la entidad coincidan
+            await _unitOfWork.MessageRepository.AddAsync(message);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result.Ok(new CreatedResponseDto(message.Id));
+        }
+
+        /// <inheritdoc/>
+        public async Task<Result<List<MessageDto>>> GetByIncidentIdAsync(long incidentId)
+        {
+            Incident? incident = await _unitOfWork.IncidentRepository.GetByIdAsync(incidentId);
+            if(incident == null) return Result.Fail<List<MessageDto>>("Incident not found.");
+
+            List<MessageDto> messages = _mapper.Map<List<MessageDto>>(await _unitOfWork.MessageRepository.GetByIncidentIdAsync(incidentId));
+            
+            return Result.Ok(messages);
+        }
     }
 }
