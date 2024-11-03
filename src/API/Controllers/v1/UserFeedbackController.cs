@@ -76,26 +76,6 @@ public class UserFeedbackController(IUserFeedbackService userfeedbackService) : 
     }
 
     /// <summary>
-    /// Updates an existing userfeedback.
-    /// </summary>
-    /// <param name="id">The ID of the userfeedback to update.</param>
-    /// <param name="updateRequestDto">The updated data for the userfeedback.</param>
-    /// <returns>A response indicating the result of the operation.</returns>
-    [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateAsync(long id, [FromBody] UserFeedbackUpdateRequestDto updateRequestDto)
-    {
-        var result = await _userfeedbackService.UpdateAsync(id, updateRequestDto);
-        if (result.IsFailed)
-        {
-            return NotFound(result.Errors);
-        }
-
-        return Ok(result.Value);
-    }
-
-    /// <summary>
     /// Deletes a userfeedback by ID.
     /// </summary>
     /// <param name="id">The ID of the userfeedback to delete.</param>

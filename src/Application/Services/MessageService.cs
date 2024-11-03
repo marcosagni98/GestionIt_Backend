@@ -1,11 +1,8 @@
 ﻿using Application.Dtos.CommonDtos;
-using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Messages;
 using Application.Dtos.CRUD.Messages.Request;
 using Application.Interfaces.Services;
 using AutoMapper;
-using Domain.Dtos.CommonDtos.Request;
-using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using FluentResults;
@@ -65,6 +62,8 @@ namespace Application.Services
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+
         #endregion
 
         /// <inheritdoc/>
@@ -74,73 +73,18 @@ namespace Application.Services
             await _unitOfWork.MessageRepository.AddAsync(message);
             await _unitOfWork.SaveChangesAsync();
 
-            return Result.Ok(new CreatedResponseDto (message.Id));
+            return Result.Ok(new CreatedResponseDto(message.Id));
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> DeleteAsync(long id)
+        public async Task<Result<List<MessageDto>>> GetByIncidentIdAsync(long incidentId)
         {
-            var exists = await _unitOfWork.MessageRepository.ExistsAsync(id);
-            if (!exists)
-            {
-                return Result.Fail<SuccessResponseDto>("Message not found.");
-            }
+            Incident? incident = await _unitOfWork.IncidentRepository.GetByIdAsync(incidentId);
+            if(incident == null) return Result.Fail<List<MessageDto>>("Incident not found.");
 
-            await _unitOfWork.MessageRepository.DeleteAsync(id);
-            await _unitOfWork.SaveChangesAsync();
-
-            return Result.Ok(new SuccessResponseDto { Message = "Message deleted successfully." });
-        }
-
-        /// <inheritdoc/>
-        public async Task<Result<PaginatedList<MessageDto>>> GetAsync(QueryFilterDto queryFilter)
-        {
-            var paginatedList = await _unitOfWork.MessageRepository.GetAsync(queryFilter);
-
-            if (paginatedList == null || paginatedList.Items == null)
-            {
-                return Result.Fail<PaginatedList<MessageDto>>("Error retrieving messages.");
-            }
-
-            var messageDtos = _mapper.Map<List<MessageDto>>(paginatedList.Items);
-
-            return Result.Ok(new PaginatedList<MessageDto>(messageDtos, paginatedList.TotalCount));
-        }
-
-        /// <inheritdoc/>
-        public async Task<Result<MessageDto>> GetByIdAsync(long id)
-        {
-            var message = await _unitOfWork.MessageRepository.GetByIdAsync(id);
-            if (message == null)
-            {
-                return Result.Fail<MessageDto>("Message not found.");
-            }
-
-            var response = _mapper.Map<MessageDto>(message);
-            return Result.Ok(response);
-        }
-
-        /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> UpdateAsync(long id, MessageUpdateRequestDto updateRequestDto)
-        {
-            var message = await _unitOfWork.MessageRepository.GetByIdAsync(id);
-            if (message == null)
-            {
-                return Result.Fail<SuccessResponseDto>("Message not found.");
-            }
-
-            _mapper.Map(updateRequestDto, message);
-            _unitOfWork.MessageRepository.Update(message);
-            await _unitOfWork.SaveChangesAsync();
-
-            return Result.Ok(new SuccessResponseDto { Message = "Message updated successfully." });
-        }
-
-        /// <inheritdoc/>
-        public Task HandleMessageAsync(string user, string message)
-        {
-            // Aquí puede ir la lógica de negocio, como almacenar el mensaje o aplicar validaciones.
-            return Task.CompletedTask;
+            List<MessageDto> messages = _mapper.Map<List<MessageDto>>(await _unitOfWork.MessageRepository.GetByIncidentIdAsync(incidentId));
+            
+            return Result.Ok(messages);
         }
     }
 }

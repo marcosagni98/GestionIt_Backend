@@ -76,17 +76,16 @@ public class WorkLogController(IWorkLogService worklogService) : BaseApiControll
     }
 
     /// <summary>
-    /// Updates an existing worklog.
+    /// Gets a worklog by incidentId.
     /// </summary>
-    /// <param name="id">The ID of the worklog to update.</param>
-    /// <param name="updateRequestDto">The updated data for the worklog.</param>
-    /// <returns>A response indicating the result of the operation.</returns>
-    [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
+    /// <param name="incidentId">The ID of the incident id related to worklog to retrieve.</param>
+    /// <returns>The requested worklogs.</returns>
+    [HttpGet("{incidentId}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<WorkLogDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateAsync(long id, [FromBody] WorkLogUpdateRequestDto updateRequestDto)
+    public async Task<IActionResult> GetByIncidentIdAsync(long incidentId)
     {
-        var result = await _worklogService.UpdateAsync(id, updateRequestDto);
+        var result = await _worklogService.GetByIncidentIdAsync(incidentId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);

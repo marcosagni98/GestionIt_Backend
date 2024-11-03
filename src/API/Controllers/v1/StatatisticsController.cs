@@ -1,10 +1,5 @@
-﻿using Application.Dtos.CommonDtos.Response;
-using Application.Dtos.CRUD.IncidentHistories;
-using Application.Dtos.CRUD.IncidentHistories.Request;
-using Application.Dtos.Stats;
+﻿using Application.Dtos.Stats;
 using Application.Interfaces.Services;
-using Domain.Dtos.CommonDtos.Request;
-using Domain.Dtos.CommonDtos.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.v1;

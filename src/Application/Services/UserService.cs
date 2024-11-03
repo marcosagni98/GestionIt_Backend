@@ -9,6 +9,7 @@ using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
@@ -87,6 +88,22 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
+        public async Task<Result<SuccessResponseDto>> UpdateAsync(long id, UserUpdateRequestDto updateRequestDto)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                return Result.Fail<SuccessResponseDto>("User not found.");
+            }
+
+            _mapper.Map(updateRequestDto, user);
+            _unitOfWork.UserRepository.Update(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result.Ok(new SuccessResponseDto { Message = "User updated successfully." });
+        }
+
+        /// <inheritdoc/>
         public async Task<Result<SuccessResponseDto>> DeleteAsync(long id)
         {
             if (!await _unitOfWork.UserRepository.ExistsAsync(id))
@@ -129,22 +146,6 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> UpdateAsync(long id, UserUpdateRequestDto updateRequestDto)
-        {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
-            if (user == null)
-            {
-                return Result.Fail<SuccessResponseDto>("User not found.");
-            }
-
-            _mapper.Map(updateRequestDto, user);
-            _unitOfWork.UserRepository.Update(user);
-            await _unitOfWork.SaveChangesAsync();
-
-            return Result.Ok(new SuccessResponseDto { Message = "User updated successfully." });
-        }
-
-        /// <inheritdoc/>
         public async Task<Result<long>> VerifyUserAsync(string userId)
         {
             if (!long.TryParse(userId, out long parsedUserId))
@@ -160,6 +161,29 @@ namespace Application.Services
             }
             
             return Result.Ok(parsedUserId);
+        }
+
+        /// <inheritdoc/>
+        public async Task<Result<SuccessResponseDto>> UpdateUserTypeAsync(long userId, int userType)
+        {
+            User? user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+
+            if (user == null)
+            {
+                return Result.Fail<SuccessResponseDto>("User not found.");
+            }
+            if (!Enum.IsDefined(typeof(UserType), userType))
+            {
+                return Result.Fail<SuccessResponseDto>("User type not valid");
+            }
+            UserType _usertype = (UserType)userType;
+
+
+            user.UserType = _usertype;
+            _unitOfWork.UserRepository.Update(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result.Ok(new SuccessResponseDto { Message = "User type updated successfully." });
         }
     }
 }

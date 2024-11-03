@@ -2,13 +2,7 @@
 using Application.Dtos.Auth.Response;
 using Application.Dtos.CommonDtos;
 using Application.Dtos.CommonDtos.Response;
-using Application.Dtos.CRUD.IncidentHistories;
-using Application.Dtos.CRUD.IncidentHistories.Request;
-using Application.Dtos.CRUD.Users.Request;
 using Application.Interfaces.Services;
-using Domain.Dtos.CommonDtos.Request;
-using Domain.Dtos.CommonDtos.Response;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.v1;

@@ -137,5 +137,14 @@ namespace Application.Services
 
             return Result.Ok(new SuccessResponseDto { Message = "Work log updated successfully." });
         }
+
+        /// <inheritdoc/>
+        public async Task<Result<List<WorkLogDto>>> GetByIncidentIdAsync(long incidentId)
+        {
+            Incident? incident = await _unitOfWork.IncidentRepository.GetByIdAsync(incidentId);
+            if (incident == null) return Result.Fail("Incident not found");
+
+            return _mapper.Map<List<WorkLogDto>>(await _unitOfWork.WorkLogRepository.GetByIncidentIdAsync(incidentId));
+        }
     }
 }

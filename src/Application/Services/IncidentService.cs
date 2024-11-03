@@ -2,11 +2,13 @@
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Incidents;
 using Application.Dtos.CRUD.Incidents.Request;
+using Application.Dtos.CRUD.Users;
 using Application.Interfaces.Services;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
@@ -93,11 +95,22 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<PaginatedList<IncidentDto>>> GetAsync(QueryFilterDto queryFilter)
+        public async Task<Result<PaginatedList<IncidentDto>>> GetAsync(QueryFilterDto queryFilter, long userId)
         {
-            var paginatedList = await _unitOfWork.IncidentRepository.GetAsync(queryFilter);
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            if (user == null) return Result.Fail("User not found");
 
-            if (paginatedList == null || paginatedList.Items == null)
+            PaginatedList<Incident> paginatedList = new([], 0);
+            if(user.UserType == UserType.Admin)
+            {
+                paginatedList = await _unitOfWork.IncidentRepository.GetAsync(queryFilter);
+            }
+            else
+            {
+                paginatedList = await _unitOfWork.IncidentRepository.GetIncidentsOfUserAsync(queryFilter, userId);
+            }
+
+            if (paginatedList.Items == null)
             {
                 return Result.Fail<PaginatedList<IncidentDto>>("Error retrieving incidents.");
             }
@@ -105,6 +118,24 @@ namespace Application.Services
             var incidentDtos = _mapper.Map<List<IncidentDto>>(paginatedList.Items);
 
             return Result.Ok(new PaginatedList<IncidentDto>(incidentDtos, paginatedList.TotalCount));
+        }
+
+        /// <inheritdoc/>
+        public Task<Result<PaginatedList<IncidentDto>>> GetAsync(QueryFilterDto queryFilter)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public async Task<Result<PaginatedList<IncidentDto>>> GetHistoricAsync(QueryFilterDto queryFilter)
+        {
+            var paginatedList = await _unitOfWork.IncidentRepository.GetHistoricAsync(queryFilter);
+            if (paginatedList == null || paginatedList.Items == null)
+            {
+                return Result.Fail<PaginatedList<IncidentDto>>("Error retrieving incidnets.");
+            }
+            var incidetnsDtos = _mapper.Map<List<IncidentDto>>(paginatedList.Items);
+            return Result.Ok(new PaginatedList<IncidentDto>(incidetnsDtos, paginatedList.TotalCount));
         }
 
         /// <inheritdoc/>
@@ -174,5 +205,52 @@ namespace Application.Services
 
             return Result.Ok(incidentList.Select(i => i!.Id).ToList());
         }
+
+        /// <inheritdoc/>
+        public async Task<Result<SuccessResponseDto>> UpdateTechnitianAsync(long id, IncidentUpdateTechnitianRequestDto incidentUpdateTechnitianRequestDto)
+        {
+            Incident? incident = await _unitOfWork.IncidentRepository.GetByIdAsync(id);
+            if (incident == null) return Result.Fail("Incident not found");
+
+            incident.TechnicianId = incidentUpdateTechnitianRequestDto.TechnitianId;
+            _unitOfWork.IncidentRepository.Update(incident);
+            await _unitOfWork.SaveChangesAsync();
+            
+            return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
+        }
+
+        /// <inheritdoc/>
+        public async Task<Result<SuccessResponseDto>> UpdateTitleAndDescription(long id, IncidentUpdateTitleDescriptionRequestDto updateTitleDescriptionRequestDto)
+        {
+            Incident? incident = await _unitOfWork.IncidentRepository.GetByIdAsync(id);
+            if (incident == null) return Result.Fail("Incident not found");
+
+            UpdateValuesOfIncident(updateTitleDescriptionRequestDto, incident);
+
+            _unitOfWork.IncidentRepository.Update(incident);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
+        }
+        #region UpdateTitleAndDescription private methods
+        /// <summary>
+        /// Updates the title and description of an incident.
+        /// </summary>
+        /// <param name="updateTitleDescriptionRequestDto">The new values of the incident</param>
+        /// <param name="incident">The incident</param>
+        private static void UpdateValuesOfIncident(IncidentUpdateTitleDescriptionRequestDto updateTitleDescriptionRequestDto, Incident incident)
+        {
+            if (!string.IsNullOrEmpty(updateTitleDescriptionRequestDto.Title))
+            {
+                incident.Title = updateTitleDescriptionRequestDto.Title;
+            }
+            if (!string.IsNullOrEmpty(updateTitleDescriptionRequestDto.Description))
+            {
+                incident.Description = updateTitleDescriptionRequestDto.Description;
+            }
+        }
+
+        
+        #endregion
     }
 }

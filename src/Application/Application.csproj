@@ -42,4 +42,8 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dtos\CRUD\IncidentHistories\Request\" />
+  </ItemGroup>
+
 </Project>

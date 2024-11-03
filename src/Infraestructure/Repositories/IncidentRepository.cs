@@ -1,8 +1,12 @@
 using AutoMapper;
+using Domain.Dtos.CommonDtos.Request;
+using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
+using Domain.Entities.Common;
 using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
+using Infraestructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories;
@@ -53,6 +57,24 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     {
         return await _dbSet
             .CountAsync(f => f.CreatedAt >= startDate && f.CreatedAt <= endDate && f.Active == true && f.Technician.Id == id);
+    }
+
+    /// <inheritdoc/>
+    public async Task<PaginatedList<Incident>?> GetHistoricAsync(QueryFilterDto queryFilter)
+    {
+        List<string> searchParameters = new List<string>();
+
+        var query = _dbSet.Where(x => (x.Status == Status.Completed || x.Status == Status.Closed) && x.Active == true);
+
+        var totalCount = await CountAsync(query);
+
+        query = new QueryFilterBuilder<Incident>(query)
+            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
+            .Build();
+
+        var items = await query.ToListAsync();
+
+        return new PaginatedList<Incident>(items, totalCount);
     }
 
     /// <inheritdoc/>
@@ -136,6 +158,22 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     {
         var incident = await _dbSet.FindAsync(id) ?? throw new KeyNotFoundException($"Incident with ID {id} not found.");
         incident.Status = newStatus;
+    }
+
+    public async Task<PaginatedList<Incident>> GetIncidentsOfUserAsync(QueryFilterDto queryFilter, long userId)
+    {
+        List<string> searchParameters = new List<string>();
+
+        var totalCount = await CountAsync(queryFilter, searchParameters);
+
+        var query = new QueryFilterBuilder<Incident>(_dbSet
+            .Where(x => (x.UserId == userId || x.TechnicianId == userId) && x.Active == true))
+        .ApplyQueryFilterAndActive(queryFilter, searchParameters)
+        .Build();
+
+        var items = await query.ToListAsync();
+
+        return new PaginatedList<Incident>(items, totalCount);
     }
 }
 

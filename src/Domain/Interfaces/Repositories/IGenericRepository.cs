@@ -44,6 +44,15 @@ public interface IGenericRepository<TEntity> where TEntity : class
     Task DeleteAsync(long id);
 
     /// <summary>
+    /// Asynchronously counts the number of entities in the specified query.
+    /// </summary>
+    /// <param name="query">The queryable collection of entities to count, 
+    /// which can include custom filters or conditions applied to the <typeparamref name="TEntity"/> type.</param>
+    /// <returns>A task that represents the asynchronous operation. 
+    /// The task result contains the count of entities matching the specified query.</returns>
+    public Task<int> CountAsync(IQueryable<TEntity> query);
+
+    /// <summary>
     /// Asynchronously counts the number of entities in the database based on optional filtering criteria.
     /// </summary>
     /// <param name="queryFilter">Query filter data for sorting, searching, and pagination.</param>

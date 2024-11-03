@@ -45,13 +45,20 @@ public class IncidentHistoryRepository : IIncidentHistoryRepository
 
         return new PaginatedList<IncidentHistory>(items, totalCount);
     }
-
+    
     /// <inheritdoc/>
     public async Task<IncidentHistory?> GetByIdAsync(long id)
     {
         return await _dbSet
             .Where(x => x.Id == id)
             .FirstOrDefaultAsync();
+    }
+
+    /// <inheritdoc/>
+    public Task<List<IncidentHistory>> GetByIncidentIdAsync(long incidentId)
+    {
+        return _dbSet.Where(x => x.IncidentId == incidentId)
+            .ToListAsync();
     }
 
     /// <inheritdoc/>
@@ -82,4 +89,6 @@ public class IncidentHistoryRepository : IIncidentHistoryRepository
 
         return await query.CountAsync();
     }
+
+    
 }

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Entities;
 using Application.Dtos.CRUD.IncidentHistories;
-using Application.Dtos.CRUD.IncidentHistories.Request;
 
 namespace Application.Helpers.Mappers;
 
@@ -16,7 +15,5 @@ public class IncidentHistoryMapper : Profile
     public IncidentHistoryMapper()
     {
         CreateMap<IncidentHistory, IncidentHistoryDto>().ReverseMap();
-        CreateMap<IncidentHistoryAddRequestDto, IncidentHistory>().ReverseMap();
-        CreateMap<IncidentHistoryUpdateRequestDto, IncidentHistory>().ReverseMap();
     }
 }
