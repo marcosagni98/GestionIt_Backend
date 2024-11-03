@@ -65,7 +65,24 @@ public interface IIncidentRepository : IGenericRepository<Incident>
     /// </summary>
     /// <param name="queryFilter">The query filter containing pagination, sorting, and search criteria.</param>
     /// <returns>A task representing the asynchronous operation, containing a list of historical incidents.</returns>
-    public Task<PaginatedList<Incident>?> GetHistoricAsync(QueryFilterDto queryFilter);
+    public Task<PaginatedList<Incident>> GetHistoricAsync(QueryFilterDto queryFilter);
+
+    /// <summary>
+    /// Retrieves a paginated list of incidents filtered by priority.
+    /// </summary>
+    /// <param name="queryFilter">The query filter containing pagination, sorting, and search criteria.</param>
+    /// <param name="priority">The priority level to filter incidents by.</param>
+    /// <returns>A task representing the asynchronous operation, containing a paginated list of incidents filtered by the specified priority.</returns>
+    public Task<PaginatedList<Incident>> GetByPriorityAsync(QueryFilterDto queryFilter, Priority priority);
+
+    /// <summary>
+    /// Retrieves a paginated list of incidents filtered by priority and user.
+    /// </summary>
+    /// <param name="queryFilter">The query filter containing pagination, sorting, and search criteria.</param>
+    /// <param name="userId">The ID of the user whose incidents are to be retrieved.</param>
+    /// <param name="priority">The priority level to filter incidents by.</param>
+    /// <returns>A task representing the asynchronous operation, containing a paginated list of incidents filtered by the specified priority and user.</returns>
+    public Task<PaginatedList<Incident>> GetIncidentsOfByPriorityUserAsync(QueryFilterDto queryFilter, Priority priority, long userId);
 
     /// <summary>
     /// Asynchronously retrieves the average resolution time of incidents within a specified date range.

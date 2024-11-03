@@ -13,8 +13,6 @@ namespace Application.Interfaces.Services;
 /// </summary>
 public interface IIncidentService : IBaseService<IncidentDto, IncidentAddRequestDto, IncidentUpdateRequestDto>, IDisposable
 {
-    
-
     /// <summary>
     /// Updates the status of an incident.
     /// </summary>
@@ -54,6 +52,18 @@ public interface IIncidentService : IBaseService<IncidentDto, IncidentAddRequest
     /// associated with the specified user ID.
     /// </returns>
     public Task<Result<List<long>>> GetIncidentIdsByUserIdAsync(long userId);
+
+    /// <summary>
+    /// Retrieves incidents by priority ID.
+    /// </summary>
+    /// <param name="queryFilter">The filtering, sorting, and pagination parameters.</param>
+    /// <param name="priorityId">The ID of the priority to filter incidents by.</param>
+    /// <param name="userId">The ID of the user requesting the incidents.</param>
+    /// <returns>
+    /// An asynchronous task representing a <see cref="Result{PaginatedList{IncidentDto}}"/> containing the incidents
+    /// filtered by the specified priority ID.
+    /// </returns>
+    public Task<Result<PaginatedList<IncidentDto>>> GetByPriorityAsync(QueryFilterDto queryFilter, Priority priorityId, long userId);
 
     /// <summary>
     /// Updates the technician assigned to an incident.

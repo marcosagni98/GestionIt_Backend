@@ -4,6 +4,7 @@ using Application.Dtos.CRUD.Incidents.Request;
 using Application.Interfaces.Services;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
+using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.v1;
@@ -40,9 +41,10 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     }
 
     /// <summary>
-    /// Gets a list of incidents.
+    /// Gets a list of incidents based on the provided query filter.
     /// </summary>
-    /// <returns>A list of incidents.</returns>
+    /// <param name="queryFilter">The filtering, sorting, and pagination parameters.</param>
+    /// <returns>A paginated list of incidents.</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<IncidentDto>))]
     public async Task<IActionResult> GetAsync([FromQuery] QueryFilterDto queryFilter)
@@ -94,6 +96,25 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
         return Ok(result.Value);
     }
 
+    /// <summary>
+    /// Gets a list of incidents filtered by priority.
+    /// </summary>
+    /// <param name="priorityId">The ID of the priority to filter incidents by.</param>
+    /// <param name="queryFilter">The filtering, sorting, and pagination parameters.</param>
+    /// <returns>A paginated list of incidents filtered by the specified priority.</returns>
+    [HttpGet("by-priority/{priorityId}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<IncidentDto>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetByPriorityAsync(Priority priorityId, [FromQuery] QueryFilterDto queryFilter)
+    {
+        var result = await _incidentService.GetByPriorityAsync(queryFilter, priorityId, 1);
+        if (result.IsFailed)
+        {
+            return NotFound(result.Errors);
+        }
+
+        return Ok(result.Value);
+    }
 
     /// <summary>
     /// Updates the status of an incident.
@@ -121,7 +142,7 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     }
 
     /// <summary>
-    /// Updates the tecnitian assigned to a incident.
+    /// Updates the technitian assigned to a incident.
     /// </summary>
     /// <param name="id">The ID of the incident to update.</param>
     /// <param name="updateTechnitianRequestDto">The data to be updated.</param>
