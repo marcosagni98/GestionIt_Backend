@@ -20,8 +20,11 @@ public class MessageRepository : GenericRepository<Message>, IMessageRepository
     }
 
     /// <inheritdoc/>
-    public Task<List<Message>> GetByIncidentIdAsync(long incidentId)
+    public async Task<List<Message>> GetByIncidentIdAsync(long incidentId)
     {
-        return _dbSet.Where(x => x.IncidentId == incidentId).ToListAsync();
+        return await _dbSet
+            .Where(x => x.IncidentId == incidentId)
+            .Include(x => x.Sender)
+            .ToListAsync();
     }
 }

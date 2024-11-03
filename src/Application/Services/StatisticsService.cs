@@ -79,7 +79,7 @@ public class StatisticsService : IStatisticsService
         double VariationFromLastMonth;
         if (user.UserType == UserType.Admin )
         {
-            totalCount = await _unitOfWork.IncidentRepository.CountAsync(null, null);
+            totalCount = await _unitOfWork.IncidentRepository.CountAsync(null, null, null);
             lowCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Low);
             mediumCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Medium);
             highCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.High);

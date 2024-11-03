@@ -13,6 +13,8 @@ public class MessageMapper : Profile
     /// </summary>
     public MessageMapper()
     {
-        CreateMap<Message, MessageDto>().ReverseMap();
+        CreateMap<Message, MessageDto>()
+           .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender.Name));
+        CreateMap<MessageDto, Message>();
     }
 }

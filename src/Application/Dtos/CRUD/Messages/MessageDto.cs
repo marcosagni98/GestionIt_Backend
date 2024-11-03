@@ -21,6 +21,11 @@ public class MessageDto
     public long SenderId { get; set; }
 
     /// <summary>
+    /// Name of the sender
+    /// </summary>
+    public string SenderName { get; set; }
+
+    /// <summary>
     /// Text of the message
     /// </summary>
     public string Text { get; set; } = string.Empty;

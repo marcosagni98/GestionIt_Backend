@@ -66,7 +66,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         var query = _dbSet.Where(x => (x.Status == Status.Completed || x.Status == Status.Closed) && x.Active == true);
 
-        var totalCount = await CountAsync(query);
+        var totalCount = await CountAsync(query, queryFilter, searchParameters);
 
         query = new QueryFilterBuilder<Incident>(query)
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
