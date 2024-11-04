@@ -38,7 +38,7 @@ public class AppDbContext : DbContext
         // Configurar la relación entre Incident y User (técnico asignado)
         modelBuilder.Entity<Incident>()
             .HasOne(i => i.Technician)
-            .WithMany() // No necesitas una colección en User para Technician
+            .WithMany() // No necesitas una colección en User para technician
             .HasForeignKey(i => i.TechnicianId)
             .OnDelete(DeleteBehavior.Restrict);
 

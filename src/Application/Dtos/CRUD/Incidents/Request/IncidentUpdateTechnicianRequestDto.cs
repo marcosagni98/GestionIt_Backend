@@ -4,6 +4,6 @@
 /// DTO para actualizar el técnico asignado a un incidente.
 /// </summary>
 /// <param name="TechnitianId">ID del técnico.</param>
-public record IncidentUpdateTechnitianRequestDto(
+public record IncidentUpdateTechnicianRequestDto(
     long TechnitianId
     );

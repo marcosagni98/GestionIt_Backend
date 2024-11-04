@@ -34,7 +34,7 @@ public interface IIncidentRepository : IGenericRepository<Incident>
     /// <param name="priority">The priority level to filter incidents by.</param>
     /// <param name="priority">The priority level to filter incidents by.</param>
     /// <returns>A task representing the asynchronous operation, containing the count of incidents with the specified priority.</returns>
-    public Task<int> CountByPriorityAsync(Priority priority, long technitianId);
+    public Task<int> CountByPriorityAsync(Priority priority, long technicianId);
 
     /// <summary>
     /// Counts the number of incidents with the specified status.

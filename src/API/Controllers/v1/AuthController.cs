@@ -3,6 +3,7 @@ using Application.Dtos.Auth.Response;
 using Application.Dtos.CommonDtos;
 using Application.Dtos.CommonDtos.Response;
 using Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.v1;
@@ -75,6 +76,7 @@ public class AuthController(IAuthService authService) : BaseApiController
     /// </summary>
     /// <param name="resetPasswordRequestDto">The data to be able to recover a password of the user.</param>
     /// <returns>a <see cref="SuccessResponseDto"/> indicating if it was able to recover password.</returns>
+    [Authorize]
     [HttpPut("reset-password")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
     public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordRequestDto resetPasswordRequestDto)

@@ -11,10 +11,12 @@ using Infraestructure;
 using Infraestructure.Repositories;
 using Infraestructure.Utils;
 using log4net;
-using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace API;
@@ -24,7 +26,7 @@ namespace API;
 /// </summary>
 public class Startup
 {
-#pragma warning disable CS1591 // Falta el comentario XML para el tipo o miembro visible públicamente
+#pragma warning disable CS1591 
     public IConfiguration Configuration { get; }
 
 
@@ -50,6 +52,29 @@ public class Startup
         // Configure logging
         services.AddSingleton<ILog>(provider => LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType));
 
+        var key = Encoding.ASCII.GetBytes("supersecretkeysupersecretkeysupersecretkey");
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidIssuer = "gestionIt_api",
+                ValidAudience = "gestionIt_frontend",
+                ClockSkew = TimeSpan.Zero
+            };
+        });
+
         // Add services
         services.AddControllers()
             .AddJsonOptions(options =>
@@ -61,12 +86,10 @@ public class Startup
 
         services.AddEndpointsApiExplorer();
 
-
         RegisterAutomapper(services);
         RegisterRepositories(services);
         RegisterServices(services);
         
-
         // CORS setup
         services.AddCors(options =>
         {
@@ -124,6 +147,19 @@ public class Startup
         services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Incident Management API", Version = "v1" });
+
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Enter 'Bearer' followed by a space and then the JWT token. Example: 'Bearer abcdef12345'"
+            });
+
+            c.OperationFilter<AuthorizeCheckOperationFilter>();
+
             var filePathApiXml = Path.Combine(AppContext.BaseDirectory, "API.xml");
             var filePathApplicationXml = Path.Combine(AppContext.BaseDirectory, "Application.xml");
             c.IncludeXmlComments(filePathApiXml);
@@ -156,4 +192,4 @@ public class Startup
         });
     }
 }
-#pragma warning restore CS1591 // Falta el comentario XML para el tipo o miembro visible públicamente
+#pragma warning restore CS1591 

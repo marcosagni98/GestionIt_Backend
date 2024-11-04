@@ -1,5 +1,6 @@
 ﻿using Application.Dtos.CRUD.IncidentHistories;
 using Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.v1;
@@ -22,6 +23,7 @@ public class IncidentHistoryController(IIncidentHistoryService incidentHistorySe
     /// </summary>
     /// <param name="incidentId">The ID of the incident of the incidents stories to retrieve.</param>
     /// <returns>The requested incidenthistory.</returns>
+    [Authorize]
     [HttpGet("{incidentId}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidentHistoryDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

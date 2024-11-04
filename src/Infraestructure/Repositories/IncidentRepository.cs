@@ -32,10 +32,10 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     }
 
     /// <inheritdoc/>
-    public Task<int> CountByPriorityAsync(Priority priority, long technitianId)
+    public Task<int> CountByPriorityAsync(Priority priority, long technicianId)
     {
         return _dbSet
-            .CountAsync(x => x.Priority == priority && x.Active == true && (x.Status != Status.Completed || x.Status != Status.Closed) && x.Technician.Id == technitianId );
+            .CountAsync(x => x.Priority == priority && x.Active == true && (x.Status != Status.Completed || x.Status != Status.Closed) && x.Technician.Id == technicianId );
     }
 
     /// <inheritdoc/>

@@ -207,7 +207,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> UpdateTechnitianAsync(long id, IncidentUpdateTechnitianRequestDto incidentUpdateTechnitianRequestDto)
+        public async Task<Result<SuccessResponseDto>> UpdateTechnicianAsync(long id, IncidentUpdateTechnicianRequestDto incidentUpdateTechnitianRequestDto)
         {
             Incident? incident = await _unitOfWork.IncidentRepository.GetByIdAsync(id);
             if (incident == null) return Result.Fail("Incident not found");

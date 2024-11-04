@@ -1,5 +1,6 @@
 ﻿using Application.Dtos.Stats;
 using Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.v1;
@@ -24,6 +25,7 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// </summary>
     /// <param name="id">The ID of the user.</param>
     /// <returns>he count and severity of active incidents</returns>
+    [Authorize]
     [HttpGet("Active-incidents")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActiveIncidentsStatsResponseDto))]
     public async Task<IActionResult> GetActiveIncidentsSevirityCount()
@@ -42,6 +44,7 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// Gets the average resolution time of the incidents.
     /// </summary>
     /// <returns>The count and severity of active incidents</returns>
+    [Authorize]
     [HttpGet("Average-incident-resolution-time")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AverageIncidencesResolutionTimeResponseDto))]
     public async Task<IActionResult> GetAverageResolutionTime()
@@ -61,6 +64,7 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// </summary>
     /// <param name="id">The ID of the user.</param>
     /// <returns>The user happiness statistics including the happiness ratio and change ratio from the last month.</returns>
+    [Authorize]
     [HttpGet("User-happiness")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserHappinessResponseDto))]
     public async Task<IActionResult> GetUserHappiness()
@@ -79,6 +83,7 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// Gets the summary of incidences.
     /// </summary>
     /// <returns>The total number of incidences in each type (open, closed, unassinged)</returns>
+    [Authorize]
     [HttpGet("incidences-resume")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesResumeResponseDto))]
     public async Task<IActionResult> GetIncidencesResumeAsync()
@@ -96,6 +101,7 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// Gets the summary of incidences.
     /// </summary>
     /// <returns>The total number of incidences in each type (open, closed, unassinged)</returns>
+    [Authorize]
     [HttpGet("incidences-monthly-resume")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesMonthlyResumeResponseDto))]
     public async Task<IActionResult> GetIncidencesMonthlyResumeAsync()
@@ -113,6 +119,7 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// Get number of incidents by day.
     /// </summary>
     /// <returns>The total number of incidences created each day</returns>
+    [Authorize]
     [HttpGet("incidences-by-day")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesDailyResumeResponseDto))]
     public async Task<IActionResult> GetIncidencesDayResumeAsync()

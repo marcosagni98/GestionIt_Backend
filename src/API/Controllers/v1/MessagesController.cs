@@ -1,6 +1,7 @@
 ﻿using Application.Dtos.CRUD.Messages;
 using Application.Interfaces.Services;
 using Domain.Dtos.CommonDtos.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.v1;
@@ -23,6 +24,7 @@ public class MessageController(IMessageService messageService) : BaseApiControll
     /// </summary>
     /// <param name="incidentId">The ID of the incident.</param></param>
     /// <returns>A list of messages.</returns>
+    [Authorize]
     [HttpGet("{incidentId}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<MessageDto>))]
     public async Task<IActionResult> GetByIncidentIdAsync(long incidentId)

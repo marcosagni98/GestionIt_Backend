@@ -73,7 +73,7 @@ public interface IIncidentService : IBaseService<IncidentDto, IncidentAddRequest
     /// <returns>
     /// An asynchronous task representing a <see cref="Result{SuccessResponseDto}"/> indicating the success or failure of the operation.
     /// </returns>
-    public Task<Result<SuccessResponseDto>> UpdateTechnitianAsync(long id, IncidentUpdateTechnitianRequestDto technitianRequestDto);
+    public Task<Result<SuccessResponseDto>> UpdateTechnicianAsync(long id, IncidentUpdateTechnicianRequestDto technitianRequestDto);
 
     /// <summary>
     /// Updates the title and description of an incident.

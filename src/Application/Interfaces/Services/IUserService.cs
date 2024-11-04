@@ -37,5 +37,5 @@ public interface IUserService : IBaseService<UserDto, UserAddRequestDto, UserUpd
     /// <returns>
     /// An asynchronous task representing a <see cref="Result{List{UserDto}}"/> containing the list of technicians.
     /// </returns>
-    public Task<Result<List<UserDto>>> GetTechnitiansAsync();
+    public Task<Result<List<UserDto>>> GetTechniciansAsync();
 }

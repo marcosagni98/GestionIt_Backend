@@ -4,6 +4,7 @@ using Application.Dtos.CRUD.UserFeedbacks.Request;
 using Application.Interfaces.Services;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.v1;
@@ -26,6 +27,7 @@ public class UserFeedbackController(IUserFeedbackService userfeedbackService) : 
     /// </summary>
     /// <param name="addRequestDto">The data for the new userfeedback.</param>
     /// <returns>A response indicating the result of the operation.</returns>
+    [Authorize]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(SuccessResponseDto))]
     public async Task<IActionResult> AddAsync([FromBody] UserFeedbackAddRequestDto addRequestDto)
@@ -43,6 +45,7 @@ public class UserFeedbackController(IUserFeedbackService userfeedbackService) : 
     /// Gets a list of userfeedbacks.
     /// </summary>
     /// <returns>A list of userfeedbacks.</returns>
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<UserFeedbackDto>))]
     public async Task<IActionResult> GetAsync([FromQuery] QueryFilterDto queryFilter)
@@ -61,6 +64,7 @@ public class UserFeedbackController(IUserFeedbackService userfeedbackService) : 
     /// </summary>
     /// <param name="id">The ID of the userfeedback to retrieve.</param>
     /// <returns>The requested userfeedback.</returns>
+    [Authorize]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserFeedbackDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -80,6 +84,7 @@ public class UserFeedbackController(IUserFeedbackService userfeedbackService) : 
     /// </summary>
     /// <param name="id">The ID of the userfeedback to delete.</param>
     /// <returns>A response indicating the result of the operation.</returns>
+    [Authorize]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
