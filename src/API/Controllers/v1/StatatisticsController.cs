@@ -1,6 +1,8 @@
 ﻿using Application.Dtos.Stats;
 using Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers.v1;
 
@@ -24,12 +26,16 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// </summary>
     /// <param name="id">The ID of the user.</param>
     /// <returns>he count and severity of active incidents</returns>
+    [Authorize(Roles = "2")]
     [HttpGet("Active-incidents")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActiveIncidentsStatsResponseDto))]
     public async Task<IActionResult> GetActiveIncidentsSevirityCount()
     {
-        //Todo: Get the user id from the jwt
-        var result = await _statisticsService.GetActiveIncidentsSevirityCount(1);
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        var result = await _statisticsService.GetActiveIncidentsSevirityCount(userId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -42,12 +48,16 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// Gets the average resolution time of the incidents.
     /// </summary>
     /// <returns>The count and severity of active incidents</returns>
+    [Authorize(Roles = "1, 2")]
     [HttpGet("Average-incident-resolution-time")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AverageIncidencesResolutionTimeResponseDto))]
     public async Task<IActionResult> GetAverageResolutionTime()
     {
-        //Todo: Get the user id from the jwt
-        var result = await _statisticsService.GetAverageResolutionTime(1);
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        var result = await _statisticsService.GetAverageResolutionTime(userId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -61,12 +71,16 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// </summary>
     /// <param name="id">The ID of the user.</param>
     /// <returns>The user happiness statistics including the happiness ratio and change ratio from the last month.</returns>
+    [Authorize(Roles = "1, 2")]
     [HttpGet("User-happiness")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserHappinessResponseDto))]
     public async Task<IActionResult> GetUserHappiness()
     {
-        //Todo: Get the user id from the jwt
-        var result = await _statisticsService.GetUserHappinessAsync(1);
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        var result = await _statisticsService.GetUserHappinessAsync(userId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -79,6 +93,7 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// Gets the summary of incidences.
     /// </summary>
     /// <returns>The total number of incidences in each type (open, closed, unassinged)</returns>
+    [Authorize(Roles = "1, 2")]
     [HttpGet("incidences-resume")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesResumeResponseDto))]
     public async Task<IActionResult> GetIncidencesResumeAsync()
@@ -96,6 +111,7 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// Gets the summary of incidences.
     /// </summary>
     /// <returns>The total number of incidences in each type (open, closed, unassinged)</returns>
+    [Authorize(Roles = "2")]
     [HttpGet("incidences-monthly-resume")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesMonthlyResumeResponseDto))]
     public async Task<IActionResult> GetIncidencesMonthlyResumeAsync()
@@ -113,8 +129,9 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// Get number of incidents by day.
     /// </summary>
     /// <returns>The total number of incidences created each day</returns>
+    [Authorize(Roles = "2")]
     [HttpGet("incidences-by-day")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesDailyResumeResponseDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<IncidencesDailyResumeResponseDto>))]
     public async Task<IActionResult> GetIncidencesDayResumeAsync()
     {
         var result = await _statisticsService.GetIncidencesDayResumeAsync();

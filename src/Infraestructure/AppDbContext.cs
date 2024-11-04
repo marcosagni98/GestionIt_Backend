@@ -1,4 +1,5 @@
-﻿using Domain.Entities; 
+﻿using Domain.Entities;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -17,13 +18,6 @@ public class AppDbContext : DbContext
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        //Si no existe base de datos o tablas se crea
-        var databaseCreator = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
-        if(databaseCreator != null)
-        {
-            if (!databaseCreator.CanConnect()) databaseCreator.Create();
-            if (!databaseCreator.HasTables()) databaseCreator.CreateTables();
-        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,7 +32,7 @@ public class AppDbContext : DbContext
         // Configurar la relación entre Incident y User (técnico asignado)
         modelBuilder.Entity<Incident>()
             .HasOne(i => i.Technician)
-            .WithMany() // No necesitas una colección en User para Technician
+            .WithMany() // No necesitas una colección en User para technician
             .HasForeignKey(i => i.TechnicianId)
             .OnDelete(DeleteBehavior.Restrict);
 

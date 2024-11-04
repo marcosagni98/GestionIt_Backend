@@ -21,7 +21,7 @@ public class WorkLogDto
     public long TechnicianId { get; set; }
 
     /// <summary>
-    /// Name of the technitian
+    /// Name of the technician
     /// </summary>
     public string? TechnicianName { get; set; }
 

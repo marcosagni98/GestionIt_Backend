@@ -338,14 +338,15 @@ public class StatisticsService : IStatisticsService
                 var date = new DateTime(year, month, day);
                 int count = await _unitOfWork.IncidentRepository.GetIncidentCountByDateAsync(date);
 
-                dailyIncidences.Add(new IncidencesDailyResumeResponseDto(
-                    Date: date,
-                    Count: count
-                ));
+                if (count > 0)
+                {
+                    dailyIncidences.Add(new IncidencesDailyResumeResponseDto(
+                        Date: date,
+                        Count: count
+                    ));
+                }
             }
         }
-
-        return Result.Ok(dailyIncidences);
 
         return Result.Ok(dailyIncidences);
     }

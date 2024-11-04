@@ -1,6 +1,4 @@
-﻿using Application.Dtos.Auth.Requests;
-using Application.Dtos.Auth.Response;
-using Application.Dtos.CommonDtos;
+﻿using Application.Dtos.CommonDtos;
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Users;
 using Application.Dtos.CRUD.Users.Request;
@@ -12,8 +10,6 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
-using Microsoft.AspNetCore.Http;
-using System.Text.RegularExpressions;
 
 namespace Application.Services
 {
@@ -133,7 +129,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<List<UserDto>>> GetTechnitiansAsync()
+        public async Task<Result<List<UserDto>>> GetTechniciansAsync()
         {
             var tecnitiansDtos = _mapper.Map<List<UserDto>>(await _unitOfWork.UserRepository.GetAllTechniantsAsync());
 
@@ -172,7 +168,7 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Result<SuccessResponseDto>> UpdateUserTypeAsync(long userId, int userType)
+        public async Task<Result<SuccessResponseDto>> UpdateUserTypeAsync(long userId, UserType userType)
         {
             User? user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
 
@@ -180,14 +176,8 @@ namespace Application.Services
             {
                 return Result.Fail<SuccessResponseDto>("User not found.");
             }
-            if (!Enum.IsDefined(typeof(UserType), userType))
-            {
-                return Result.Fail<SuccessResponseDto>("User type not valid");
-            }
-            UserType _usertype = (UserType)userType;
 
-
-            user.UserType = _usertype;
+            user.UserType = userType;
             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.SaveChangesAsync();
 

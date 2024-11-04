@@ -5,7 +5,10 @@ using Application.Interfaces.Services;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 
 namespace API.Controllers.v1;
 
@@ -27,10 +30,16 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     /// </summary>
     /// <param name="addRequestDto">The data for the new incident.</param>
     /// <returns>A response indicating the result of the operation.</returns>
+    [Authorize]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(SuccessResponseDto))]
     public async Task<IActionResult> AddAsync([FromBody] IncidentAddRequestDto addRequestDto)
     {
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        addRequestDto.UserId = userId;
         var result = await _incidentService.AddAsync(addRequestDto);
         if (result.IsFailed)
         {
@@ -45,13 +54,16 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     /// </summary>
     /// <param name="queryFilter">The filtering, sorting, and pagination parameters.</param>
     /// <returns>A paginated list of incidents.</returns>
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<IncidentDto>))]
     public async Task<IActionResult> GetAsync([FromQuery] QueryFilterDto queryFilter)
     {
-
-        //TODO: Añadir obtner el usertype id del jwt
-        var result = await _incidentService.GetAsync(queryFilter, 1);
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        var result = await _incidentService.GetAsync(queryFilter, userId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -64,6 +76,7 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     /// Gets a list of incidents.
     /// </summary>
     /// <returns>A list of incidents.</returns>
+    [Authorize]
     [HttpGet("Historic")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<IncidentDto>))]
     public async Task<IActionResult> GetHistoricAsync([FromQuery] QueryFilterDto queryFilter)
@@ -82,6 +95,7 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     /// </summary>
     /// <param name="id">The ID of the incident to retrieve.</param>
     /// <returns>The requested incident.</returns>
+    [Authorize]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidentDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -102,12 +116,17 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     /// <param name="priorityId">The ID of the priority to filter incidents by.</param>
     /// <param name="queryFilter">The filtering, sorting, and pagination parameters.</param>
     /// <returns>A paginated list of incidents filtered by the specified priority.</returns>
+    [Authorize]
     [HttpGet("by-priority/{priorityId}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<IncidentDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByPriorityAsync(Priority priorityId, [FromQuery] QueryFilterDto queryFilter)
     {
-        var result = await _incidentService.GetByPriorityAsync(queryFilter, priorityId, 1);
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        var result = await _incidentService.GetByPriorityAsync(queryFilter, priorityId, userId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -122,6 +141,7 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     /// <param name="id">The ID of the incident to update.</param>
     /// <param name="updateStatusRequestDto">The updated data for the incident.</param>
     /// <returns>A response indicating the result of the operation.</returns>
+    [Authorize(Roles = "0, 1, 2")]
     [HttpPut("update-status/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -147,6 +167,7 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     /// <param name="id">The ID of the incident to update.</param>
     /// <param name="updateStatusRequestDto">The updated data for the incident.</param>
     /// <returns>A response indicating the result of the operation.</returns>
+    [Authorize]
     [HttpPut("update-priority/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -162,17 +183,18 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     }
 
     /// <summary>
-    /// Updates the technitian assigned to a incident.
+    /// Updates the technician assigned to a incident.
     /// </summary>
     /// <param name="id">The ID of the incident to update.</param>
-    /// <param name="updateTechnitianRequestDto">The data to be updated.</param>
+    /// <param name="updateTechnicianRequestDto">The data to be updated.</param>
     /// <returns>A response indicating the result of the operation.</returns>
-    [HttpPut("set-technitian/{id}")]
+    [Authorize]
+    [HttpPut("set-technician/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateTechnitian(long id, [FromBody] IncidentUpdateTechnitianRequestDto updateTechnitianRequestDto)
+    public async Task<IActionResult> UpdateTechnician(long id, [FromBody] IncidentUpdateTechnicianRequestDto updateTechnicianRequestDto)
     {
-        var result = await _incidentService.UpdateTechnitianAsync(id, updateTechnitianRequestDto);
+        var result = await _incidentService.UpdateTechnicianAsync(id, updateTechnicianRequestDto);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -181,6 +203,7 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
         return Ok(result.Value);
     }
 
+    [Authorize]
     [HttpPut("update-title-description/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -200,6 +223,7 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     /// </summary>
     /// <param name="id">The ID of the incident to delete.</param>
     /// <returns>A response indicating the result of the operation.</returns>
+    [Authorize]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

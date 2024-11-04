@@ -1,4 +1,5 @@
 ﻿using Domain.Enums;
+using System.Text.Json.Serialization;
 
 namespace Application.Dtos.CRUD.Incidents.Request;
 
@@ -25,5 +26,6 @@ public class IncidentAddRequestDto
     /// <summary>
     /// User id that created the incident
     /// </summary>
+    [JsonIgnore]
     public long? UserId { get; set; }
 }

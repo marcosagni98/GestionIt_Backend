@@ -81,19 +81,23 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     }
 
     /// <inheritdoc/>
-    public async Task<int> CountAsync(IQueryable<TEntity> query, QueryFilterDto? queryFilter, List<string>? searchParameters)
+    public async Task<int> CountAsync(IQueryable<TEntity>? query, QueryFilterDto? queryFilter, List<string>? searchParameters)
     {
-       if(queryFilter != null && !string.IsNullOrEmpty(queryFilter.Search))
+        if(query == null)
         {
-            query = new QueryFilterBuilder<TEntity>(_dbSet)
-            .Where(searchParameters, queryFilter.Search)
-            .Build();
+            query = _dbSet.AsQueryable();
         }
-        
-        query = new QueryFilterBuilder<TEntity>(_dbSet)
-        .WhereActive()
-        .Build();
-        
+        if (queryFilter != null && !string.IsNullOrEmpty(queryFilter.Search))
+        {
+            query = new QueryFilterBuilder<TEntity>(query)
+                .Where(searchParameters, queryFilter.Search)
+                .Build();
+        }
+
+        query = new QueryFilterBuilder<TEntity>(query)
+            .WhereActive()
+            .Build();
+
         return await query.CountAsync();
     }
 

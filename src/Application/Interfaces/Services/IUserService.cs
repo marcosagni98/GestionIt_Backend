@@ -29,7 +29,7 @@ public interface IUserService : IBaseService<UserDto, UserAddRequestDto, UserUpd
     /// <returns>
     /// An asynchronous task representing a <see cref="Result{SuccessResponseDto}"/> containing the result of the update operation.
     /// </returns>
-    public Task<Result<SuccessResponseDto>> UpdateUserTypeAsync(long userId, int userType);
+    public Task<Result<SuccessResponseDto>> UpdateUserTypeAsync(long userId, UserType userType);
 
     /// <summary>
     /// Retrieves a list of users with the technician role.
@@ -37,5 +37,5 @@ public interface IUserService : IBaseService<UserDto, UserAddRequestDto, UserUpd
     /// <returns>
     /// An asynchronous task representing a <see cref="Result{List{UserDto}}"/> containing the list of technicians.
     /// </returns>
-    public Task<Result<List<UserDto>>> GetTechnitiansAsync();
+    public Task<Result<List<UserDto>>> GetTechniciansAsync();
 }
