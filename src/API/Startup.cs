@@ -5,6 +5,8 @@ using Application.Interfaces.Services;
 using Application.Interfaces.Utils;
 using Application.Services;
 using Application.Utils;
+using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Utils;
 using Infraestructure;
@@ -13,8 +15,12 @@ using Infraestructure.Utils;
 using log4net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -168,7 +174,7 @@ public class Startup
     }
 
     // Method to configure the HTTP request pipeline
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
     {
         // Middleware for exception handling
         app.UseExceptionHandler(opt => { });
@@ -185,11 +191,49 @@ public class Startup
         app.UseAuthentication();
         app.UseAuthorization();
 
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
             endpoints.MapHub<ChatHub>("/messagehub");
         });
+
+        InitializeDatabaseAndAdminUser(serviceProvider);
+    }
+
+    /// <summary>
+    /// Initializes the database and creates an admin user if it doesn't exist.
+    /// </summary>
+    /// <param name="serviceProvider"></param>
+    private void InitializeDatabaseAndAdminUser(IServiceProvider serviceProvider)
+    {
+        using (var scope = serviceProvider.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            var databaseCreator = context.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
+            if (databaseCreator != null)
+            {
+                if (!databaseCreator.CanConnect())
+                    databaseCreator.Create();
+                if (!databaseCreator.HasTables())
+                    databaseCreator.CreateTables();
+            }
+
+            if (!context.Users.Any(u => u.UserType == UserType.Admin))
+            {
+                var adminUser = new User
+                {
+                    Name = "admin",
+                    Email = "admin@gmail.com",
+                    Password = "admin",
+                    UserType = UserType.Admin
+                };
+
+                context.Users.Add(adminUser);
+                context.SaveChanges();
+            }
+        }
     }
 }
 #pragma warning restore CS1591 

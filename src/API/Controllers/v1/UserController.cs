@@ -108,7 +108,7 @@ public class UserController(IUserService userService) : BaseApiController
     [HttpPut("update-user-type/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateUserTypeAsync(long id, [FromBody] int userType)
+    public async Task<IActionResult> UpdateUserTypeAsync(long id, [FromBody] UserType userType)
     {
         var result = await _userService.UpdateUserTypeAsync(id, userType);
         if (result.IsFailed)

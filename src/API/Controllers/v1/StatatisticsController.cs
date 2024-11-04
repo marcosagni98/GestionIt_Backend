@@ -2,6 +2,7 @@
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers.v1;
 
@@ -30,8 +31,11 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActiveIncidentsStatsResponseDto))]
     public async Task<IActionResult> GetActiveIncidentsSevirityCount()
     {
-        //Todo: Get the user id from the jwt
-        var result = await _statisticsService.GetActiveIncidentsSevirityCount(1);
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        var result = await _statisticsService.GetActiveIncidentsSevirityCount(userId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -49,8 +53,11 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AverageIncidencesResolutionTimeResponseDto))]
     public async Task<IActionResult> GetAverageResolutionTime()
     {
-        //Todo: Get the user id from the jwt
-        var result = await _statisticsService.GetAverageResolutionTime(1);
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        var result = await _statisticsService.GetAverageResolutionTime(userId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -69,8 +76,11 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserHappinessResponseDto))]
     public async Task<IActionResult> GetUserHappiness()
     {
-        //Todo: Get the user id from the jwt
-        var result = await _statisticsService.GetUserHappinessAsync(1);
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        var result = await _statisticsService.GetUserHappinessAsync(userId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -121,7 +131,7 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// <returns>The total number of incidences created each day</returns>
     [Authorize]
     [HttpGet("incidences-by-day")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesDailyResumeResponseDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<IncidencesDailyResumeResponseDto>))]
     public async Task<IActionResult> GetIncidencesDayResumeAsync()
     {
         var result = await _statisticsService.GetIncidencesDayResumeAsync();

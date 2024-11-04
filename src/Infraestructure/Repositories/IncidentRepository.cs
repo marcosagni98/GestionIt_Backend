@@ -94,11 +94,11 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     {
         List<string> searchParameters = new List<string>();
 
-        var query = _dbSet.Where(x => (x.Status == Status.Completed || x.Status == Status.Closed) && x.Active == true);
+        var baseQuery = _dbSet.Where(x => (x.Status == Status.Completed || x.Status == Status.Closed) && x.Active == true);
 
-        var totalCount = await CountAsync(query, queryFilter, searchParameters);
+        var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
 
-        query = new QueryFilterBuilder<Incident>(query)
+        var query = new QueryFilterBuilder<Incident>(baseQuery)
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
             .Build()
             .Include(i => i.User)
@@ -206,14 +206,15 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     {
         List<string> searchParameters = new List<string>();
 
-        var totalCount = await CountAsync(queryFilter, searchParameters);
+        var baseQuery = _dbSet.Where(x => (x.UserId == userId || x.TechnicianId == userId) && x.Active == true);
 
-        var query = new QueryFilterBuilder<Incident>(_dbSet
-            .Where(x => (x.UserId == userId || x.TechnicianId == userId) && x.Active == true))
-        .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-        .Build()
-        .Include(i => i.User)
-        .Include(i => i.Technician);
+        var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
+
+        var query = new QueryFilterBuilder<Incident>(baseQuery)
+            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
+            .Build()
+            .Include(i => i.User)
+            .Include(i => i.Technician);
 
         var items = await query.ToListAsync();
 
@@ -225,11 +226,11 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     {
         List<string> searchParameters = new List<string>();
 
-        var query = _dbSet.Where(x => (x.Priority == priority));
+        var baseQuery = _dbSet.Where(x => (x.Priority == priority));
 
-        var totalCount = await CountAsync(query, queryFilter, searchParameters);
+        var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
 
-        query = new QueryFilterBuilder<Incident>(query)
+        var query = new QueryFilterBuilder<Incident>(baseQuery)
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
             .Build()
             .Include(i => i.User)
@@ -245,11 +246,11 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     {
         List<string> searchParameters = new List<string>();
 
-        var query = _dbSet.Where(x => (x.Priority == priority) );
+        var baseQuery = _dbSet.Where(x => (x.Priority == priority) );
 
-        var totalCount = await CountAsync(query, queryFilter, searchParameters);
+        var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
 
-        query = new QueryFilterBuilder<Incident>(query)
+        var query = new QueryFilterBuilder<Incident>(baseQuery)
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
             .Build()
             .Include(i => i.User)

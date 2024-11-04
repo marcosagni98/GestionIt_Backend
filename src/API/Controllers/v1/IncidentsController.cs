@@ -7,6 +7,8 @@ using Domain.Dtos.CommonDtos.Response;
 using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 
 namespace API.Controllers.v1;
 
@@ -33,6 +35,11 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(SuccessResponseDto))]
     public async Task<IActionResult> AddAsync([FromBody] IncidentAddRequestDto addRequestDto)
     {
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        addRequestDto.UserId = userId;
         var result = await _incidentService.AddAsync(addRequestDto);
         if (result.IsFailed)
         {
@@ -52,9 +59,11 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<IncidentDto>))]
     public async Task<IActionResult> GetAsync([FromQuery] QueryFilterDto queryFilter)
     {
-
-        //TODO: Añadir obtner el usertype id del jwt
-        var result = await _incidentService.GetAsync(queryFilter, 1);
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        var result = await _incidentService.GetAsync(queryFilter, userId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
@@ -113,7 +122,11 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByPriorityAsync(Priority priorityId, [FromQuery] QueryFilterDto queryFilter)
     {
-        var result = await _incidentService.GetByPriorityAsync(queryFilter, priorityId, 1);
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        var result = await _incidentService.GetByPriorityAsync(queryFilter, priorityId, userId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);
