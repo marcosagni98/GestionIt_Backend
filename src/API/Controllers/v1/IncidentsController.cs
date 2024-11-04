@@ -141,7 +141,7 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     /// <param name="id">The ID of the incident to update.</param>
     /// <param name="updateStatusRequestDto">The updated data for the incident.</param>
     /// <returns>A response indicating the result of the operation.</returns>
-    [Authorize]
+    [Authorize(Roles = "0, 1, 2")]
     [HttpPut("update-status/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
