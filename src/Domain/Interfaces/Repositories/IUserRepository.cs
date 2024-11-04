@@ -25,4 +25,10 @@ public interface IUserRepository : IGenericRepository<User>
     /// <param name="email">Email of the user</param>
     /// <returns>User entity</returns>
     public Task<User?> GetUserByEmailAsync(string email);
+
+    /// <summary>
+    /// Returns a list of technicians
+    /// </summary>
+    /// <returns>List of User entities who are technicians</returns>
+    public Task<List<User?>> GetAllTechniantsAsync();
 }

@@ -142,12 +142,32 @@ public class IncidentController(IIncidentService incidentService) : BaseApiContr
     }
 
     /// <summary>
+    /// Updates the priority of an incident.
+    /// </summary>
+    /// <param name="id">The ID of the incident to update.</param>
+    /// <param name="updateStatusRequestDto">The updated data for the incident.</param>
+    /// <returns>A response indicating the result of the operation.</returns>
+    [HttpPut("update-priority/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdatePriorityAsync(long id, [FromBody] IncidentUpdatePriorityRequestDto updatePriorityRequestDto)
+    {
+        var result = await _incidentService.UpdatePriorityAsync(id, updatePriorityRequestDto);
+        if (result.IsFailed)
+        {
+            return NotFound(result.Errors);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
     /// Updates the technitian assigned to a incident.
     /// </summary>
     /// <param name="id">The ID of the incident to update.</param>
     /// <param name="updateTechnitianRequestDto">The data to be updated.</param>
     /// <returns>A response indicating the result of the operation.</returns>
-    [HttpPut("set-tecnitian/{id}")]
+    [HttpPut("set-technitian/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateTechnitian(long id, [FromBody] IncidentUpdateTechnitianRequestDto updateTechnitianRequestDto)

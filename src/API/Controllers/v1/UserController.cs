@@ -58,6 +58,23 @@ public class UserController(IUserService userService) : BaseApiController
     }
 
     /// <summary>
+    /// Gets a list of users technitians.
+    /// </summary>
+    /// <returns>A list of users technitians.</returns>
+    [HttpGet("Technitians")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<UserDto>))]
+    public async Task<IActionResult> GetTechnitiansAsync()
+    {
+        var result = await _userService.GetTechnitiansAsync();
+        if (result.IsFailed)
+        {
+            return NotFound(result.Errors);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
     /// Gets a user by ID.
     /// </summary>
     /// <param name="id">The ID of the user to retrieve.</param>

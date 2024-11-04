@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,11 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     public Task<bool> EmailExistsAsync(string email)
     {
         return _dbSet.Where(x => x.Email == email && x.Active == true).AnyAsync();
+    }
+
+    public async Task<List<User>?> GetAllTechniantsAsync()
+    {
+        return await _dbSet.Where(u => u.UserType == UserType.Technician).ToListAsync();
     }
 
     /// <inheritdoc/>

@@ -32,10 +32,10 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     }
 
     /// <inheritdoc/>
-    public Task<int> CountByPriorityAsync(Priority priority, long tecnitianId)
+    public Task<int> CountByPriorityAsync(Priority priority, long technitianId)
     {
         return _dbSet
-            .CountAsync(x => x.Priority == priority && x.Active == true && (x.Status != Status.Completed || x.Status != Status.Closed) && x.Technician.Id == tecnitianId );
+            .CountAsync(x => x.Priority == priority && x.Active == true && (x.Status != Status.Completed || x.Status != Status.Closed) && x.Technician.Id == technitianId );
     }
 
     /// <inheritdoc/>
@@ -192,6 +192,13 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     {
         var incident = await _dbSet.FindAsync(id) ?? throw new KeyNotFoundException($"Incident with ID {id} not found.");
         incident.Status = newStatus;
+    }
+
+    /// <inheritdoc/>
+    public async Task UpdateIncidentPriorityAsync(long id, Priority newPriority)
+    {
+        var incident = await _dbSet.FindAsync(id) ?? throw new KeyNotFoundException($"Incident with ID {id} not found.");
+        incident.Priority = newPriority;
     }
 
     /// <inheritdoc/>

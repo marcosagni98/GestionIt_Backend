@@ -250,8 +250,6 @@ namespace Application.Services
             }
         }
 
-
-
         #endregion
 
         /// <inheritdoc/>
@@ -278,6 +276,21 @@ namespace Application.Services
             var incidentDtos = _mapper.Map<List<IncidentDto>>(paginatedList.Items);
 
             return Result.Ok(new PaginatedList<IncidentDto>(incidentDtos, paginatedList.TotalCount));
+        }
+
+        /// <inheritdoc/>
+        public async Task<Result<SuccessResponseDto>> UpdatePriorityAsync(long id, IncidentUpdatePriorityRequestDto priorityRequestDto)
+        {
+            var incident = await _unitOfWork.IncidentRepository.GetByIdAsync(id);
+            if (incident == null)
+            {
+                return Result.Fail<SuccessResponseDto>("Incident not found.");
+            }
+
+            await _unitOfWork.IncidentRepository.UpdateIncidentPriorityAsync(id, priorityRequestDto.PriorityId);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
         }
     }
 }

@@ -34,7 +34,7 @@ public interface IIncidentRepository : IGenericRepository<Incident>
     /// <param name="priority">The priority level to filter incidents by.</param>
     /// <param name="priority">The priority level to filter incidents by.</param>
     /// <returns>A task representing the asynchronous operation, containing the count of incidents with the specified priority.</returns>
-    public Task<int> CountByPriorityAsync(Priority priority, long tecnitianId);
+    public Task<int> CountByPriorityAsync(Priority priority, long technitianId);
 
     /// <summary>
     /// Counts the number of incidents with the specified status.
@@ -109,6 +109,14 @@ public interface IIncidentRepository : IGenericRepository<Incident>
     public Task UpdateIncidentStatusAsync(long id, Status newStatus);
 
     /// <summary>
+    /// Asynchronously updates the priority of an incident by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the incident to update.</param>
+    /// <param name="priority">The new priority to set for the incident.</param>
+    /// <returns>A task representing the asynchronous update operation.</returns>
+    public Task UpdateIncidentPriorityAsync(long id, Priority priority);
+
+    /// <summary>
     /// Asynchronously retrieves a paginated list of incidents associated with a specific user, based on the provided query filter.
     /// </summary>
     /// <param name="queryFilter">The query filter containing pagination, sorting, and search criteria.</param>
@@ -122,4 +130,6 @@ public interface IIncidentRepository : IGenericRepository<Incident>
     /// <param name="date">The date for which the incident count is retrieved. Only incidents created on this date will be counted.</param>
     /// <returns>An asynchronous task that returns the count of incidents for the specified date.</returns>
     public Task<int> GetIncidentCountByDateAsync(DateTime date);
+
+
 }

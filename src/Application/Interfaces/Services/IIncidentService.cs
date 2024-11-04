@@ -84,4 +84,14 @@ public interface IIncidentService : IBaseService<IncidentDto, IncidentAddRequest
     /// An asynchronous task representing a <see cref="Result{SuccessResponseDto}"/> indicating the success or failure of the operation.
     /// </returns>
     public Task<Result<SuccessResponseDto>> UpdateTitleAndDescription(long id, IncidentUpdateTitleDescriptionRequestDto updateTitleDescriptionRequestDto);
+
+    /// <summary>
+    /// Updates the priority of an incident.
+    /// </summary>
+    /// <param name="id">The ID of the incident to update.</param>
+    /// <param name="priorityRequestDto">The data transfer object containing the new priority.</param>
+    /// <returns>
+    /// An asynchronous task representing a <see cref="Result{SuccessResponseDto}"/> indicating the success or failure of the operation.
+    /// </returns>
+    public Task<Result<SuccessResponseDto>> UpdatePriorityAsync(long id, IncidentUpdatePriorityRequestDto priorityRequestDto);
 }
