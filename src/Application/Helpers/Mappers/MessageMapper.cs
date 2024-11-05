@@ -1,4 +1,5 @@
 ﻿using Application.Dtos.CRUD.Messages;
+using Application.Dtos.CRUD.Messages.Request;
 using AutoMapper;
 
 using Domain.Entities;
@@ -16,5 +17,7 @@ public class MessageMapper : Profile
         CreateMap<Message, MessageDto>()
            .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender != null ? src.Sender.Name : string.Empty))
            .ReverseMap();
+
+        CreateMap<Message, MessageAddRequestDto>().ReverseMap();
     }
 }

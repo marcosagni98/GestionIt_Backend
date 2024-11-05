@@ -69,7 +69,7 @@ namespace Application.Services
         /// <inheritdoc/>
         public async Task<Result<CreatedResponseDto>> AddAsync(MessageAddRequestDto addRequestDto)
         {
-            var message = _mapper.Map<Message>(addRequestDto); // Asegúrate de que el DTO y la entidad coincidan
+            var message = _mapper.Map<Message>(addRequestDto);
             await _unitOfWork.MessageRepository.AddAsync(message);
             await _unitOfWork.SaveChangesAsync();
 
