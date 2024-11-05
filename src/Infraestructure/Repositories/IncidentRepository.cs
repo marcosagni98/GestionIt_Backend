@@ -25,6 +25,12 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     }
 
     /// <inheritdoc/>
+    public async Task<List<long>?> GetIdsAsync()
+    {
+        return await _dbSet.Where(x => x.Active == true).Select(x => x.Id).ToListAsync();
+    }
+
+    /// <inheritdoc/>
     public Task<int> CountByPriorityAsync(Priority priority)
     {
         return _dbSet
@@ -110,12 +116,13 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     }
 
     /// <inheritdoc/>
-    public async Task<List<Incident>?> GetByUserIdAsync(long userId)
+    public async Task<List<long>?> GetIdsByUserIdAsync(long userId)
     {
         return await _dbSet
-            .Where(x => x.UserId == userId && x.Active == true)
+            .Where(x => x.UserId == userId || x.TechnicianId == userId && x.Active == true)
             .Include(i => i.User)
             .Include(i => i.Technician)
+            .Select(x => x.Id)
             .ToListAsync();
     }
 
@@ -271,5 +278,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
             .Where(i => i.CreatedAt >= startOfDay && i.CreatedAt <= endOfDay)
             .CountAsync();
     }
+
+
 }
 

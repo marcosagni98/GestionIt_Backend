@@ -1,4 +1,6 @@
-﻿namespace Application.Dtos.CRUD.UserFeedbacks.Request;
+﻿using System.Text.Json.Serialization;
+
+namespace Application.Dtos.CRUD.UserFeedbacks.Request;
 
 /// <summary>
 /// User feedback add request dto
@@ -13,6 +15,7 @@ public class UserFeedbackAddRequestDto
     /// <summary>
     /// The id of the user that submitted the feedback
     /// </summary>
+    [JsonIgnore]
     public long UserId { get; set; }
 
     /// <summary>

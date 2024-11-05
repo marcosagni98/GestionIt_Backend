@@ -26,7 +26,7 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// </summary>
     /// <param name="id">The ID of the user.</param>
     /// <returns>he count and severity of active incidents</returns>
-    [Authorize(Roles = "2")]
+    [Authorize(Roles = "1,2")]
     [HttpGet("Active-incidents")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActiveIncidentsStatsResponseDto))]
     public async Task<IActionResult> GetActiveIncidentsSevirityCount()
@@ -93,7 +93,7 @@ public class StatisticsController(IStatisticsService statisticsService) : BaseAp
     /// Gets the summary of incidences.
     /// </summary>
     /// <returns>The total number of incidences in each type (open, closed, unassinged)</returns>
-    [Authorize(Roles = "1, 2")]
+    [Authorize(Roles = "2")]
     [HttpGet("incidences-resume")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IncidencesResumeResponseDto))]
     public async Task<IActionResult> GetIncidencesResumeAsync()

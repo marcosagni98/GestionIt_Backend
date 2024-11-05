@@ -11,6 +11,12 @@ namespace Domain.Interfaces.Repositories;
 public interface IIncidentRepository : IGenericRepository<Incident>
 {
     /// <summary>
+    /// Retrieves a list of all incidents.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation, containing a list of all incidents or null if no incidents are found.</returns>
+    public Task<List<long>?> GetIdsAsync();
+
+    /// <summary>
     /// Retrieves a list of incidents associated with the specified user ID.
     /// </summary>
     /// <param name="userId">The ID of the user whose incidents are to be retrieved.</param>
@@ -19,7 +25,7 @@ public interface IIncidentRepository : IGenericRepository<Incident>
     /// <see cref="Incident"/> objects associated with the specified user ID, 
     /// or null if no incidents are found.
     /// </returns>
-    public Task<List<Incident>?> GetByUserIdAsync(long userId);
+    public Task<List<long>?> GetIdsByUserIdAsync(long userId);
 
     /// <summary>
     /// Counts the number of active incidents (not closed or completed) with the specified priority.
@@ -130,6 +136,4 @@ public interface IIncidentRepository : IGenericRepository<Incident>
     /// <param name="date">The date for which the incident count is retrieved. Only incidents created on this date will be counted.</param>
     /// <returns>An asynchronous task that returns the count of incidents for the specified date.</returns>
     public Task<int> GetIncidentCountByDateAsync(DateTime date);
-
-
 }

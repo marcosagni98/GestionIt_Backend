@@ -20,4 +20,11 @@ public interface IUserFeedbackRepository : IGenericRepository<UserFeedback>
     /// <param name="id">User identifier.</param>
     /// <returns>User happiness index.</returns>
     public Task<int> GetUserHappinessAsync(DateTime startDate, DateTime endDate, long id);
+
+    /// <summary>
+    /// Gets the user feedback by incident identifier.
+    /// </summary>
+    /// <param name="incidentId">Incident identifier.</param>
+    /// <returns>User feedback.</returns>
+    public Task<UserFeedback?> GetByIncidentIdAsync(long incidentId);
 }

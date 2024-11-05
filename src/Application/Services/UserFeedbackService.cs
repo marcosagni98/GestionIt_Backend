@@ -121,6 +121,19 @@ namespace Application.Services
         }
 
         /// <inheritdoc/>
+        public async Task<Result<UserFeedbackDto>> GetByIncidentIdAsync(long incident)
+        {
+            var userFeedback = await _unitOfWork.UserFeedbackRepository.GetByIncidentIdAsync(incident);
+            if (userFeedback == null)
+            {
+                return Result.Fail<UserFeedbackDto>("User feedback not found.");
+            }
+
+            var response = _mapper.Map<UserFeedbackDto>(userFeedback);
+            return Result.Ok(response);
+        }
+
+        /// <inheritdoc/>
         public async Task<Result<SuccessResponseDto>> UpdateAsync(long id, UserFeedbackUpdateRequestDto updateRequestDto)
         {
             var userFeedback = await _unitOfWork.UserFeedbackRepository.GetByIdAsync(id);

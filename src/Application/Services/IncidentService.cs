@@ -197,13 +197,27 @@ namespace Application.Services
         /// <inheritdoc/>
         public async Task<Result<List<long>>> GetIncidentIdsByUserIdAsync(long userId)
         {
-            List<Incident>? incidentList = await _unitOfWork.IncidentRepository.GetByUserIdAsync(userId);
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            List<long>? incidentList;
+            if (user == null)
+            {
+                return Result.Fail("User not found");
+            }
+            else if (user.UserType == UserType.Admin)
+            {
+                incidentList = await _unitOfWork.IncidentRepository.GetIdsAsync();
+            }
+            else
+            {
+                incidentList = await _unitOfWork.IncidentRepository.GetIdsByUserIdAsync(userId);
+            }
+            
             if (incidentList == null || incidentList.Count == 0)
             {
                 return Result.Fail<List<long>>($"Not incidents found for user {userId}");
             }
 
-            return Result.Ok(incidentList.Select(i => i!.Id).ToList());
+            return Result.Ok(incidentList.ToList());
         }
 
         /// <inheritdoc/>
