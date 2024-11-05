@@ -6,6 +6,6 @@
 /// <param name="AvgTimeMin">The average time in minutes to resolve incidences.</param>
 /// <param name="ChangeRatioFromLastMonth">The percentage change in average resolution time compared to the previous month.</param>
 public record AverageIncidencesResolutionTimeResponseDto(
-    double AvgTimeMin,
+    int AvgTimeMin,
     double ChangeRatioFromLastMonth
 );

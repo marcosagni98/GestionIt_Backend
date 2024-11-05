@@ -20,3 +20,4 @@ public class MessageMapper : Profile
 
         CreateMap<Message, MessageAddRequestDto>().ReverseMap();
     }
+}

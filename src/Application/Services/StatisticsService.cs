@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services;
 
@@ -165,8 +166,8 @@ public class StatisticsService : IStatisticsService
         }
 
         double changeRatio = CalculateChangeRatio(currentMonthResolutionTime, previousMonthResolutionTime);
-
-        return Result.Ok(new AverageIncidencesResolutionTimeResponseDto(currentMonthResolutionTime, changeRatio));
+        int currentMonthResolutionTimeRedondeado = (int)Math.Round(currentMonthResolutionTime);
+        return Result.Ok(new AverageIncidencesResolutionTimeResponseDto(currentMonthResolutionTimeRedondeado, changeRatio));
     }
 
     /// <inheritdoc/>
