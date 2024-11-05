@@ -1,5 +1,6 @@
 ﻿using Application.Dtos.CRUD.Messages.Request;
 using Application.Interfaces.Services;
+using Azure.Identity;
 using FluentResults;
 using Microsoft.AspNetCore.SignalR;
 
@@ -65,11 +66,12 @@ public class ChatHub : Hub
     /// <param name="incidentId">ID of the incident group.</param>
     /// <param name="userId">ID of the sender.</param>
     /// <param name="text">Content of the message.</param>
-    public async Task SendMessage(long incidentId, long userId, string text)
+    public async Task SendMessage(long incidentId, long userId, string name, string text)
     {
         MessageAddRequestDto message = new(
             IncidentId: incidentId,
             SenderId: userId,
+            SenderName: name,
             Text: text,
             SentAt: DateTime.UtcNow
         );
