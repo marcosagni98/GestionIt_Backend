@@ -150,7 +150,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
             .ToList();
 
         var resolutionTimes = completedIncidents
-            .Select(i => (i.CompletedAt.ChangedAt - i.CreatedAt).TotalHours)
+            .Select(i => (i.CompletedAt.ChangedAt - i.CreatedAt).TotalMinutes)
             .ToList();
 
         double averageResolutionTime = resolutionTimes.Count > 0

@@ -91,7 +91,7 @@ public class UserFeedbackController(IUserFeedbackService userfeedbackService) : 
     /// <param name="incidenceId">The ID of the incident related to the userfeedback to retrieve.</param>
     /// <returns>The requested userfeedback.</returns>
     [Authorize]
-    [HttpGet("by-incidence{incidenceId}")]
+    [HttpGet("by-incidence/{incidenceId}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserFeedbackDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIncidenceIdAsync(long incidenceId)

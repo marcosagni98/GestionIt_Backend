@@ -18,6 +18,8 @@ public class MessageMapper : Profile
            .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender != null ? src.Sender.Name : string.Empty))
            .ReverseMap();
 
-        CreateMap<Message, MessageAddRequestDto>().ReverseMap();
+        CreateMap<Message, MessageAddRequestDto>()
+            .ForMember(dest => dest.SenderName, opt => opt.Ignore())
+            .ReverseMap();
     }
 }

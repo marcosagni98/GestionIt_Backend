@@ -212,7 +212,7 @@ public class StatisticsService : IStatisticsService
     private async Task<double> GetUserHappinessForMonth(DateTime start, DateTime end)
     {
         int happinessValue = await _unitOfWork.UserFeedbackRepository.GetUserHappinessAsync(start, end);
-        return happinessValue / 100.0;
+        return happinessValue / 5.0;
     }
 
     /// <summary>
@@ -292,7 +292,7 @@ public class StatisticsService : IStatisticsService
 
         for (int i = 0; i < months; i++)
         {
-            var monthStart = endDate.AddMonths(-i).Date;
+            var monthStart = endDate.AddMonths(-i).AddDays(1 - endDate.Day).Date;
             var monthEnd = new DateTime(monthStart.Year, monthStart.Month, DateTime.DaysInMonth(monthStart.Year, monthStart.Month));
             int count = await _unitOfWork.IncidentRepository.CountAsync(monthStart, monthEnd);
             incidencesByMonth[monthStart.Month] = count;
@@ -342,7 +342,7 @@ public class StatisticsService : IStatisticsService
                 if (count > 0)
                 {
                     dailyIncidences.Add(new IncidencesDailyResumeResponseDto(
-                        Date: date,
+                        Date: date.ToString("yyyy-MM-dd"),
                         Count: count
                     ));
                 }
