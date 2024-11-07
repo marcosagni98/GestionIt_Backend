@@ -25,9 +25,10 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return _dbSet.Where(x => x.Email == email && x.Active == true).AnyAsync();
     }
 
-    public async Task<List<User>?> GetAllTechniantsAsync()
+    /// <inheritdoc/>
+    public async Task<List<User>> GetAllTechniciansAsync()
     {
-        return await _dbSet.Where(u => u.UserType == UserType.Technician).ToListAsync();
+        return await _dbSet.Where(u => u.UserType == UserType.Technician || u.UserType == UserType.Admin).ToListAsync();
     }
 
     /// <inheritdoc/>

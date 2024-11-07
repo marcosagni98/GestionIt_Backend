@@ -131,9 +131,13 @@ public interface IIncidentRepository : IGenericRepository<Incident>
     public Task<PaginatedList<Incident>> GetIncidentsOfUserAsync(QueryFilterDto queryFilter, long userId);
 
     /// <summary>
-    /// Retrieves the count of incidents that occurred on a specific date.
+    /// Retrieves the daily summary of incidents for a specific year, including the date and the count of incidents for each day that had incidents.
     /// </summary>
-    /// <param name="date">The date for which the incident count is retrieved. Only incidents created on this date will be counted.</param>
-    /// <returns>An asynchronous task that returns the count of incidents for the specified date.</returns>
-    public Task<int> GetIncidentCountByDateAsync(DateTime date);
+    /// <param name="year">The year for which the incident counts are retrieved. Only incidents created in this year will be considered.</param>
+    /// <returns>
+    /// An asynchronous task that returns a list of tuples, each containing:
+    /// - `Date`: A string representing the date in "yyyy-MM-dd" format.
+    /// - `Count`: The count of incidents that occurred on that date. Only days with one or more incidents will be included in the result.
+    /// </returns>
+    public Task<List<(string Date, int Count)>> GetIncidentCountByDayAsync(int year);
 }

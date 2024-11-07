@@ -227,6 +227,11 @@ namespace Application.Services
             if (incident == null) return Result.Fail("Incident not found");
 
             incident.TechnicianId = incidentUpdateTechnicianRequestDto.TechnicianId;
+            if(incident.Status == Status.Unassigned)
+            {
+                incident.Status = Status.Pending;
+            }
+
             _unitOfWork.IncidentRepository.Update(incident);
             await _unitOfWork.SaveChangesAsync();
             

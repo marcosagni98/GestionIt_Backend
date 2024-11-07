@@ -269,14 +269,22 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     }
 
     /// <inheritdoc/>
-    public async Task<int> GetIncidentCountByDateAsync(DateTime date)
+    public async Task<List<(string Date, int Count)>> GetIncidentCountByDayAsync(int year)
     {
-        var startOfDay = date.Date;
-        var endOfDay = date.Date.AddDays(1).AddTicks(-1);
+        var dailyIncidences = await _dbSet
+        .Where(i => i.CreatedAt.Year == year)
+        .GroupBy(i => new { i.CreatedAt.Month, i.CreatedAt.Day })
+        .Where(g => g.Count() > 0)
+        .Select(g => new
+        {
+            Date = new DateTime(year, g.Key.Month, g.Key.Day).ToString("yyyy-MM-dd"),
+            Count = g.Count()
+        })
+        .ToListAsync();
 
-        return await _dbSet
-            .Where(i => i.CreatedAt >= startOfDay && i.CreatedAt <= endOfDay)
-            .CountAsync();
+        return dailyIncidences
+            .Select(x => (x.Date, x.Count))
+            .ToList();
     }
 
 

@@ -27,8 +27,8 @@ public interface IUserRepository : IGenericRepository<User>
     public Task<User?> GetUserByEmailAsync(string email);
 
     /// <summary>
-    /// Returns a list of technicians
+    /// Returns a list of technicians (admin also can be considered technician
     /// </summary>
     /// <returns>List of User entities who are technicians</returns>
-    public Task<List<User?>> GetAllTechniantsAsync();
+    public Task<List<User>> GetAllTechniciansAsync();
 }

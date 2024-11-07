@@ -131,7 +131,7 @@ namespace Application.Services
         /// <inheritdoc/>
         public async Task<Result<List<UserDto>>> GetTechniciansAsync()
         {
-            var tecnitiansDtos = _mapper.Map<List<UserDto>>(await _unitOfWork.UserRepository.GetAllTechniantsAsync());
+            var tecnitiansDtos = _mapper.Map<List<UserDto>>(await _unitOfWork.UserRepository.GetAllTechniciansAsync());
 
             return Result.Ok(new List<UserDto>(tecnitiansDtos));
         }

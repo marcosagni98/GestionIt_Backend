@@ -326,31 +326,19 @@ public class StatisticsService : IStatisticsService
     /// <inheritdoc/>
     public async Task<Result<List<IncidencesDailyResumeResponseDto>>> GetIncidencesDayResumeAsync()
     {
-        var currentDate = DateTime.Now;
-        var year = currentDate.Year;
-        var dailyIncidences = new List<IncidencesDailyResumeResponseDto>();
+        var currentYear = DateTime.Now.Year;
+        var dailyIncidencesTuples = await _unitOfWork.IncidentRepository.GetIncidentCountByDayAsync(currentYear);
 
-        for (int month = 1; month <= currentDate.Month; month++)
-        {
-            int daysInMonth = DateTime.DaysInMonth(year, month);
-
-            for (int day = 1; day <= (month == currentDate.Month ? currentDate.Day : daysInMonth); day++)
-            {
-                var date = new DateTime(year, month, day);
-                int count = await _unitOfWork.IncidentRepository.GetIncidentCountByDateAsync(date);
-
-                if (count > 0)
-                {
-                    dailyIncidences.Add(new IncidencesDailyResumeResponseDto(
-                        Date: date.ToString("yyyy-MM-dd"),
-                        Count: count
-                    ));
-                }
-            }
-        }
+        var dailyIncidences = dailyIncidencesTuples
+            .Select(tuple => new IncidencesDailyResumeResponseDto(
+                Date: tuple.Date,
+                Count: tuple.Count
+            ))
+            .ToList();
 
         return Result.Ok(dailyIncidences);
     }
+
 
     #region private methods
     /// <summary>
