@@ -1,4 +1,6 @@
-﻿using Application.Dtos.CRUD.Messages;
+﻿using Application.Dtos.CommonDtos.Response;
+using Application.Dtos.CRUD.Messages;
+using Application.Dtos.CRUD.Messages.Request;
 using Application.Interfaces.Services;
 using Domain.Dtos.CommonDtos.Response;
 using Microsoft.AspNetCore.Authorization;
@@ -30,6 +32,26 @@ public class MessageController(IMessageService messageService) : BaseApiControll
     public async Task<IActionResult> GetByIncidentIdAsync(long incidentId)
     {
         var result = await _messageService.GetByIncidentIdAsync(incidentId);
+        if (result.IsFailed)
+        {
+            return NotFound(result.Errors);
+        }
+
+        return Ok(result.Value);
+    }
+
+
+    /// <summary>
+    /// Gets a list of messages by incident id.
+    /// </summary>
+    /// <param name="incidentId">The ID of the incident.</param></param>
+    /// <returns>A list of messages.</returns>
+    [Authorize]
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
+    public async Task<IActionResult> AddASYNC(MessageAddRequestDto incidentId)
+    {
+        var result = await _messageService.AddAsync(incidentId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);

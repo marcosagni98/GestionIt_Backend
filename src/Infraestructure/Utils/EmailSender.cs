@@ -11,6 +11,7 @@ public class EmailSender : IEmailSender
     {
         var mail = Environment.GetEnvironmentVariable("EMAIL");
         var password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
+        var baseUrl = Environment.GetEnvironmentVariable("BASE_URL");
 
         var smtpClient = new SmtpClient("smtp.gmail.com", 587)
         {
@@ -19,7 +20,7 @@ public class EmailSender : IEmailSender
             UseDefaultCredentials = false,
         };
 
-        var url = $"https://AddTheRoutingToFrontEndHere/reset-password?token={token}";
+        var url = $"{baseUrl}/reset-password?token={token}";
         try {
             await smtpClient.SendMailAsync(
                 new MailMessage(

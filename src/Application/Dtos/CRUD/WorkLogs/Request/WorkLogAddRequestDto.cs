@@ -1,4 +1,6 @@
-﻿namespace Application.Dtos.CRUD.WorkLogs.Request;
+﻿using System.Text.Json.Serialization;
+
+namespace Application.Dtos.CRUD.WorkLogs.Request;
 
 /// <summary>
 /// work log add request dto
@@ -13,6 +15,7 @@ public class WorkLogAddRequestDto
     /// <summary>
     /// Id of the technician
     /// </summary>
+    [JsonIgnore]
     public long TechnicianId { get; set; }
 
     /// <summary>

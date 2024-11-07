@@ -6,6 +6,7 @@ using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers.v1;
 
@@ -32,6 +33,11 @@ public class WorkLogController(IWorkLogService worklogService) : BaseApiControll
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(SuccessResponseDto))]
     public async Task<IActionResult> AddAsync([FromBody] WorkLogAddRequestDto addRequestDto)
     {
+        if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userId))
+        {
+            return Unauthorized();
+        }
+        addRequestDto.TechnicianId = userId;
         var result = await _worklogService.AddAsync(addRequestDto);
         if (result.IsFailed)
         {

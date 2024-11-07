@@ -49,6 +49,11 @@ public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeed
             .FirstOrDefaultAsync();
     }
 
+    public async Task<UserFeedback?> GetByIncidentIdAsync(long incidentId)
+    {
+        return await _dbSet.Where(x => x.IncidentId == incidentId).OrderBy(x => x.SubmittedAt).LastAsync();
+    }
+
     public async Task<int> GetUserHappinessAsync(DateTime startDate, DateTime endDate)
     {
         var averageRating = await _dbSet
