@@ -31,7 +31,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-
+        
         #region Dispose
         private bool disposed = false;
 
