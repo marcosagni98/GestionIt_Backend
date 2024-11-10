@@ -72,10 +72,17 @@ namespace Application.Services
         public async Task<Result<CreatedResponseDto>> AddAsync(UserAddRequestDto addRequestDto)
         {
             var user = _mapper.Map<User>(addRequestDto);
-            var result = await _unitOfWork.UserRepository.EmailExistsAsync(user.Email);
-            if (result)
+            if(await _unitOfWork.UserRepository.CountAsync() == 0)
             {
-                return Result.Fail<CreatedResponseDto>("Email already exists.");
+                user.UserType = UserType.Admin;
+            }
+            else 
+            { 
+                var result = await _unitOfWork.UserRepository.EmailExistsAsync(user.Email);
+                if (result)
+                {
+                    return Result.Fail<CreatedResponseDto>("Email already exists.");
+                }
             }
             await _unitOfWork.UserRepository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
