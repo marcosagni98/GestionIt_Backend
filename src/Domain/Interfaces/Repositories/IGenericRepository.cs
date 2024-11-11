@@ -56,23 +56,8 @@ public interface IGenericRepository<TEntity> where TEntity : class
     /// <param name="queryFilter">Query filter data for sorting, searching, and pagination.</param>
     /// <param name="filterParameter">Additional parameters to filter the count operation.</param>
     /// <returns>A task representing the asynchronous count operation, returning the total count of entities.</returns>
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-    Task<int> CountAsync(IQueryable<TEntity> query, QueryFilterDto? queryFilter, List<string>? filterParameter);
-=======
-    Task<int> CountAsync(IQueryable<TEntity>? query, QueryFilterDto? queryFilter, List<string>? filterParameter);
->>>>>>> Stashed changes
-=======
     Task<int> CountAsync(IQueryable<TEntity>? query, QueryFilterDto? queryFilter, List<string>? filterParameter);
 
-    /// <summary>
-    /// Asynchronously counts all entities in the User table.
-    /// </summary>
-    /// <returns>A task representing the asynchronous count operation, returning the total count of users.</returns>
-    Task<int> CountAsync();
->>>>>>> 8a564712c0be6447d7fdf3b090fa63225cee612d
-
-    /// <summary>
     /// Asynchronously checks whether an entity with the specified identifier exists in the database.
     /// </summary>
     /// <param name="id">The unique identifier of the entity to check.</param>
