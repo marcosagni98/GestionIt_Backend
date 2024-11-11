@@ -12,23 +12,23 @@ services:
     volumes:
     - db_data:/var/opt/mssql
 
-   web:
+  web:
+    image: 840110/gestionit_front:latest
     build:
-      context: .
-      dockerfile: Dockerfile
-    image: react-nginx-app
+      context: ../SISINF/
+      dockerfile: ../SISINF/Dockerfile
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/cert.pem:/etc/nginx/cert.pem:ro
-      - ./nginx/privkey.pem:/etc/nginx/privkey.pem:ro
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../SISINF/nginx/cert.pem:/etc/nginx/cert.pem:ro
+      -  ../SISINF/nginx/privkey.pem:/etc/nginx/privkey.pem:ro
+      -  ../SISINF/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     env_file:
       - .env
     environment:
-      - REACT_APP_API_BASE_URL=${API_BASE_URL}
-      - REACT_APP_DEBUG=${DEBUG}
+      - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
+      - REACT_APP_DEBUG=${REACT_APP_DEBUG}
     restart: always
   
   api:
