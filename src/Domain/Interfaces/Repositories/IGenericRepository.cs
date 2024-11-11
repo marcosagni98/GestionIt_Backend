@@ -44,12 +44,22 @@ public interface IGenericRepository<TEntity> where TEntity : class
     Task DeleteAsync(long id);
 
     /// <summary>
+    /// Asynchronously counts all entities in the User table.
+    /// </summary>
+    /// <returns>A task representing the asynchronous count operation, returning the total count of users.</returns>
+    Task<int> CountAsync();
+
+    /// <summary>
     /// Asynchronously counts the number of entities in the database based on optional filtering criteria.
     /// </summary>
     /// <param name="queryFilter">Query filter data for sorting, searching, and pagination.</param>
     /// <param name="filterParameter">Additional parameters to filter the count operation.</param>
     /// <returns>A task representing the asynchronous count operation, returning the total count of entities.</returns>
+<<<<<<< Updated upstream
     Task<int> CountAsync(IQueryable<TEntity> query, QueryFilterDto? queryFilter, List<string>? filterParameter);
+=======
+    Task<int> CountAsync(IQueryable<TEntity>? query, QueryFilterDto? queryFilter, List<string>? filterParameter);
+>>>>>>> Stashed changes
 
     /// <summary>
     /// Asynchronously checks whether an entity with the specified identifier exists in the database.
