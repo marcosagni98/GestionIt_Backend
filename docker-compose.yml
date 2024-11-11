@@ -1,17 +1,29 @@
-
-version: '3.8'
-
 services:
   apidb:
     container_name: gestionIt_db
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
-      - "8002:1433"
+        - "8002:1433"
+    env_file:
+      - .env
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=password@12345#
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=${DB_PASSWORD}
     volumes:
-      - db_data:/var/opt/mssql
+    - db_data:/var/opt/mssql
+
+  web:
+    image: 840110/gestionit_front:latest
+    build:
+      context: ../SISINF/
+      dockerfile: ../SISINF/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
+      - REACT_APP_DEBUG=${REACT_APP_DEBUG}
   
   api:
     image: 840110/gestionit_api:latest
@@ -20,14 +32,19 @@ services:
       dockerfile: src/API/Dockerfile
     ports:
       - "5000:5000"
-    depends_on:
-      - apidb
     env_file:
       - .env
+    depends_on:
+      - apidb
     environment:
       - DB_HOST=apidb
       - DB_NAME=gestionIt_db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EMAIL=${EMAIL}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - BASE_URL=http://localhost:3000
       - ASPNETCORE_ENVIRONMENT=Development
-
 volumes:
   db_data:
+
