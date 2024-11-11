@@ -6,6 +6,7 @@ using Application.Interfaces.Services;
 using Application.Interfaces.Utils;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Utils;
 using FluentResults;
@@ -91,13 +92,22 @@ public class AuthService : IAuthService
     public async Task<Result<CreatedResponseDto>> RegisterAsync(RegisterRequestDto registerRequestDto)
     {
         var user = _mapper.Map<User>(registerRequestDto);
-        if (await _unitOfWork.UserRepository.EmailExistsAsync(user.Email))
+        if (await _unitOfWork.UserRepository.CountAsync() == 0)
         {
-            return Result.Fail<CreatedResponseDto>("Email already exists.");
+            user.UserType = UserType.Admin;
+        }
+        else
+        {
+            var result = await _unitOfWork.UserRepository.EmailExistsAsync(user.Email);
+            if (result)
+            {
+                return Result.Fail<CreatedResponseDto>("Email already exists.");
+            }
         }
         await _unitOfWork.UserRepository.AddAsync(user);
         await _unitOfWork.SaveChangesAsync();
-        return new CreatedResponseDto(user.Id);
+
+        return Result.Ok(new CreatedResponseDto(user.Id));
     }
 
     /// <inheritdoc/>
