@@ -219,20 +219,6 @@ public class Startup
                 if (!databaseCreator.HasTables())
                     databaseCreator.CreateTables();
             }
-
-            if (!context.Users.Any(u => u.UserType == UserType.Admin))
-            {
-                var adminUser = new User
-                {
-                    Name = "admin",
-                    Email = "admin@gmail.com",
-                    Password = "admin",
-                    UserType = UserType.Admin
-                };
-
-                context.Users.Add(adminUser);
-                context.SaveChanges();
-            }
         }
     }
 }

@@ -81,6 +81,12 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     }
 
     /// <inheritdoc/>
+    public async Task<int> CountAsync()
+    {
+        return await _dbSet.CountAsync();
+    }
+    
+    /// <inheritdoc/>
     public async Task<int> CountAsync(IQueryable<TEntity>? query, QueryFilterDto? queryFilter, List<string>? searchParameters)
     {
         if(query == null)
