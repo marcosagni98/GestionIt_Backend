@@ -70,7 +70,8 @@ public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeed
     public async Task<int> GetUserHappinessAsync(DateTime startDate, DateTime endDate, long id)
     {
         var averageRating = await _dbSet
-           .Where(f => f.SubmittedAt >= startDate && f.SubmittedAt <= endDate && f.UserId == id && f.Active == true)
+           .Include(i => i.Incident)
+           .Where(f => f.SubmittedAt >= startDate && f.SubmittedAt <= endDate && f.Incident!.TechnicianId == id && f.Active == true)
            .Select(f => (double?)f.Rating)
            .AverageAsync();
 
