@@ -4,6 +4,7 @@ using Application.Dtos.CommonDtos;
 using Application.Dtos.CommonDtos.Response;
 using Application.Interfaces.Services;
 using Application.Interfaces.Utils;
+using Application.Validators.Auth;
 using Application.Utils;
 using AutoMapper;
 using Domain.Entities;
@@ -11,6 +12,7 @@ using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Utils;
 using FluentResults;
+using FluentValidation;
 
 namespace Application.Services;
 
@@ -77,8 +79,16 @@ public class AuthService : IAuthService
     /// <inheritdoc/>
     public async Task<Result<LoginResponseDto>> LoginAsync(LoginRequestDto loginRequestDto)
     {
+        var validator = new LoginRequestDtoValidator();
+        var validationResult = await validator.ValidateAsync(loginRequestDto);
+        if (!validationResult.IsValid)
+        {
+            return Result.Fail<LoginResponseDto>(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+        }
+
         var hashedPassword = PasswordHasher.HashPassword(loginRequestDto.Password);
         if (!await _unitOfWork.UserRepository.LoginAsync(loginRequestDto.Email, hashedPassword))
+
         {
             return Result.Fail<LoginResponseDto>("Email or password incorrect.");
         }
@@ -93,6 +103,13 @@ public class AuthService : IAuthService
     /// <inheritdoc/>
     public async Task<Result<CreatedResponseDto>> RegisterAsync(RegisterRequestDto registerRequestDto)
     {
+        var validator = new RegisterRequestDtoValidator();
+        var validationResult = await validator.ValidateAsync(registerRequestDto);
+        if (!validationResult.IsValid)
+        {
+            return Result.Fail<CreatedResponseDto>(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+        }
+
         var user = _mapper.Map<User>(registerRequestDto);
         if (await _unitOfWork.UserRepository.CountAsync() == 0)
         {
@@ -116,7 +133,14 @@ public class AuthService : IAuthService
     /// <inheritdoc/>
     public async Task<Result<SuccessResponseDto>> ForgotPasswordAsync(ForgotPasswordRequestDto forgotPasswordRequestDto)
     {
-        if(!await _unitOfWork.UserRepository.EmailExistsAsync(forgotPasswordRequestDto.Email))
+        var validator = new ForgotPasswordRequestDtoValidator();
+        var validationResult = await validator.ValidateAsync(forgotPasswordRequestDto);
+        if (!validationResult.IsValid)
+        {
+            return Result.Fail<SuccessResponseDto>(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+        }
+
+        if (!await _unitOfWork.UserRepository.EmailExistsAsync(forgotPasswordRequestDto.Email))
         {
             return Result.Fail<SuccessResponseDto>("Email does not exists.");
         }
@@ -133,7 +157,14 @@ public class AuthService : IAuthService
     /// <inheritdoc/>
     public async Task<Result<SuccessResponseDto>> RecoverPasswordAsync(ResetPasswordRequestDto resetPasswordRequestDto)
     {
-        if(!await _unitOfWork.UserRepository.EmailExistsAsync(resetPasswordRequestDto.Email))
+        var validator = new ResetPasswordRequestDtoValidator();
+        var validationResult = await validator.ValidateAsync(resetPasswordRequestDto);
+        if (!validationResult.IsValid)
+        {
+            return Result.Fail<SuccessResponseDto>(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+        }
+
+        if (!await _unitOfWork.UserRepository.EmailExistsAsync(resetPasswordRequestDto.Email))
         {
             return Result.Fail<SuccessResponseDto>("User not found.");
         }

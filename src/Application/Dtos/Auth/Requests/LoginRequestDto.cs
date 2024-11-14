@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Dtos.Auth.Requests;
+﻿namespace Application.Dtos.Auth.Requests;
 
 /// <summary>
-/// Login request
+/// Represents a login request containing the user's email and password.
 /// </summary>
-public class LoginRequestDto
-{
-    /// <summary>
-    /// User email
-    /// </summary>
-    public string Email { get; set; } = string.Empty;
-
-    /// <summary>
-    /// User password
-    /// </summary>
-    public string Password { get; set; } = string.Empty;
-}
+/// <param name="Email">The user's email address.</param>
+/// <param name="Password">The user's password.</param>
+public record LoginRequestDto(
+    string Email,
+    string Password
+);
