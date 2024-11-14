@@ -68,13 +68,14 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public override async Task<PaginatedList<Incident>> GetAsync(QueryFilterDto queryFilter)
     {
-        List<string> searchParameters = new List<string>();
+        List<string> searchParameters = [];
 
-        var totalCount = await CountAsync(queryFilter, searchParameters);
+        IQueryable<Incident> query = _dbSet.Where(x => (x.Status != Status.Completed && x.Status != Status.Closed));
 
-        IQueryable<Incident> query = _dbSet.AsQueryable();
+        var totalCount = await CountAsync(query, queryFilter, searchParameters);
 
-        query = new QueryFilterBuilder<Incident>(_dbSet)
+
+        query = new QueryFilterBuilder<Incident>(query)
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
             .Build()
             .Include(i => i.User)
@@ -98,7 +99,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public async Task<PaginatedList<Incident>> GetHistoricAsync(QueryFilterDto queryFilter)
     {
-        List<string> searchParameters = new List<string>();
+        List<string> searchParameters = [];
 
         var baseQuery = _dbSet.Where(x => (x.Status == Status.Completed || x.Status == Status.Closed) && x.Active == true);
 
@@ -211,9 +212,9 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public async Task<PaginatedList<Incident>> GetIncidentsOfUserAsync(QueryFilterDto queryFilter, long userId)
     {
-        List<string> searchParameters = new List<string>();
+        List<string> searchParameters = [];
 
-        var baseQuery = _dbSet.Where(x => (x.UserId == userId || x.TechnicianId == userId) && x.Active == true);
+        var baseQuery = _dbSet.Where(x => (x.UserId == userId || x.TechnicianId == userId) && x.Active == true && (x.Status != Status.Completed && x.Status != Status.Closed));
 
         var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
 
@@ -231,7 +232,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public async Task<PaginatedList<Incident>> GetByPriorityAsync(QueryFilterDto queryFilter, Priority priority)
     {
-        List<string> searchParameters = new List<string>();
+        List<string> searchParameters = [];
 
         var baseQuery = _dbSet.Where(x => (x.Priority == priority));
 
@@ -251,7 +252,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public async Task<PaginatedList<Incident>> GetIncidentsOfByPriorityUserAsync(QueryFilterDto queryFilter, Priority priority, long userId)
     {
-        List<string> searchParameters = new List<string>();
+        List<string> searchParameters = [];
 
         var baseQuery = _dbSet.Where(x => (x.Priority == priority) );
 
