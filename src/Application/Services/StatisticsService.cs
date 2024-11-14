@@ -80,18 +80,18 @@ public class StatisticsService : IStatisticsService
         double VariationFromLastMonth;
         if (user.UserType == UserType.Admin )
         {
-            totalCount = await _unitOfWork.IncidentRepository.CountAsync(null, null, null);
             lowCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Low);
             mediumCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Medium);
             highCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.High);
+            totalCount = lowCount + mediumCount + highCount;
             VariationFromLastMonth = await CalculateRatioOfNewIncidentsFromLastMonth();
         }
         else if (user.UserType == UserType.Technician)
         {
-            totalCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Low, id);
             lowCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Low, id);
             mediumCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Medium, id);
             highCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.High, id);
+            totalCount = lowCount + mediumCount + highCount;
             VariationFromLastMonth = await CalculateRatioOfNewIncidentsFromLastMonth(id);
         }
         else
@@ -225,7 +225,7 @@ public class StatisticsService : IStatisticsService
     private async Task<double> GetUserHappinessForMonth(DateTime start, DateTime end, long id)
     {
         int happinessValue = await _unitOfWork.UserFeedbackRepository.GetUserHappinessAsync(start, end, id);
-        return happinessValue / 100.0;
+        return happinessValue / 5.0;
     }
 
     #endregion

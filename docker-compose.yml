@@ -49,7 +49,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - EMAIL=${EMAIL}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
-      - BASE_URL=http://localhost:3000
+      - BASE_URL=${BASE_URL}
       - ASPNETCORE_ENVIRONMENT=Development
 volumes:
   db_data:

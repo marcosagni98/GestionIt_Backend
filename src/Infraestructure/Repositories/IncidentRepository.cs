@@ -34,21 +34,21 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     public Task<int> CountByPriorityAsync(Priority priority)
     {
         return _dbSet
-            .CountAsync(x => x.Priority == priority && x.Active == true && (x.Status != Status.Completed || x.Status != Status.Closed));
+            .CountAsync(x => x.Priority == priority && x.Active == true && (x.Status != Status.Completed && x.Status != Status.Closed));
     }
 
     /// <inheritdoc/>
     public Task<int> CountByPriorityAsync(Priority priority, long technicianId)
     {
         return _dbSet
-            .CountAsync(x => x.Priority == priority && x.Active == true && (x.Status != Status.Completed || x.Status != Status.Closed) && x.Technician.Id == technicianId );
+            .CountAsync(x => x.Priority == priority && x.Active == true && (x.Status != Status.Completed && x.Status != Status.Closed) && x.Technician.Id == technicianId );
     }
 
     /// <inheritdoc/>
     public Task<int> CountByStatusAsync(Status status)
     {
         return _dbSet
-            .CountAsync(x => x.Status == status && x.Active == true && (x.Status != Status.Completed || x.Status != Status.Closed));
+            .CountAsync(x => x.Status == status && x.Active == true && (x.Status != Status.Completed && x.Status != Status.Closed));
     }
 
     /// <inheritdoc/>
@@ -184,7 +184,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
             .ToList();
 
         var resolutionTimes = completedIncidents
-            .Select(i => (i.CompletedAt.ChangedAt - i.CreatedAt).TotalHours)
+            .Select(i => (i.CompletedAt.ChangedAt - i.CreatedAt).TotalMinutes)
             .ToList();
 
         double averageResolutionTime = resolutionTimes.Count > 0
