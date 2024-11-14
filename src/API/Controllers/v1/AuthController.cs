@@ -32,6 +32,11 @@ public class AuthController(IAuthService authService) : BaseApiController
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequestDto loginDto)
     {
         var loginResult = await _authService.LoginAsync(loginDto);
+        if (!loginResult.IsSuccess)
+        {
+            return BadRequest(loginResult.Errors);
+            
+        }
         return Ok(loginResult.Value);
     }
 
