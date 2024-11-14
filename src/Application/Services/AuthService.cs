@@ -5,6 +5,7 @@ using Application.Dtos.CommonDtos.Response;
 using Application.Interfaces.Services;
 using Application.Interfaces.Utils;
 using Application.Validators.Auth;
+using Application.Utils;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
@@ -85,7 +86,9 @@ public class AuthService : IAuthService
             return Result.Fail<LoginResponseDto>(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
         }
 
-        if (!await _unitOfWork.UserRepository.LoginAsync(loginRequestDto.Email, loginRequestDto.Password))
+        var hashedPassword = PasswordHasher.HashPassword(loginRequestDto.Password);
+        if (!await _unitOfWork.UserRepository.LoginAsync(loginRequestDto.Email, hashedPassword))
+
         {
             return Result.Fail<LoginResponseDto>("Email or password incorrect.");
         }
@@ -120,6 +123,7 @@ public class AuthService : IAuthService
                 return Result.Fail<CreatedResponseDto>("Email already exists.");
             }
         }
+        user.Password = PasswordHasher.HashPassword(registerRequestDto.Password);
         await _unitOfWork.UserRepository.AddAsync(user);
         await _unitOfWork.SaveChangesAsync();
 
@@ -165,7 +169,7 @@ public class AuthService : IAuthService
             return Result.Fail<SuccessResponseDto>("User not found.");
         }
         User? user = await _unitOfWork.UserRepository.GetUserByEmailAsync(resetPasswordRequestDto.Email);
-        user!.Password = resetPasswordRequestDto.Password;
+        user.Password = PasswordHasher.HashPassword(resetPasswordRequestDto.Password);
         _unitOfWork.UserRepository.Update(user);
         await _unitOfWork.SaveChangesAsync();
 
