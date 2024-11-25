@@ -48,7 +48,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     public Task<int> CountByStatusAsync(Status status)
     {
         return _dbSet
-            .CountAsync(x => x.Status == status && x.Active == true && (x.Status != Status.Completed && x.Status != Status.Closed));
+            .CountAsync(x => x.Status == status && x.Active == true);
     }
 
     /// <inheritdoc/>

@@ -29,7 +29,6 @@ public class RegisterRequestDtoValidator : AbstractValidator<RegisterRequestDto>
         // Validate Password
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("The password is required.")
-            .MinimumLength(6).WithMessage("The password must be at least 6 characters long.")
             .MaximumLength(100).WithMessage("The password cannot be longer than 100 characters.");
     }
 }
