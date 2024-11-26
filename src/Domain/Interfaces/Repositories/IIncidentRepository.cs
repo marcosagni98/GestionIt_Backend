@@ -88,7 +88,7 @@ public interface IIncidentRepository : IGenericRepository<Incident>
     /// <param name="userId">The ID of the user whose incidents are to be retrieved.</param>
     /// <param name="priority">The priority level to filter incidents by.</param>
     /// <returns>A task representing the asynchronous operation, containing a paginated list of incidents filtered by the specified priority and user.</returns>
-    public Task<PaginatedList<Incident>> GetIncidentsOfByPriorityUserAsync(QueryFilterDto queryFilter, Priority priority, long userId);
+    public Task<PaginatedList<Incident>> GetIncidentsByPriorityUserAsync(QueryFilterDto queryFilter, Priority priority, long userId);
 
     /// <summary>
     /// Asynchronously retrieves the average resolution time of incidents within a specified date range.

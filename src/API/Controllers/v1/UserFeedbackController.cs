@@ -56,6 +56,7 @@ public class UserFeedbackController(IUserFeedbackService userfeedbackService) : 
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<UserFeedbackDto>))]
     public async Task<IActionResult> GetAsync([FromQuery] QueryFilterDto queryFilter)
     {
+        queryFilter.OrderBy == null;
         var result = await _userfeedbackService.GetAsync(queryFilter);
         if (result.IsFailed)
         {

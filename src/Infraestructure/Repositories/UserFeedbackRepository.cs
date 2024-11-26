@@ -24,13 +24,16 @@ public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeed
     /// <inheritdoc/>
     public override async Task<PaginatedList<UserFeedback>> GetAsync(QueryFilterDto queryFilter)
     {
-        List<string> searchParameters = new List<string>();
+        List<string> searchParameters = [];
+
+        GetCorrectQueryFilterOrderBy(queryFilter);
 
         var totalCount = await CountAsync(queryFilter, searchParameters);
 
-        IQueryable<UserFeedback> query = _dbSet.AsQueryable();
+        IQueryable<UserFeedback> query = _dbSet
+            .Include(x => x.User);
 
-        query = new QueryFilterBuilder<UserFeedback>(_dbSet)
+        query = new QueryFilterBuilder<UserFeedback>(query)
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
             .Build()
             .Include(x => x.User);
@@ -39,6 +42,26 @@ public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeed
 
         return new PaginatedList<UserFeedback>(items, totalCount);
     }
+
+    #region GetAsync private functions
+    /// <summary>
+    /// Transforms sorting property names from Data Transfer Object (DTO) conventions to corresponding entity navigation property names.
+    /// This method maps client-side sorting properties to the correct database entity property paths for efficient querying.
+    /// </summary>
+    /// <param name="queryFilter">The query filter containing sorting parameters to be transformed.</param>
+    private static void GetCorrectQueryFilterOrderBy(QueryFilterDto queryFilter)
+    {
+        if (!string.IsNullOrWhiteSpace(queryFilter?.OrderBy))
+        {
+            queryFilter.OrderBy = queryFilter.OrderBy switch
+            {
+                "UserName" => "User.Name",
+                _ => queryFilter.OrderBy
+            };
+        }
+    }
+
+    #endregion
 
     /// <inheritdoc/>
     public override async Task<UserFeedback?> GetByIdAsync(long id)

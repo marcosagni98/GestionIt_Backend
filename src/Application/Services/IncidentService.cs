@@ -284,7 +284,7 @@ namespace Application.Services
             }
             else
             {
-                paginatedList = await _unitOfWork.IncidentRepository.GetIncidentsOfByPriorityUserAsync(queryFilter, priorityId, userId);
+                paginatedList = await _unitOfWork.IncidentRepository.GetIncidentsByPriorityUserAsync(queryFilter, priorityId, userId);
             }
 
             if (paginatedList.Items == null)

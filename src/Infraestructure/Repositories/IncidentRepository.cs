@@ -69,22 +69,56 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     public override async Task<PaginatedList<Incident>> GetAsync(QueryFilterDto queryFilter)
     {
         List<string> searchParameters = [];
+        GetCorrectQueryFilterOrderBy(queryFilter);
 
-        IQueryable<Incident> query = _dbSet.Where(x => (x.Status != Status.Completed && x.Status != Status.Closed));
+        IQueryable<Incident> query = _dbSet.Where(x => (x.Status != Status.Completed && x.Status != Status.Closed)).Include(i => i.User)
+            .Include(i => i.Technician);
 
         var totalCount = await CountAsync(query, queryFilter, searchParameters);
 
 
         query = new QueryFilterBuilder<Incident>(query)
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build()
-            .Include(i => i.User)
-            .Include(i => i.Technician);
+            .Build();
 
         var items = await query.ToListAsync();
 
         return new PaginatedList<Incident>(items, totalCount);
     }
+
+
+
+    #region GetAsync private functions
+    /// <summary>
+    /// Transforms sorting property names from Data Transfer Object (DTO) conventions to corresponding entity navigation property names.
+    /// This method maps client-side sorting properties to the correct database entity property paths for efficient querying.
+    /// </summary>
+    /// <param name="queryFilter">The query filter containing sorting parameters to be transformed.</param>
+    /// /// <remarks>
+    /// Supported mappings include:
+    /// - "UserName" -> "User.Name"
+    /// - "UserId" -> "User.Id"
+    /// - "TechnicianName" -> "Technician.Name"
+    /// - "TechnicianId" -> "Technician.Id"
+    /// 
+    /// If no matching mapping is found, the original OrderBy value is preserved.
+    /// </remarks>
+    private static void GetCorrectQueryFilterOrderBy(QueryFilterDto queryFilter)
+    {
+        if (!string.IsNullOrWhiteSpace(queryFilter?.OrderBy))
+        {
+            queryFilter.OrderBy = queryFilter.OrderBy switch
+            {
+                "UserName" => "User.Name",
+                "UserId" => "User.Id",
+                "TechnicianName" => "Technician.Name",
+                "TechnicianId" => "Technician.Id",
+                _ => queryFilter.OrderBy
+            };
+        }
+    }
+
+    #endregion
 
     /// <inheritdoc/>
     public override async Task<Incident?> GetByIdAsync(long id)
@@ -101,7 +135,10 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     {
         List<string> searchParameters = [];
 
-        var baseQuery = _dbSet.Where(x => (x.Status == Status.Completed || x.Status == Status.Closed) && x.Active == true);
+        GetCorrectQueryFilterOrderBy(queryFilter);
+
+        var baseQuery = _dbSet.Where(x => (x.Status == Status.Completed || x.Status == Status.Closed) && x.Active == true).Include(i => i.User)
+            .Include(i => i.Technician);
 
         var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
 
@@ -214,7 +251,12 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     {
         List<string> searchParameters = [];
 
-        var baseQuery = _dbSet.Where(x => (x.UserId == userId || x.TechnicianId == userId) && x.Active == true && (x.Status != Status.Completed && x.Status != Status.Closed));
+        GetCorrectQueryFilterOrderBy(queryFilter);
+
+        var baseQuery = _dbSet
+            .Where(x => (x.UserId == userId || x.TechnicianId == userId) && x.Active == true && (x.Status != Status.Completed && x.Status != Status.Closed))
+            .Include(i => i.User)
+            .Include(i => i.Technician);
 
         var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
 
@@ -233,8 +275,11 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     public async Task<PaginatedList<Incident>> GetByPriorityAsync(QueryFilterDto queryFilter, Priority priority)
     {
         List<string> searchParameters = [];
+        GetCorrectQueryFilterOrderBy(queryFilter);
 
-        var baseQuery = _dbSet.Where(x => (x.Priority == priority));
+        var baseQuery = _dbSet.Where(x => (x.Priority == priority))
+            .Include(i => i.User)
+            .Include(i => i.Technician);
 
         var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
 
@@ -250,11 +295,15 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedList<Incident>> GetIncidentsOfByPriorityUserAsync(QueryFilterDto queryFilter, Priority priority, long userId)
+    public async Task<PaginatedList<Incident>> GetIncidentsByPriorityUserAsync(QueryFilterDto queryFilter, Priority priority, long userId)
     {
         List<string> searchParameters = [];
 
-        var baseQuery = _dbSet.Where(x => (x.Priority == priority) );
+        GetCorrectQueryFilterOrderBy(queryFilter);
+
+        var baseQuery = _dbSet.Where(x => (x.Priority == priority) )
+            .Include(i => i.User)
+            .Include(i => i.Technician); ;
 
         var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
 

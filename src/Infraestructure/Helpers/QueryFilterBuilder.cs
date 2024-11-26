@@ -158,17 +158,32 @@ public class QueryFilterBuilder<T>
         ValidateSortOrderParameter(sortOrder);
 
         var parameterExpression = Expression.Parameter(typeof(T), "x");
-        var propertyExpression = CreatePropertyExpression(sortBy, parameterExpression);
+
+        // Handle nested properties
+        Expression propertyExpression = parameterExpression;
+        var properties = sortBy.Split('.');
+
+        foreach (var prop in properties)
+        {
+            propertyExpression = Expression.Property(propertyExpression, prop);
+        }
+
+        // Create a lambda expression for the property
+        var lambdaExpression = Expression.Lambda(propertyExpression, parameterExpression);
+
+        // Determine the sorting method based on the order
         var sortingMethod = GetSortingMethod(sortOrder);
 
+        // Create the method call expression for sorting
         var methodCallExpression = Expression.Call(
             typeof(Queryable),
             sortingMethod,
-            new Type[] { typeof(T), propertyExpression.Type },
+            new Type[] { typeof(T), lambdaExpression.ReturnType },
             _query.Expression,
-            Expression.Quote(Expression.Lambda(propertyExpression, parameterExpression))
+            Expression.Quote(lambdaExpression)
         );
 
+        // Update the query with the sorting
         _query = _query.Provider.CreateQuery<T>(methodCallExpression);
 
         _sortBy = sortBy;
