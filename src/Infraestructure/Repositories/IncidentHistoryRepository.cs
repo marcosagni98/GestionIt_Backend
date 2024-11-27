@@ -31,7 +31,7 @@ public class IncidentHistoryRepository : IIncidentHistoryRepository
     /// <inheritdoc/>
     public async Task<PaginatedList<IncidentHistory>> GetAsync(QueryFilterDto queryFilter)
     {
-        List<string> searchParameters = new List<string>();
+        List<string> searchParameters = ["ChangedByUser.Name", "ResolutionDetails"];
 
         var totalCount = await CountAsync(queryFilter, searchParameters);
 

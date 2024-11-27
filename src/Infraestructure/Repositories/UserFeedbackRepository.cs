@@ -24,7 +24,7 @@ public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeed
     /// <inheritdoc/>
     public override async Task<PaginatedList<UserFeedback>> GetAsync(QueryFilterDto queryFilter)
     {
-        List<string> searchParameters = [];
+        List<string> searchParameters = ["User.Name", "Feedback"];
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
@@ -55,7 +55,7 @@ public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeed
         {
             queryFilter.OrderBy = queryFilter.OrderBy switch
             {
-                "UserName" => "User.Name",
+                "userName" => "User.Name",
                 _ => queryFilter.OrderBy
             };
         }
