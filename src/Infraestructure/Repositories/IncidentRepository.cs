@@ -68,7 +68,13 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public override async Task<PaginatedList<Incident>> GetAsync(QueryFilterDto queryFilter)
     {
-        List<string> searchParameters = [];
+        List<string> searchParameters = [
+            "Title",
+            "Description",
+            "User.Name",
+            "Technician.Name"
+        ];
+
         GetCorrectQueryFilterOrderBy(queryFilter);
 
         IQueryable<Incident> query = _dbSet.Where(x => (x.Status != Status.Completed && x.Status != Status.Closed)).Include(i => i.User)
@@ -133,7 +139,12 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public async Task<PaginatedList<Incident>> GetHistoricAsync(QueryFilterDto queryFilter)
     {
-        List<string> searchParameters = [];
+        List<string> searchParameters = [
+             "Title",
+            "Description",
+            "User.Name",
+            "Technician.Name"
+         ];
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
@@ -249,7 +260,12 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public async Task<PaginatedList<Incident>> GetIncidentsOfUserAsync(QueryFilterDto queryFilter, long userId)
     {
-        List<string> searchParameters = [];
+        List<string> searchParameters = [
+            "Title",
+            "Description",
+            "User.Name",
+            "Technician.Name"
+        ];
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
@@ -274,7 +290,13 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public async Task<PaginatedList<Incident>> GetByPriorityAsync(QueryFilterDto queryFilter, Priority priority)
     {
-        List<string> searchParameters = [];
+        List<string> searchParameters = [
+            "Title",
+            "Description",
+            "User.Name",
+            "Technician.Name"
+        ];
+
         GetCorrectQueryFilterOrderBy(queryFilter);
 
         var baseQuery = _dbSet.Where(x => (x.Priority == priority))
@@ -297,7 +319,12 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public async Task<PaginatedList<Incident>> GetIncidentsByPriorityUserAsync(QueryFilterDto queryFilter, Priority priority, long userId)
     {
-        List<string> searchParameters = [];
+        List<string> searchParameters = [
+            "Title",
+            "Description",
+            "User.Name",
+            "Technician.Name"
+        ];
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
