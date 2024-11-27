@@ -40,9 +40,7 @@ public class QueryFilterBuilder<T>
 
         var parameterExpression = Expression.Parameter(typeof(T), "x");
 
-        var propertiesToFilter = (filterParameterNames == null || filterParameterNames.Count == 0)
-        ? typeof(T).GetProperties().Select(p => p.Name).ToList()
-        : filterParameterNames;
+        var propertiesToFilter = GetPropertiesToFilter<T>(filterParameterNames);
 
         var filterExpressions = CreateFilterExpressions(parameterExpression, propertiesToFilter, value!);
         var combinedExpression = CombineExpression(filterExpressions);
@@ -59,38 +57,81 @@ public class QueryFilterBuilder<T>
     /// <summary>
     /// Validates the provided parameters for the Where method.
     /// </summary>
-    /// <param name="filterParameterNames">A list of property names to filter on</param>
-    /// <exception cref="ArgumentException">Thrown when parameter names are null or empty.</exception>
     /// <exception cref="ArgumentNullException">Thrown when filter value is null or empty.</exception>
     private void ValidateParemeters(object? value)
     {
-        if (string.IsNullOrEmpty(value?.ToString()))
+        if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
         {
             throw new ArgumentNullException(nameof(value), "Filter value cannot be null or empty.");
         }
     }
 
     /// <summary>
+    /// Dynamically retrieves properties to filter based on input or all properties of the type
+    /// </summary>
+    /// <param name="filterParameterNames">Optional list of specific properties to filter</param>
+    /// <returns>List of property names to filter</returns>
+    private List<string> GetPropertiesToFilter<TEntity>(List<string>? filterParameterNames)
+    {
+        // If no properties specified, get all string and convertible to string properties
+        if (filterParameterNames == null || filterParameterNames.Count == 0)
+        {
+            return typeof(TEntity)
+                .GetProperties()
+                .Where(p =>
+                    p.PropertyType == typeof(string) ||
+                    p.PropertyType.IsPrimitive ||
+                    p.PropertyType == typeof(decimal) ||
+                    p.PropertyType == typeof(DateTime))
+                .Select(p => p.Name)
+                .ToList();
+        }
+
+        return filterParameterNames;
+    }
+
+    /// <summary>
     /// Creates filter expressions for the specified property names and filter value.
     /// </summary>
-    /// <param name="parameterExpression">The parameter expression representing the object being queried.</param>
-    /// <param name="filterParameterNames">The property names to filter on.</param>
-    /// <param name="value">The filter value.</param>
     /// <returns>A list of combined filter expressions.</returns>
-    private List<Expression> CreateFilterExpressions(ParameterExpression parameterExpression, List<string> filterParameterNames, object value)
+    private List<Expression> CreateFilterExpressions(
+        ParameterExpression parameterExpression,
+        List<string> filterParameterNames,
+        object value)
     {
         var orExpressions = new List<Expression>();
-        var filterValue = value.ToString();
+        var filterValue = value.ToString()?.ToLower();
         var containsMethod = GetContainsMethod();
 
         foreach (var filterParameterName in filterParameterNames)
         {
-            var propertyExpression = Expression.Property(parameterExpression, filterParameterName);
+            // Handle nested properties
+            var propertyExpression = GetNestedPropertyExpression(parameterExpression, filterParameterName);
+
+            // Create case-insensitive contains expression
             var containsExpression = CreateContainsExpression(propertyExpression, containsMethod, filterValue);
+
             orExpressions.Add(containsExpression);
         }
 
         return orExpressions;
+    }
+
+    /// <summary>
+    /// Supports nested property navigation
+    /// </summary>
+    private Expression GetNestedPropertyExpression(
+        ParameterExpression parameterExpression,
+        string propertyPath)
+    {
+        Expression propertyExpression = parameterExpression;
+
+        foreach (var memberName in propertyPath.Split('.'))
+        {
+            propertyExpression = Expression.Property(propertyExpression, memberName);
+        }
+
+        return propertyExpression;
     }
 
     /// <summary>
@@ -118,18 +159,42 @@ public class QueryFilterBuilder<T>
 
 
     /// <summary>
-    /// Creates a 'Contains' expression for a given property and filter value.
+    /// Creates a 'Contains' expression with case-insensitive comparison
     /// </summary>
-    /// <param name="propertyExpression">The property expression to apply the Contains method to.</param>
-    /// <param name="containsMethod">The MethodInfo for the Contains method.</param>
-    /// <param name="filterValue">The value to filter by.</param>
-    /// <returns>A contains expression for the property.</returns>
-    private Expression CreateContainsExpression(Expression propertyExpression, MethodInfo containsMethod, string filterValue)
+    private Expression CreateContainsExpression(
+        Expression propertyExpression,
+        MethodInfo containsMethod,
+        string? filterValue)
     {
-        return propertyExpression.Type == typeof(string)
-            ? Expression.Call(propertyExpression, containsMethod, Expression.Constant(filterValue))
-            : Expression.Call(Expression.Convert(propertyExpression, typeof(string)), containsMethod, Expression.Constant(filterValue));
+        // Handle null values
+        if (filterValue == null)
+        {
+            return Expression.Constant(false);
+        }
+
+        // For string properties
+        if (propertyExpression.Type == typeof(string))
+        {
+            // Case-insensitive contains
+            return Expression.Call(
+                Expression.Call(propertyExpression,
+                    typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
+                containsMethod,
+                Expression.Constant(filterValue)
+            );
+        }
+
+        // For non-string properties, convert to string first
+        return Expression.Call(
+            Expression.Call(
+                Expression.Convert(propertyExpression, typeof(string)),
+                typeof(string).GetMethod("ToLower", Type.EmptyTypes)!
+            ),
+            containsMethod,
+            Expression.Constant(filterValue)
+        );
     }
+
     #endregion
 
 
