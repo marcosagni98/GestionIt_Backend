@@ -55,7 +55,7 @@ public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeed
         {
             queryFilter.OrderBy = queryFilter.OrderBy switch
             {
-                "UserName" => "User.Name",
+                "userName" => "User.Name",
                 _ => queryFilter.OrderBy
             };
         }

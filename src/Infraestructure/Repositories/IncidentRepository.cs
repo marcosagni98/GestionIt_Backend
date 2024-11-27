@@ -109,10 +109,10 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
         {
             queryFilter.OrderBy = queryFilter.OrderBy switch
             {
-                "UserName" => "User.Name",
-                "UserId" => "User.Id",
-                "TechnicianName" => "Technician.Name",
-                "TechnicianId" => "Technician.Id",
+                "userName" => "User.Name",
+                "userId" => "User.Id",
+                "technicianName" => "Technician.Name",
+                "technicianId" => "Technician.Id",
                 _ => queryFilter.OrderBy
             };
         }
