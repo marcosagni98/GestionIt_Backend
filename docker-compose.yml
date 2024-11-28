@@ -1,4 +1,14 @@
 services:
+    
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/data
+    
+        
   apidb:
     container_name: gestionIt_db
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -51,6 +61,9 @@ services:
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
       - BASE_URL=${BASE_URL}
       - ASPNETCORE_ENVIRONMENT=Development
+
 volumes:
   db_data:
+  ollama-data:
+    driver: local  
 
