@@ -44,7 +44,7 @@ services:
     restart: always
   
   api:
-    image: 840110/gestionit_api:IA
+    image: 840110/gestionit_api:latest
     build:
       context: .
       dockerfile: src/API/Dockerfile
