@@ -1,4 +1,16 @@
 services:
+    
+  ollama:
+    image: 840110/gestionit_ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/data
+    restart: always
+
+    
+        
   apidb:
     container_name: gestionIt_db
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -32,7 +44,7 @@ services:
     restart: always
   
   api:
-    image: 840110/gestionit_api:latest
+    image: 840110/gestionit_api:IA
     build:
       context: .
       dockerfile: src/API/Dockerfile
@@ -51,6 +63,9 @@ services:
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
       - BASE_URL=${BASE_URL}
       - ASPNETCORE_ENVIRONMENT=Development
+
 volumes:
   db_data:
+  ollama-data:
+    driver: local  
 
