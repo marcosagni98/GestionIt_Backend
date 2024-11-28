@@ -1,13 +1,14 @@
 services:
     
   ollama:
-    image: ollama/ollama:latest
+    image: 840110/gestionit_ollama:latest
     container_name: ollama
     ports:
       - "11434:11434"
     volumes:
       - ollama-data:/data
-    command: ["ollama", "run", "llama3.2:1b"]
+    restart: always
+
     
         
   apidb:
@@ -43,7 +44,7 @@ services:
     restart: always
   
   api:
-    image: 840110/gestionit_api:latest
+    image: 840110/gestionit_api:IA
     build:
       context: .
       dockerfile: src/API/Dockerfile
