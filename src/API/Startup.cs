@@ -145,6 +145,7 @@ public class Startup
         services.AddScoped<IWorkLogService, WorkLogService>();
         services.AddScoped<IStatisticsService, StatisticsService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddHttpClient<IOllamaService, OllamaService>();
         services.AddScoped<IJwt, Jwt>();
     }
 
