@@ -299,7 +299,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
-        var baseQuery = _dbSet.Where(x => (x.Priority == priority))
+        var baseQuery = _dbSet.Where(x => (x.Priority == priority && (x.Status != Status.Completed && x.Status != Status.Closed)))
             .Include(i => i.User)
             .Include(i => i.Technician);
 
@@ -307,9 +307,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         var query = new QueryFilterBuilder<Incident>(baseQuery)
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build()
-            .Include(i => i.User)
-            .Include(i => i.Technician);
+            .Build();
 
         var items = await query.ToListAsync();
 
@@ -328,7 +326,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
-        var baseQuery = _dbSet.Where(x => (x.Priority == priority) )
+        var baseQuery = _dbSet.Where(x => (x.Priority == priority && (x.Status != Status.Completed && x.Status != Status.Closed)) )
             .Include(i => i.User)
             .Include(i => i.Technician); ;
 
