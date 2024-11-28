@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Services;
+﻿using Application.Dtos.Ollama;
+using Application.Interfaces.Services;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
@@ -16,55 +17,17 @@ public class OllamaService : IOllamaService
         _httpClient.Timeout = TimeSpan.FromMinutes(2);
     }
 
-    public async Task<string> GenerateResponseAsync(string prompt)
-    {
-        try
-        {
-            var request = new
-            {
-                model = "llama3.2:1b",  // Usa el nombre exacto del modelo que mostraste
-                prompt = prompt,
-                stream = false
-            };
-
-            _logger.LogInformation($"Sending request to Ollama with prompt: {prompt}");
-
-            var response = await _httpClient.PostAsJsonAsync("/api/generate", request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                _logger.LogError($"Ollama API Error: {response.StatusCode}. Content: {errorContent}");
-                throw new HttpRequestException($"Error: {response.StatusCode}. Content: {errorContent}");
-            }
-
-            var responseContent = await response.Content.ReadAsStringAsync();
-            _logger.LogInformation($"Received response from Ollama: {responseContent}");
-
-            var result = JsonConvert.DeserializeObject<OllamaResponse>(responseContent);
-            return result?.Response ?? string.Empty;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error connecting to Ollama: {ex.Message}");
-            throw;
-        }
-    }
-
-    public async Task<string> GenerateImprovedDescriptionAsync(string title, string? currentDescription)
+    public async Task<ImproveDescriptionResponseDto> GenerateImprovedDescriptionAsync(string title, string? currentDescription)
     {
         // Prompt específico para generar descripciones de incidencias
         string prompt = $@"Estás ayudando a un sistema de gestión de incidencias de TI a crear una descripción más detallada y precisa de los problemas reportados por los usuarios.
-
-            Título de la incidencia: '{title}'
-            Descripción actual: '{currentDescription ?? "No hay descripción inicial"}'
-
-           Genera una descripción mejorada que sea:
-            - Clara, técnica y con un mínimo de 50 palabras.
-            - Enfocada en proporcionar detalles útiles al equipo de soporte técnico.
-            - Escrita desde la perspectiva del usuario, utilizando un lenguaje natural y describiendo el problema, de una manera profesional y tecnica.
-
-            Devuelve SOLO la descripción mejorada, sin ningún texto adicional.";
+        Título de la incidencia: '{title}'
+        Descripción actual: '{currentDescription ?? "No hay descripción inicial"}'
+       Genera una descripción mejorada que sea:
+        - Clara, técnica y con un mínimo de 50 palabras.
+        - Enfocada en proporcionar detalles útiles al equipo de soporte técnico.
+        - Escrita desde la perspectiva del usuario, utilizando un lenguaje natural y describiendo el problema, de una manera profesional y tecnica.
+        Devuelve SOLO la descripción mejorada, sin ningún texto adicional.";
 
         var request = new
         {
@@ -79,8 +42,49 @@ public class OllamaService : IOllamaService
         var responseContent = await response.Content.ReadAsStringAsync();
         var result = JsonConvert.DeserializeObject<OllamaResponse>(responseContent);
 
-        // Limpiar la descripción de posibles prefijos o elementos no deseados
-        return result?.Response?.Trim() ?? string.Empty;
+        // Limpiar la descripción
+        string cleanedDescription = CleanDescription(result?.Response ?? string.Empty);
+
+        return new ImproveDescriptionResponseDto
+        {
+            ImproveDescription = cleanedDescription
+        };
+    }
+
+    // Método privado para limpiar la descripción
+    private string CleanDescription(string rawDescription)
+    {
+        // Eliminar prefijos comunes
+        string[] prefixesToRemove = new[]
+        {
+        "Descripción:",
+        "Descripción mejorada:",
+        "Respuesta:",
+        "Generando descripción:",
+        "Informe técnico:"
+    };
+
+        string cleanedText = rawDescription;
+
+        // Eliminar prefijos
+        foreach (var prefix in prefixesToRemove)
+        {
+            if (cleanedText.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                cleanedText = cleanedText.Substring(prefix.Length).Trim();
+            }
+        }
+
+        // Eliminar comillas al inicio y al final si existen
+        cleanedText = cleanedText.Trim('"', '\'');
+
+        // Asegurar que tenga al menos 20 palabras
+        if (cleanedText.Split(' ').Length < 20)
+        {
+            cleanedText += " [Descripción generada requiere revisión adicional]";
+        }
+
+        return cleanedText.Trim();
     }
 
     private class OllamaResponse

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.Dtos.Ollama;
 
 namespace Application.Interfaces.Services;
 
 public interface IOllamaService
 {
-    Task<string> GenerateResponseAsync(string prompt);
 
-    public Task<string> GenerateImprovedDescriptionAsync(string title, string? currentDescription);
-    
+    public Task<ImproveDescriptionResponseDto> GenerateImprovedDescriptionAsync(string title, string? currentDescription);
 }
