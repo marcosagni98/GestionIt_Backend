@@ -25,7 +25,7 @@ services:
     - db_data:/var/opt/mssql
 
   web:
-    image: 840110/gestionit_front:latest
+    image: 840110/gestionit_front:IA
     build:
       context: ../SISINF/
       dockerfile: ../SISINF/Dockerfile
@@ -44,7 +44,7 @@ services:
     restart: always
   
   api:
-    image: 840110/gestionit_api:latest
+    image: 840110/gestionit_api:IA
     build:
       context: .
       dockerfile: src/API/Dockerfile
