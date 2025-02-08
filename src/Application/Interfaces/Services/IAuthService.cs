@@ -1,9 +1,6 @@
 ﻿using Application.Dtos.Auth.Requests;
 using Application.Dtos.Auth.Response;
-using Application.Dtos.CRUD.Users.Request;
-using Application.Dtos.CRUD.Users;
 using FluentResults;
-using Domain.Interfaces;
 using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CommonDtos;
 
@@ -12,7 +9,7 @@ namespace Application.Interfaces.Services;
 /// <summary>
 /// Auth Service Interface
 /// </summary>
-public interface IAuthService : IDisposable
+public interface IAuthService
 {
     /// <summary>
     /// Logs in the user asynchronously

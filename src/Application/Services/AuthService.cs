@@ -12,7 +12,6 @@ using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Utils;
 using FluentResults;
-using FluentValidation;
 
 namespace Application.Services;
 
@@ -25,6 +24,7 @@ public class AuthService : IAuthService
     private readonly IMapper _mapper;
     private readonly IJwt _jwt;
     private readonly IEmailSender _emailSender;
+    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AuthService"/> class.
@@ -33,48 +33,14 @@ public class AuthService : IAuthService
     /// <param name="mapper">The mapper for object mapping.</param>
     /// <param name="jwt">The jwt service.</param>
     /// <param name="emailSender">The email sender.</param>
-    public AuthService(IUnitOfWork unitOfWork, IMapper mapper, IJwt jwt, IEmailSender emailSender)
+    public AuthService(IUnitOfWork unitOfWork, IMapper mapper, IJwt jwt, IEmailSender emailSender, IUserRepository userRepository)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _jwt = jwt;
         _emailSender = emailSender;
+        _userRepository = userRepository;
     }
-
-    #region Dispose
-    private bool disposed = false;
-
-    /// <summary>
-    /// Releases the unmanaged resources used by the service and optionally releases
-    /// the managed resources if disposing is true.
-    /// </summary>
-    /// <param name="disposing">Indicates whether the method was called directly
-    /// or from a finalizer. If true, the method has been called directly
-    /// and managed resources should be disposed. If false, it was called by the
-    /// runtime from inside the finalizer and only unmanaged resources should be disposed.</param>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposed)
-        {
-            if (disposing)
-            {
-                _unitOfWork.Dispose();
-            }
-        }
-        disposed = true;
-    }
-
-    /// <summary>
-    /// Releases all resources used by the service.
-    /// This method is called by consumers of the service when they are done
-    /// using it to free resources promptly.
-    /// </summary>
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-    #endregion
 
     /// <inheritdoc/>
     public async Task<Result<LoginResponseDto>> LoginAsync(LoginRequestDto loginRequestDto)
@@ -87,12 +53,12 @@ public class AuthService : IAuthService
         }
 
         var hashedPassword = PasswordHasher.HashPassword(loginRequestDto.Password);
-        if (!await _unitOfWork.UserRepository.LoginAsync(loginRequestDto.Email, hashedPassword))
-
+        if (!await _userRepository.LoginAsync(loginRequestDto.Email, hashedPassword))
         {
             return Result.Fail<LoginResponseDto>("Email or password incorrect.");
         }
-        User? user = await _unitOfWork.UserRepository.GetUserByEmailAsync(loginRequestDto.Email);
+        
+        User? user = await _userRepository.GetUserByEmailAsync(loginRequestDto.Email);
         if (user == null)
         {
             return Result.Fail<LoginResponseDto>("User does not exists.");
@@ -111,21 +77,21 @@ public class AuthService : IAuthService
         }
 
         var user = _mapper.Map<User>(registerRequestDto);
-        if (await _unitOfWork.UserRepository.CountAsync() == 0)
+        if (await _userRepository.CountAsync() == 0)
         {
             user.UserType = UserType.Admin;
         }
         else
         {
-            var result = await _unitOfWork.UserRepository.EmailExistsAsync(user.Email);
+            var result = await _userRepository.EmailExistsAsync(user.Email);
             if (result)
             {
                 return Result.Fail<CreatedResponseDto>("Email already exists.");
             }
         }
         user.Password = PasswordHasher.HashPassword(registerRequestDto.Password);
-        await _unitOfWork.UserRepository.AddAsync(user);
-        await _unitOfWork.SaveChangesAsync();
+        await _userRepository.AddAsync(user);
+        await _unitOfWork.CommitAsync();
 
         return Result.Ok(new CreatedResponseDto(user.Id));
     }
@@ -140,11 +106,11 @@ public class AuthService : IAuthService
             return Result.Fail<SuccessResponseDto>(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
         }
 
-        if (!await _unitOfWork.UserRepository.EmailExistsAsync(forgotPasswordRequestDto.Email))
+        if (!await _userRepository.EmailExistsAsync(forgotPasswordRequestDto.Email))
         {
             return Result.Fail<SuccessResponseDto>("Email does not exists.");
         }
-        User? user = await _unitOfWork.UserRepository.GetUserByEmailAsync(forgotPasswordRequestDto.Email);
+        User? user = await _userRepository.GetUserByEmailAsync(forgotPasswordRequestDto.Email);
         if (user == null)
         {
             return Result.Fail<SuccessResponseDto>("User does not exists.");
@@ -164,14 +130,14 @@ public class AuthService : IAuthService
             return Result.Fail<SuccessResponseDto>(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
         }
 
-        if (!await _unitOfWork.UserRepository.EmailExistsAsync(resetPasswordRequestDto.Email))
+        if (!await _userRepository.EmailExistsAsync(resetPasswordRequestDto.Email))
         {
             return Result.Fail<SuccessResponseDto>("User not found.");
         }
-        User? user = await _unitOfWork.UserRepository.GetUserByEmailAsync(resetPasswordRequestDto.Email);
+        User? user = await _userRepository.GetUserByEmailAsync(resetPasswordRequestDto.Email);
         user.Password = PasswordHasher.HashPassword(resetPasswordRequestDto.Password);
-        _unitOfWork.UserRepository.Update(user);
-        await _unitOfWork.SaveChangesAsync();
+        _userRepository.Update(user);
+        await _unitOfWork.CommitAsync();
 
         return Result.Ok(new SuccessResponseDto());
     }

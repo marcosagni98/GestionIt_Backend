@@ -20,59 +20,26 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IUserFeedbackRepository _userFeedbackRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserFeedbackService"/> class.
         /// </summary>
         /// <param name="unitOfWork">The unit of work for database operations.</param>
         /// <param name="mapper">The mapper for object mapping.</param>
-        public UserFeedbackService(IUnitOfWork unitOfWork, IMapper mapper)
+        public UserFeedbackService(IUnitOfWork unitOfWork, IMapper mapper, IUserFeedbackRepository userFeedbackRepository)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userFeedbackRepository = userFeedbackRepository;
         }
-        
-        #region Dispose
-        private bool disposed = false;
-
-        /// <summary>
-        /// Releases the unmanaged resources used by the service and optionally releases
-        /// the managed resources if disposing is true.
-        /// </summary>
-        /// <param name="disposing">Indicates whether the method was called directly
-        /// or from a finalizer. If true, the method has been called directly
-        /// and managed resources should be disposed. If false, it was called by the
-        /// runtime from inside the finalizer and only unmanaged resources should be disposed.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
-                if (disposing)
-                {
-                    _unitOfWork.Dispose();
-                }
-            }
-            disposed = true;
-        }
-
-        /// <summary>
-        /// Releases all resources used by the service.
-        /// This method is called by consumers of the service when they are done
-        /// using it to free resources promptly.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
 
         /// <inheritdoc/>
         public async Task<Result<CreatedResponseDto>> AddAsync(UserFeedbackAddRequestDto addRequestDto)
         {
             var userFeedback = _mapper.Map<UserFeedback>(addRequestDto);
-            await _unitOfWork.UserFeedbackRepository.AddAsync(userFeedback);
-            await _unitOfWork.SaveChangesAsync();
+            await _userFeedbackRepository.AddAsync(userFeedback);
+            await _unitOfWork.CommitAsync();
 
             return Result.Ok(new CreatedResponseDto (userFeedback.Id));
         }
@@ -80,14 +47,14 @@ namespace Application.Services
         /// <inheritdoc/>
         public async Task<Result<SuccessResponseDto>> DeleteAsync(long id)
         {
-            var exists = await _unitOfWork.UserFeedbackRepository.ExistsAsync(id);
+            var exists = await _userFeedbackRepository.ExistsAsync(id);
             if (!exists)
             {
                 return Result.Fail<SuccessResponseDto>("User feedback not found.");
             }
 
-            await _unitOfWork.UserFeedbackRepository.DeleteAsync(id);
-            await _unitOfWork.SaveChangesAsync();
+            await _userFeedbackRepository.DeleteAsync(id);
+            await _unitOfWork.CommitAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "User feedback deleted successfully." });
         }
@@ -95,7 +62,7 @@ namespace Application.Services
         /// <inheritdoc/>
         public async Task<Result<PaginatedList<UserFeedbackDto>>> GetAsync(QueryFilterDto queryFilter)
         {
-            var paginatedList = await _unitOfWork.UserFeedbackRepository.GetAsync(queryFilter);
+            var paginatedList = await _userFeedbackRepository.GetAsync(queryFilter);
 
             if (paginatedList == null || paginatedList.Items == null)
             {
@@ -110,7 +77,7 @@ namespace Application.Services
         /// <inheritdoc/>
         public async Task<Result<UserFeedbackDto>> GetByIdAsync(long id)
         {
-            var userFeedback = await _unitOfWork.UserFeedbackRepository.GetByIdAsync(id);
+            var userFeedback = await _userFeedbackRepository.GetByIdAsync(id);
             if (userFeedback == null)
             {
                 return Result.Fail<UserFeedbackDto>("User feedback not found.");
@@ -123,7 +90,7 @@ namespace Application.Services
         /// <inheritdoc/>
         public async Task<Result<UserFeedbackDto>> GetByIncidentIdAsync(long incident)
         {
-            var userFeedback = await _unitOfWork.UserFeedbackRepository.GetByIncidentIdAsync(incident);
+            var userFeedback = await _userFeedbackRepository.GetByIncidentIdAsync(incident);
             if (userFeedback == null)
             {
                 return Result.Fail<UserFeedbackDto>("User feedback not found.");
@@ -136,15 +103,15 @@ namespace Application.Services
         /// <inheritdoc/>
         public async Task<Result<SuccessResponseDto>> UpdateAsync(long id, UserFeedbackUpdateRequestDto updateRequestDto)
         {
-            var userFeedback = await _unitOfWork.UserFeedbackRepository.GetByIdAsync(id);
+            var userFeedback = await _userFeedbackRepository.GetByIdAsync(id);
             if (userFeedback == null)
             {
                 return Result.Fail<SuccessResponseDto>("User feedback not found.");
             }
 
             _mapper.Map(updateRequestDto, userFeedback);
-            _unitOfWork.UserFeedbackRepository.Update(userFeedback);
-            await _unitOfWork.SaveChangesAsync();
+            _userFeedbackRepository.Update(userFeedback);
+            await _unitOfWork.CommitAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "User feedback updated successfully." });
         }

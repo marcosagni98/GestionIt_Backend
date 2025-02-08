@@ -9,9 +9,9 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Utils;
-using Infraestructure;
-using Infraestructure.Repositories;
-using Infraestructure.Utils;
+using Infrastructure;
+using Infrastructure.Repositories;
+using Infrastructure.Utils;
 using log4net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -131,7 +131,7 @@ public class Startup
         services.AddScoped<IUserFeedbackRepository, UserFeedbackRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IWorkLogRepository, WorkLogsRepository>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUnitOfWork, EfUnitOfWork>();
         services.AddTransient<IEmailSender,EmailSender>();
     }
 

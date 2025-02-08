@@ -8,7 +8,7 @@ namespace Application.Interfaces.Services;
 /// <summary>
 /// Interface for message service operations
 /// </summary>
-public interface IMessageService : IDisposable
+public interface IMessageService
 {
     /// <summary>
     /// Adds a new entity asynchronously.

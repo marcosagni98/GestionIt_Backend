@@ -4,10 +4,10 @@ using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces.Repositories;
-using Infraestructure.Helpers;
+using Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infraestructure.Repositories;
+namespace Infrastructure.Repositories;
 
 public class UserRepository : GenericRepository<User>, IUserRepository
 {
@@ -15,7 +15,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     private readonly DbSet<User> _dbSet;
     private readonly IMapper _mapper;
 
-    public UserRepository(AppDbContext context, IMapper mapper) : base(context, mapper)
+    public UserRepository(AppDbContext context, IMapper mapper) : base(context)
     {
         _dbContext = context;
         _mapper = mapper;

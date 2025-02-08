@@ -3,10 +3,10 @@ using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
-using Infraestructure.Helpers;
+using Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infraestructure.Repositories;
+namespace Infrastructure.Repositories;
 
 public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeedbackRepository
 {
@@ -14,7 +14,7 @@ public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeed
     private readonly DbSet<UserFeedback> _dbSet;
     private readonly IMapper _mapper;
 
-    public UserFeedbackRepository(AppDbContext context, IMapper mapper) : base(context, mapper)
+    public UserFeedbackRepository(AppDbContext context, IMapper mapper) : base(context)
     {
         _dbContext = context;
         _mapper = mapper;

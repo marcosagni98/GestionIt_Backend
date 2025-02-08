@@ -1,13 +1,9 @@
 ﻿using Domain.Entities;
-using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
-using System.Data.Common;
 
-namespace Infraestructure;
+namespace Infrastructure;
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Incident> Incidents { get; set; }
@@ -15,10 +11,6 @@ public class AppDbContext : DbContext
     public virtual DbSet<Message> Messages { get; set; }
     public virtual DbSet<WorkLog> WorkLogs { get; set; }
     public virtual DbSet<UserFeedback> UserFeedbacks { get; set; }
-
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

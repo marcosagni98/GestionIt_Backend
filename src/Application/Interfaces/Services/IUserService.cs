@@ -9,7 +9,7 @@ namespace Application.Interfaces.Services;
 /// <summary>
 /// User Service Interface
 /// </summary>
-public interface IUserService : IBaseService<UserDto, UserAddRequestDto, UserUpdateRequestDto>, IDisposable
+public interface IUserService : IBaseService<UserDto, UserAddRequestDto, UserUpdateRequestDto>
 {
     /// <summary>
     /// Verifies the specified user ID and returns the corresponding user ID if valid.

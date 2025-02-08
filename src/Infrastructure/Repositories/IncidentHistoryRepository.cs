@@ -2,12 +2,11 @@
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
-using Domain.Entities.Common;
 using Domain.Interfaces.Repositories;
-using Infraestructure.Helpers;
+using Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infraestructure.Repositories;
+namespace Infrastructure.Repositories;
 
 public class IncidentHistoryRepository : IIncidentHistoryRepository
 {

@@ -7,7 +7,7 @@ namespace Application.Interfaces.Services;
 /// <summary>
 /// Retrieves user feedback by incident ID.
 /// </summary>
-public interface IUserFeedbackService : IBaseService<UserFeedbackDto, UserFeedbackAddRequestDto, UserFeedbackUpdateRequestDto>, IDisposable
+public interface IUserFeedbackService : IBaseService<UserFeedbackDto, UserFeedbackAddRequestDto, UserFeedbackUpdateRequestDto>
 {
     /// <summary>
     /// Retrieves user feedback by incident ID.

@@ -8,7 +8,7 @@ namespace Application.Interfaces.Services;
 /// <summary>
 /// Retrieves a list of work logs associated with a specific incident.
 /// </summary>
-public interface IWorkLogService : IBaseService<WorkLogDto, WorkLogAddRequestDto, WorkLogUpdateRequestDto>, IDisposable
+public interface IWorkLogService : IBaseService<WorkLogDto, WorkLogAddRequestDto, WorkLogUpdateRequestDto>
 {
     /// <summary>
     /// Retrieves a list of work logs associated with a specific incident.

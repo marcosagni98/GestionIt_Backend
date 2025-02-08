@@ -6,7 +6,7 @@ namespace Application.Interfaces.Services;
 /// <summary>
 /// IncidentHistory Service Interface
 /// </summary>
-public interface IIncidentHistoryService : IDisposable
+public interface IIncidentHistoryService
 {
     /// <summary>
     /// Gets a list of incdent history by incident
