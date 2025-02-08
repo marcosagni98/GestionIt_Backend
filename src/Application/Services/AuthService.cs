@@ -91,7 +91,7 @@ public class AuthService : IAuthService
         }
         user.Password = PasswordHasher.HashPassword(registerRequestDto.Password);
         await _userRepository.AddAsync(user);
-        await _unitOfWork.CommitAsync();
+        await _unitOfWork.SaveAsync();
 
         return Result.Ok(new CreatedResponseDto(user.Id));
     }
@@ -137,7 +137,7 @@ public class AuthService : IAuthService
         User? user = await _userRepository.GetUserByEmailAsync(resetPasswordRequestDto.Email);
         user.Password = PasswordHasher.HashPassword(resetPasswordRequestDto.Password);
         _userRepository.Update(user);
-        await _unitOfWork.CommitAsync();
+        await _unitOfWork.SaveAsync();
 
         return Result.Ok(new SuccessResponseDto());
     }

@@ -4,7 +4,7 @@ namespace Infrastructure;
 
 public class EfUnitOfWork(AppDbContext context) : IUnitOfWork
 {
-    public async Task CommitAsync()
+    public async Task SaveAsync()
     {
         await context.SaveChangesAsync();
     }

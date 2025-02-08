@@ -52,7 +52,7 @@ namespace Application.Services
                 }
             }
             await _userRepository.AddAsync(user);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new CreatedResponseDto(user.Id));
         }
@@ -68,7 +68,7 @@ namespace Application.Services
 
             _mapper.Map(updateRequestDto, user);
             _userRepository.Update(user);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "User updated successfully." });
         }
@@ -82,7 +82,7 @@ namespace Application.Services
             }
 
             await _userRepository.DeleteAsync(id);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "User deleted successfully." });
         }
@@ -153,7 +153,7 @@ namespace Application.Services
 
             user.UserType = userType;
             _userRepository.Update(user);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "User type updated successfully." });
         }

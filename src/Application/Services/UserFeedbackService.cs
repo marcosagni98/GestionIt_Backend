@@ -39,7 +39,7 @@ namespace Application.Services
         {
             var userFeedback = _mapper.Map<UserFeedback>(addRequestDto);
             await _userFeedbackRepository.AddAsync(userFeedback);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new CreatedResponseDto (userFeedback.Id));
         }
@@ -54,7 +54,7 @@ namespace Application.Services
             }
 
             await _userFeedbackRepository.DeleteAsync(id);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "User feedback deleted successfully." });
         }
@@ -111,7 +111,7 @@ namespace Application.Services
 
             _mapper.Map(updateRequestDto, userFeedback);
             _userFeedbackRepository.Update(userFeedback);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "User feedback updated successfully." });
         }

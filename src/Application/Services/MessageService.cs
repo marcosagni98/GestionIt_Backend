@@ -38,7 +38,7 @@ namespace Application.Services
         {
             var message = _mapper.Map<Message>(addRequestDto);
             await _messageRepository.AddAsync(message);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new CreatedResponseDto(message.Id));
         }

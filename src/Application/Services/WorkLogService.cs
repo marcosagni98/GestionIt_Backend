@@ -40,7 +40,7 @@ namespace Application.Services
         {
             var workLog = _mapper.Map<WorkLog>(addRequestDto);
             await _workLogRepository.AddAsync(workLog);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new CreatedResponseDto(workLog.Id));
         }
@@ -55,7 +55,7 @@ namespace Application.Services
             }
 
             await _workLogRepository.DeleteAsync(id);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "Work log deleted successfully." });
         }
@@ -99,7 +99,7 @@ namespace Application.Services
 
             _mapper.Map(updateRequestDto, workLog);
             _workLogRepository.Update(workLog);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "Work log updated successfully." });
         }

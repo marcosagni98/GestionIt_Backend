@@ -43,7 +43,7 @@ namespace Application.Services
         {
             var incident = _mapper.Map<Incident>(addRequestDto); 
             await _incidentRepository.AddAsync(incident);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new CreatedResponseDto (incident.Id));
         }
@@ -58,7 +58,7 @@ namespace Application.Services
             }
 
             await _incidentRepository.DeleteAsync(id);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "Incident deleted successfully." });
         }
@@ -131,7 +131,7 @@ namespace Application.Services
 
             _mapper.Map(updateRequestDto, incident);
             _incidentRepository.Update(incident);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
         }
@@ -158,7 +158,7 @@ namespace Application.Services
 
             await _incidentRepository.UpdateIncidentStatusAsync(id, statusRequest.StatusId);
             await _incidentHistoryRepository.AddAsync(incidentHistory);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
         }
@@ -202,7 +202,7 @@ namespace Application.Services
             }
 
             _incidentRepository.Update(incident);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
             
             return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
         }
@@ -216,7 +216,7 @@ namespace Application.Services
             UpdateValuesOfIncident(updateTitleDescriptionRequestDto, incident);
 
             _incidentRepository.Update(incident);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
         }
@@ -276,7 +276,7 @@ namespace Application.Services
             }
 
             await _incidentRepository.UpdateIncidentPriorityAsync(id, priorityRequestDto.PriorityId);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
         }
