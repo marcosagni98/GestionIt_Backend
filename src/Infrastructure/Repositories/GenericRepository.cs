@@ -1,25 +1,21 @@
-﻿using AutoMapper;
-using Domain.Entities.Common;
+﻿using Domain.Entities.Common;
 using Microsoft.EntityFrameworkCore;
-using Infraestructure.Helpers;
 using Domain.Dtos.CommonDtos.Request;
-using Domain;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Interfaces.Repositories;
+using Infrastructure.Helpers;
 
-namespace Infraestructure.Repositories;
+namespace Infrastructure.Repositories;
 
 public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
 {
     private readonly AppDbContext _dbContext;
     private readonly DbSet<TEntity> _dbSet;
-    private readonly IMapper _mapper;
 
-    public GenericRepository(AppDbContext dbContext, IMapper mapper)
+    public GenericRepository(AppDbContext dbContext)
     {
         _dbContext = dbContext;
         _dbSet = _dbContext.Set<TEntity>();
-        _mapper = mapper;
     }
 
     /// <inheritdoc/>

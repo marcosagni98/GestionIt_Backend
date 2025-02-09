@@ -3,7 +3,7 @@ using Domain.Entities.Common;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Infraestructure.Helpers;
+namespace Infrastructure.Helpers;
 
 public class QueryFilterBuilder<T>
 {

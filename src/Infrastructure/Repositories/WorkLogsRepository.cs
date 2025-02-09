@@ -3,10 +3,10 @@ using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
-using Infraestructure.Helpers;
+using Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infraestructure.Repositories;
+namespace Infrastructure.Repositories;
 
 public class WorkLogsRepository : GenericRepository<WorkLog>, IWorkLogRepository
 {
@@ -14,7 +14,7 @@ public class WorkLogsRepository : GenericRepository<WorkLog>, IWorkLogRepository
     private DbSet<WorkLog> _dbSet;
     private readonly IMapper _mapper;
 
-    public WorkLogsRepository(AppDbContext context, IMapper mapper) : base(context, mapper)
+    public WorkLogsRepository(AppDbContext context, IMapper mapper) : base(context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _dbSet = _context.Set<WorkLog>();

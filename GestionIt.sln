@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "src\API\API.csproj",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "src\Application\Application.csproj", "{3E8EEF88-7127-43D0-B76C-04A201CA28BC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infraestructure", "src\Infraestructure\Infraestructure.csproj", "{2BBC378B-37CA-45AE-9528-106F240F4B01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{2BBC378B-37CA-45AE-9528-106F240F4B01}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Domain\Domain.csproj", "{1C06E8D1-6E25-4CED-8DF6-B06CF2FD76F4}"
 EndProject

@@ -1,21 +1,18 @@
-﻿using AutoMapper;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infraestructure.Repositories;
+namespace Infrastructure.Repositories;
 
 public class MessageRepository : GenericRepository<Message>, IMessageRepository
 {
 
     private readonly AppDbContext _dbContext;
     private readonly DbSet<Message> _dbSet;
-    private readonly IMapper _mapper;
 
-    public MessageRepository(AppDbContext context, IMapper mapper) : base(context, mapper)
+    public MessageRepository(AppDbContext context) : base(context)
     {
         _dbContext = context;
-        _mapper = mapper;
         _dbSet = _dbContext.Set<Message>();
     }
 

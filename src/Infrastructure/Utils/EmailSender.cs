@@ -1,9 +1,8 @@
 ﻿using Domain.Interfaces.Utils;
 using System.Net;
 using System.Net.Mail;
-using System.Threading.Tasks;
 
-namespace Infraestructure.Utils;
+namespace Infrastructure.Utils;
 
 public class EmailSender : IEmailSender
 {

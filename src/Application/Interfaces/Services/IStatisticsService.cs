@@ -6,7 +6,7 @@ namespace Application.Interfaces.Services;
 /// <summary>
 /// Statistics Service Interface
 /// </summary>
-public interface IStatisticsService : IDisposable
+public interface IStatisticsService
 {
     /// <summary>
     /// Gets the count and severity of active incidents.

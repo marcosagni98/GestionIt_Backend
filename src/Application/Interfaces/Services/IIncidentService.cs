@@ -11,7 +11,7 @@ namespace Application.Interfaces.Services;
 /// <summary>
 /// incident Service Interface
 /// </summary>
-public interface IIncidentService : IBaseService<IncidentDto, IncidentAddRequestDto, IncidentUpdateRequestDto>, IDisposable
+public interface IIncidentService : IBaseService<IncidentDto, IncidentAddRequestDto, IncidentUpdateRequestDto>
 {
     /// <summary>
     /// Updates the status of an incident.

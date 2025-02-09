@@ -2,14 +2,12 @@ using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
-using Domain.Entities.Common;
 using Domain.Enums;
 using Domain.Interfaces.Repositories;
-using FluentResults;
-using Infraestructure.Helpers;
+using Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infraestructure.Repositories;
+namespace Infrastructure.Repositories;
 
 public class IncidentRepository : GenericRepository<Incident>, IIncidentRepository
 {
@@ -17,7 +15,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     private readonly DbSet<Incident> _dbSet;
     private readonly IMapper _mapper;
 
-    public IncidentRepository(AppDbContext context, IMapper mapper) : base(context, mapper)
+    public IncidentRepository(AppDbContext context, IMapper mapper) : base(context)
     {
         _dbContext = context;
         _mapper = mapper;

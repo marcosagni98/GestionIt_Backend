@@ -19,58 +19,28 @@ public class StatisticsService : IStatisticsService
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IUserRepository _userRepository;
+    private readonly IIncidentRepository _incidentRepository;
+    private readonly IUserFeedbackRepository _userFeedbackRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StatisticsService"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work for database operations.</param>
     /// <param name="mapper">The mapper for object mapping.</param>
-    public StatisticsService(IUnitOfWork unitOfWork, IMapper mapper)
+    public StatisticsService(IUnitOfWork unitOfWork, IMapper mapper, IUserRepository userRepository, IIncidentRepository incidentRepository, IUserFeedbackRepository userFeedbackRepository)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _userRepository = userRepository;
+        _incidentRepository = incidentRepository;
+        _userFeedbackRepository = userFeedbackRepository;
     }
-
-    #region Dispose
-    private bool disposed = false;
-
-    /// <summary>
-    /// Releases the unmanaged resources used by the service and optionally releases
-    /// the managed resources if disposing is true.
-    /// </summary>
-    /// <param name="disposing">Indicates whether the method was called directly
-    /// or from a finalizer. If true, the method has been called directly
-    /// and managed resources should be disposed. If false, it was called by the
-    /// runtime from inside the finalizer and only unmanaged resources should be disposed.</param>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposed)
-        {
-            if (disposing)
-            {
-                _unitOfWork.Dispose();
-            }
-        }
-        disposed = true;
-    }
-
-    /// <summary>
-    /// Releases all resources used by the service.
-    /// This method is called by consumers of the service when they are done
-    /// using it to free resources promptly.
-    /// </summary>
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    #endregion
 
     /// <inheritdoc/>
     public async Task<Result<ActiveIncidentsStatsResponseDto>> GetActiveIncidentsSevirityCount(long id)
     {
-        User? user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+        User? user = await _userRepository.GetByIdAsync(id);
         if(user == null)
         {
             return Result.Fail<ActiveIncidentsStatsResponseDto>("User not found");
@@ -80,17 +50,17 @@ public class StatisticsService : IStatisticsService
         double VariationFromLastMonth;
         if (user.UserType == UserType.Admin )
         {
-            lowCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Low);
-            mediumCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Medium);
-            highCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.High);
+            lowCount = await _incidentRepository.CountByPriorityAsync(Priority.Low);
+            mediumCount = await _incidentRepository.CountByPriorityAsync(Priority.Medium);
+            highCount = await _incidentRepository.CountByPriorityAsync(Priority.High);
             totalCount = lowCount + mediumCount + highCount;
             VariationFromLastMonth = await CalculateRatioOfNewIncidentsFromLastMonth();
         }
         else if (user.UserType == UserType.Technician)
         {
-            lowCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Low, id);
-            mediumCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.Medium, id);
-            highCount = await _unitOfWork.IncidentRepository.CountByPriorityAsync(Priority.High, id);
+            lowCount = await _incidentRepository.CountByPriorityAsync(Priority.Low, id);
+            mediumCount = await _incidentRepository.CountByPriorityAsync(Priority.Medium, id);
+            highCount = await _incidentRepository.CountByPriorityAsync(Priority.High, id);
             totalCount = lowCount + mediumCount + highCount;
             VariationFromLastMonth = await CalculateRatioOfNewIncidentsFromLastMonth(id);
         }
@@ -113,8 +83,8 @@ public class StatisticsService : IStatisticsService
         var (startOfLast30Days, endOfLast30Days) = GetDateRange(30, 0);
         var (startOfPrevious30Days, endOfPrevious30Days) = GetDateRange(60, 31);
 
-        int currentMonthIncidents = await _unitOfWork.IncidentRepository.CountAsync(startOfLast30Days, endOfLast30Days, id);
-        int previousMonthIncidents = await _unitOfWork.IncidentRepository.CountAsync(startOfPrevious30Days, endOfPrevious30Days, id);
+        int currentMonthIncidents = await _incidentRepository.CountAsync(startOfLast30Days, endOfLast30Days, id);
+        int previousMonthIncidents = await _incidentRepository.CountAsync(startOfPrevious30Days, endOfPrevious30Days, id);
 
         double VariationFromLastMonth = CalculateChangeRatio(currentMonthIncidents, previousMonthIncidents);
         return VariationFromLastMonth;
@@ -129,8 +99,8 @@ public class StatisticsService : IStatisticsService
         var (startOfLast30Days, endOfLast30Days) = GetDateRange(30, 0);
         var (startOfPrevious30Days, endOfPrevious30Days) = GetDateRange(60, 31);
 
-        int currentMonthIncidents = await _unitOfWork.IncidentRepository.CountAsync(startOfLast30Days, endOfLast30Days);
-        int previousMonthIncidents = await _unitOfWork.IncidentRepository.CountAsync(startOfPrevious30Days, endOfPrevious30Days);
+        int currentMonthIncidents = await _incidentRepository.CountAsync(startOfLast30Days, endOfLast30Days);
+        int previousMonthIncidents = await _incidentRepository.CountAsync(startOfPrevious30Days, endOfPrevious30Days);
 
         double VariationFromLastMonth = CalculateChangeRatio(currentMonthIncidents, previousMonthIncidents);
         return VariationFromLastMonth;
@@ -141,7 +111,7 @@ public class StatisticsService : IStatisticsService
     /// <inheritdoc/>
     public async Task<Result<AverageIncidencesResolutionTimeResponseDto>> GetAverageResolutionTime(long id)
     {
-        User? user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+        User? user = await _userRepository.GetByIdAsync(id);
         if (user == null)
         {
             return Result.Fail<AverageIncidencesResolutionTimeResponseDto>("User not found");
@@ -152,13 +122,13 @@ public class StatisticsService : IStatisticsService
         double currentMonthResolutionTime, previousMonthResolutionTime;
         if (user.UserType == UserType.Admin)
         {
-            currentMonthResolutionTime = await _unitOfWork.IncidentRepository.GetAverageResolutionTimeAsync(startOfLast30Days, endOfLast30Days);
-            previousMonthResolutionTime = await _unitOfWork.IncidentRepository.GetAverageResolutionTimeAsync(startOfPrevious30Days, endOfPrevious30Days);
+            currentMonthResolutionTime = await _incidentRepository.GetAverageResolutionTimeAsync(startOfLast30Days, endOfLast30Days);
+            previousMonthResolutionTime = await _incidentRepository.GetAverageResolutionTimeAsync(startOfPrevious30Days, endOfPrevious30Days);
         }
         else if(user.UserType == UserType.Technician)
         {
-            currentMonthResolutionTime = await _unitOfWork.IncidentRepository.GetAverageResolutionTimeAsync(startOfLast30Days, endOfLast30Days, id);
-            previousMonthResolutionTime = await _unitOfWork.IncidentRepository.GetAverageResolutionTimeAsync(startOfPrevious30Days, endOfPrevious30Days, id);
+            currentMonthResolutionTime = await _incidentRepository.GetAverageResolutionTimeAsync(startOfLast30Days, endOfLast30Days, id);
+            previousMonthResolutionTime = await _incidentRepository.GetAverageResolutionTimeAsync(startOfPrevious30Days, endOfPrevious30Days, id);
         }
         else
         {
@@ -173,7 +143,7 @@ public class StatisticsService : IStatisticsService
     /// <inheritdoc/>
     public async Task<Result<UserHappinessResponseDto>> GetUserHappinessAsync(long id)
     {
-        User? user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+        User? user = await _userRepository.GetByIdAsync(id);
         if (user == null)
         {
             return Result.Fail<UserHappinessResponseDto>("User not found");
@@ -211,7 +181,7 @@ public class StatisticsService : IStatisticsService
     /// <returns>A double representing the average happiness ratio for the specified period, normalized between 0 and 1.</returns>
     private async Task<double> GetUserHappinessForMonth(DateTime start, DateTime end)
     {
-        int happinessValue = await _unitOfWork.UserFeedbackRepository.GetUserHappinessAsync(start, end);
+        int happinessValue = await _userFeedbackRepository.GetUserHappinessAsync(start, end);
         return happinessValue / 5.0;
     }
 
@@ -224,7 +194,7 @@ public class StatisticsService : IStatisticsService
     /// <returns>A double representing the average happiness ratio for the specified period, normalized between 0 and 1.</returns>
     private async Task<double> GetUserHappinessForMonth(DateTime start, DateTime end, long id)
     {
-        int happinessValue = await _unitOfWork.UserFeedbackRepository.GetUserHappinessAsync(start, end, id);
+        int happinessValue = await _userFeedbackRepository.GetUserHappinessAsync(start, end, id);
         return happinessValue / 5.0;
     }
 
@@ -233,8 +203,8 @@ public class StatisticsService : IStatisticsService
     /// <inheritdoc/>
     public async Task<Result<IncidencesResumeResponseDto>> GetIncidencesResumeAsync()
     {
-        var unassigned = await _unitOfWork.IncidentRepository.CountByStatusAsync(Status.Unassigned);
-        var closed = await _unitOfWork.IncidentRepository.CountByStatusAsync(Status.Completed);
+        var unassigned = await _incidentRepository.CountByStatusAsync(Status.Unassigned);
+        var closed = await _incidentRepository.CountByStatusAsync(Status.Completed);
         int open = await GetOpenIncidentsAsync();
         return Result.Ok(new IncidencesResumeResponseDto(open, closed, unassigned));
     }
@@ -245,9 +215,9 @@ public class StatisticsService : IStatisticsService
     /// <returns>A asyncronous task that represents the number of open incidents</returns>
     private async Task<int> GetOpenIncidentsAsync()
     {
-        var pending = await _unitOfWork.IncidentRepository.CountByStatusAsync(Status.Pending);
-        var inProgress = await _unitOfWork.IncidentRepository.CountByStatusAsync(Status.InProgress);
-        var review = await _unitOfWork.IncidentRepository.CountByStatusAsync(Status.Review);
+        var pending = await _incidentRepository.CountByStatusAsync(Status.Pending);
+        var inProgress = await _incidentRepository.CountByStatusAsync(Status.InProgress);
+        var review = await _incidentRepository.CountByStatusAsync(Status.Review);
 
         var open = pending + inProgress + review;
         return open;
@@ -294,7 +264,7 @@ public class StatisticsService : IStatisticsService
         {
             var monthStart = endDate.AddMonths(-i).AddDays(1 - endDate.Day).Date;
             var monthEnd = new DateTime(monthStart.Year, monthStart.Month, DateTime.DaysInMonth(monthStart.Year, monthStart.Month));
-            int count = await _unitOfWork.IncidentRepository.CountAsync(monthStart, monthEnd);
+            int count = await _incidentRepository.CountAsync(monthStart, monthEnd);
             incidencesByMonth[monthStart.Month] = count;
         }
 
@@ -314,7 +284,7 @@ public class StatisticsService : IStatisticsService
     {
         var previousStartDate = startDate.AddMonths(-6);
         var previousEndDate = startDate;
-        int previousCount = await _unitOfWork.IncidentRepository.CountAsync(previousStartDate, previousEndDate);
+        int previousCount = await _incidentRepository.CountAsync(previousStartDate, previousEndDate);
 
         return previousCount > 0
             ? (decimal)(totalIncidences - previousCount) / previousCount
@@ -327,7 +297,7 @@ public class StatisticsService : IStatisticsService
     public async Task<Result<List<IncidencesDailyResumeResponseDto>>> GetIncidencesDayResumeAsync()
     {
         var currentYear = DateTime.Now.Year;
-        var dailyIncidencesTuples = await _unitOfWork.IncidentRepository.GetIncidentCountByDayAsync(currentYear);
+        var dailyIncidencesTuples = await _incidentRepository.GetIncidentCountByDayAsync(currentYear);
 
         var dailyIncidences = dailyIncidencesTuples
             .Select(tuple => new IncidencesDailyResumeResponseDto(

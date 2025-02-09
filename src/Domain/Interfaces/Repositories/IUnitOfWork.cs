@@ -1,12 +1,6 @@
 ﻿namespace Domain.Interfaces.Repositories;
 
-public interface IUnitOfWork : IDisposable
+public interface IUnitOfWork
 {
-    IIncidentHistoryRepository IncidentHistoryRepository { get; }
-    IIncidentRepository IncidentRepository { get; }
-    IMessageRepository MessageRepository { get; }
-    IUserRepository UserRepository { get; }
-    IUserFeedbackRepository UserFeedbackRepository { get; }
-    IWorkLogRepository WorkLogRepository { get; }
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task SaveAsync();
 }
