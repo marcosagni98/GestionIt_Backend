@@ -5,6 +5,7 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,28 +15,19 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services;
 
-public class StatisticsService : IStatisticsService
+/// <summary>
+/// Initializes a new instance of the <see cref="StatisticsService"/> class.
+/// </summary>
+/// <param name="logger"></param>
+/// <param name="userRepository"></param>
+/// <param name="incidentRepository"></param>
+/// <param name="userFeedbackRepository"></param>
+public class StatisticsService(ILogger<StatisticsService> logger, IUserRepository userRepository, IIncidentRepository incidentRepository, IUserFeedbackRepository userFeedbackRepository) : IStatisticsService
 {
-
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-    private readonly IUserRepository _userRepository;
-    private readonly IIncidentRepository _incidentRepository;
-    private readonly IUserFeedbackRepository _userFeedbackRepository;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="StatisticsService"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work for database operations.</param>
-    /// <param name="mapper">The mapper for object mapping.</param>
-    public StatisticsService(IUnitOfWork unitOfWork, IMapper mapper, IUserRepository userRepository, IIncidentRepository incidentRepository, IUserFeedbackRepository userFeedbackRepository)
-    {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
-        _userRepository = userRepository;
-        _incidentRepository = incidentRepository;
-        _userFeedbackRepository = userFeedbackRepository;
-    }
+    private readonly ILogger<StatisticsService> _logger = logger;
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IIncidentRepository _incidentRepository = incidentRepository;
+    private readonly IUserFeedbackRepository _userFeedbackRepository = userFeedbackRepository;
 
     /// <inheritdoc/>
     public async Task<Result<ActiveIncidentsStatsResponseDto>> GetActiveIncidentsSevirityCount(long id)

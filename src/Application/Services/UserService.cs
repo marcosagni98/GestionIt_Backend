@@ -10,30 +10,26 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
     /// <summary>
     /// Service for managing user-related operations.
     /// </summary>
-    public class UserService : IUserService
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="UserService"/> class.
+    /// </remarks>
+    /// <param name="logger">logger interface</param>
+    /// <param name="unitOfWork">The unit of work for database operations.</param>
+    /// <param name="mapper">The mapper for object mapping.</param>
+    /// <param name="userRepository">User repository</param>
+    public class UserService(ILogger<UserService> logger, IUnitOfWork unitOfWork, IMapper mapper, IUserRepository userRepository) : IUserService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly IUserRepository _userRepository;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UserService"/> class.
-        /// </summary>
-        /// <param name="unitOfWork">The unit of work for database operations.</param>
-        /// <param name="mapper">The mapper for object mapping.</param>
-
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper, IUserRepository userRepository)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _userRepository = userRepository;
-        }
+        private readonly ILogger<UserService> _logger = logger;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IMapper _mapper = mapper;
+        private readonly IUserRepository _userRepository = userRepository;
 
         /// <inheritdoc/>
         public async Task<Result<CreatedResponseDto>> AddAsync(UserAddRequestDto addRequestDto)

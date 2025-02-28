@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dtos\CRUD\IncidentHistories\Request\**" />
     <Compile Remove="Dtos\CRUD\IncidentHistories\Response\**" />
     <Compile Remove="Dtos\CRUD\Incidents\Response\**" />
     <Compile Remove="Dtos\CRUD\Messages\Response\**" />
@@ -15,6 +16,7 @@
     <Compile Remove="Dtos\CRUD\Users\Response\**" />
     <Compile Remove="Dtos\CRUD\WorkLogs\Response\**" />
     <Compile Remove="Dtos\Stats\Request\**" />
+    <EmbeddedResource Remove="Dtos\CRUD\IncidentHistories\Request\**" />
     <EmbeddedResource Remove="Dtos\CRUD\IncidentHistories\Response\**" />
     <EmbeddedResource Remove="Dtos\CRUD\Incidents\Response\**" />
     <EmbeddedResource Remove="Dtos\CRUD\Messages\Response\**" />
@@ -22,6 +24,7 @@
     <EmbeddedResource Remove="Dtos\CRUD\Users\Response\**" />
     <EmbeddedResource Remove="Dtos\CRUD\WorkLogs\Response\**" />
     <EmbeddedResource Remove="Dtos\Stats\Request\**" />
+    <None Remove="Dtos\CRUD\IncidentHistories\Request\**" />
     <None Remove="Dtos\CRUD\IncidentHistories\Response\**" />
     <None Remove="Dtos\CRUD\Incidents\Response\**" />
     <None Remove="Dtos\CRUD\Messages\Response\**" />
@@ -32,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="FluentResults" Version="3.16.0" />
     <PackageReference Include="FluentValidation" Version="11.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
@@ -42,10 +45,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Dtos\CRUD\IncidentHistories\Request\" />
   </ItemGroup>
 
 </Project>

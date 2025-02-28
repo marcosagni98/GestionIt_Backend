@@ -12,6 +12,7 @@ using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Utils;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services;
 
@@ -25,16 +26,20 @@ public class AuthService : IAuthService
     private readonly IJwt _jwt;
     private readonly IEmailSender _emailSender;
     private readonly IUserRepository _userRepository;
+    private readonly ILogger<AuthService> _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AuthService"/> class.
     /// </summary>
+    /// <param name="logger">The logger.</param>
     /// <param name="unitOfWork">The unit of work for database operations.</param>
     /// <param name="mapper">The mapper for object mapping.</param>
     /// <param name="jwt">The jwt service.</param>
     /// <param name="emailSender">The email sender.</param>
-    public AuthService(IUnitOfWork unitOfWork, IMapper mapper, IJwt jwt, IEmailSender emailSender, IUserRepository userRepository)
+    /// <param name="userRepository">The user repository.</param>
+    public AuthService(ILogger<AuthService> logger, IUnitOfWork unitOfWork, IMapper mapper, IJwt jwt, IEmailSender emailSender, IUserRepository userRepository)
     {
+        _logger = logger;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _jwt = jwt;

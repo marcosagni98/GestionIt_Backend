@@ -9,31 +9,28 @@ using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
     /// <summary>
     /// Service for managing work log-related operations.
     /// </summary>
-    public class WorkLogService : IWorkLogService
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="WorkLogService"/> class.
+    /// </remarks>
+    /// <param name="logger">Logger interface</param>
+    /// <param name="unitOfWork">The unit of work for database operations.</param>
+    /// <param name="mapper">The mapper for object mapping.</param>
+    /// <param name="workLogRepository">WorkLog repository</param>
+    /// <param name="incidentRepository">Incident repository</param>
+    public class WorkLogService(ILogger<WorkLogService> logger, IUnitOfWork unitOfWork, IMapper mapper, IWorkLogRepository workLogRepository, IIncidentRepository incidentRepository) : IWorkLogService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly IWorkLogRepository _workLogRepository;
-        private readonly IIncidentRepository _incidentRepository;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WorkLogService"/> class.
-        /// </summary>
-        /// <param name="unitOfWork">The unit of work for database operations.</param>
-        /// <param name="mapper">The mapper for object mapping.</param>
-        public WorkLogService(IUnitOfWork unitOfWork, IMapper mapper, IWorkLogRepository workLogRepository, IIncidentRepository incidentRepository)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _workLogRepository = workLogRepository;
-            _incidentRepository = incidentRepository;
-        }
+        private readonly ILogger<WorkLogService> _logger = logger;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IMapper _mapper = mapper;
+        private readonly IWorkLogRepository _workLogRepository = workLogRepository;
+        private readonly IIncidentRepository _incidentRepository = incidentRepository;
 
         /// <inheritdoc/>
         public async Task<Result<CreatedResponseDto>> AddAsync(WorkLogAddRequestDto addRequestDto)
