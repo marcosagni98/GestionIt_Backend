@@ -1,25 +1,21 @@
 ﻿using Application.Dtos.Auth.Requests;
 using FluentValidation;
 
-namespace Application.Validators.Auth;
+
+namespace Application.Helpers.Validators.Auth;
 
 /// <summary>
-/// Validator for the <see cref="RegisterRequestDto"/>.
-/// Ensures the fields are valid according to specified requirements.
+/// Validator for the <see cref="ResetPasswordRequestDto"/>.
+/// Ensures the email and password fields meet the validation requirements.
 /// </summary>
-public class RegisterRequestDtoValidator : AbstractValidator<RegisterRequestDto>
+public class ResetPasswordRequestDtoValidator : AbstractValidator<ResetPasswordRequestDto>
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="RegisterRequestDtoValidator"/> class.
-    /// Defines validation rules for the RegisterRequestDto.
+    /// Initializes a new instance of the <see cref="ResetPasswordRequestDtoValidator"/> class.
+    /// Defines validation rules for the ResetPasswordRequestDto.
     /// </summary>
-    public RegisterRequestDtoValidator()
+    public ResetPasswordRequestDtoValidator()
     {
-        // Validate Name
-        RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("The name is required.")
-            .MaximumLength(100).WithMessage("The name cannot be longer than 100 characters.");
-
         // Validate Email
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("The email is required.")
@@ -29,6 +25,7 @@ public class RegisterRequestDtoValidator : AbstractValidator<RegisterRequestDto>
         // Validate Password
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("The password is required.")
+            .MinimumLength(6).WithMessage("The password must be at least 6 characters long.")
             .MaximumLength(100).WithMessage("The password cannot be longer than 100 characters.");
     }
 }

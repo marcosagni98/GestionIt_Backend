@@ -1,29 +1,13 @@
 ﻿using API.Helpers;
 using API.Hubs;
-using Application.Helpers.Mappers;
-using Application.Interfaces.Services;
-using Application.Interfaces.Utils;
-using Application.Services;
-using Application.Utils;
-using Domain.Entities;
-using Domain.Enums;
-using Domain.Interfaces.Repositories;
-using Domain.Interfaces.Utils;
 using Infrastructure;
-using Infrastructure.Repositories;
-using Infrastructure.Utils;
-using log4net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Reflection;
 using System.Text;
-using System.Text.Json.Serialization;
+
 
 namespace API;
 
@@ -44,20 +28,7 @@ public class Startup
     // Method to add services to the container
     public void ConfigureServices(IServiceCollection services)
     {
-        // Build the connection string from environment variables
-        var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
-        var dbName = Environment.GetEnvironmentVariable("DB_NAME");
-        var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
-        var dbUser = Environment.GetEnvironmentVariable("DB_USER");
-        var connectionString = $"Data Source={dbHost}; Initial Catalog={dbName};User ID={dbUser};Password={dbPassword};TrustServerCertificate=True;";
-
-        // Configure DbContext with SQL Server
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(connectionString));
-
-        // Configure logging
-        services.AddSingleton<ILog>(provider => LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType));
-
+        
         var key = Encoding.ASCII.GetBytes("supersecretkeysupersecretkeysupersecretkey");
 
         services.AddAuthentication(options =>
@@ -92,61 +63,15 @@ public class Startup
 
         services.AddEndpointsApiExplorer();
 
-        RegisterAutomapper(services);
-        RegisterRepositories(services);
-        RegisterServices(services);
-        
+
         // CORS setup
-        services.AddCors(options =>
-        {
-            options.AddPolicy("AllowAllOrigins",
-                builder => builder.AllowAnyOrigin()
-                                  .AllowAnyMethod()
-                                  .AllowAnyHeader());
-        });
+        services.AddCors();
 
         // Exception handling
         services.AddExceptionHandler<ExceptionHandler>();
 
         // Swagger configuration
         ConfigureSwagger(services);
-    }
-
-    private void RegisterAutomapper(IServiceCollection services)
-    {
-        services.AddAutoMapper(typeof(Startup));
-        services.AddAutoMapper(typeof(UserMapper));
-        services.AddAutoMapper(typeof(IncidentHistoryMapper));
-        services.AddAutoMapper(typeof(IncidentMapper));
-        services.AddAutoMapper(typeof(UserFeedbackMapper));
-        services.AddAutoMapper(typeof(MessageMapper));
-        services.AddAutoMapper(typeof(WorkLogMapper));
-    }
-
-    private void RegisterRepositories(IServiceCollection services)
-    {
-        services.AddScoped<IIncidentHistoryRepository, IncidentHistoryRepository>();
-        services.AddScoped<IIncidentRepository, IncidentRepository>();
-        services.AddScoped<IMessageRepository, MessageRepository>();
-        services.AddScoped<IUserFeedbackRepository, UserFeedbackRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IWorkLogRepository, WorkLogsRepository>();
-        services.AddScoped<IUnitOfWork, EfUnitOfWork>();
-        services.AddTransient<IEmailSender,EmailSender>();
-    }
-
-    private void RegisterServices(IServiceCollection services)
-    {
-        services.AddScoped<IIncidentHistoryService, IncidentHistoryService>();
-        services.AddScoped<IIncidentService, IncidentService>();
-        services.AddScoped<IMessageService, MessageService>();
-        services.AddScoped<IUserFeedbackService, UserFeedbackService>();
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IWorkLogService, WorkLogService>();
-        services.AddScoped<IStatisticsService, StatisticsService>();
-        services.AddScoped<IAuthService, AuthService>();
-        services.AddHttpClient<IOllamaService, OllamaService>();
-        services.AddScoped<IJwt, Jwt>();
     }
 
     private void ConfigureSwagger(IServiceCollection services)

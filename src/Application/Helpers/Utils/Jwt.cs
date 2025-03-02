@@ -10,7 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Utils;
+namespace Application.Helpers.Utils;
 
 /// <summary>
 /// Jwt related operations
