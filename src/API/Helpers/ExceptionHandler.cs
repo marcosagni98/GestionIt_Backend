@@ -8,16 +8,16 @@ namespace API.Helpers;
 /// <summary>
 /// Handles exceptions and returns appropriate response
 /// </summary>
-public class ExceptionHandler : IExceptionHandler
+public class ExceptionHandler(ILogger<ExceptionHandler> logger) : IExceptionHandler
 {
-    private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+    private readonly ILogger<ExceptionHandler> _logger = logger;
 
     /// <summary>
     /// Handles exceptions and returns appropriate response
     /// </summary>
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception ex, CancellationToken ct)
     {
-        _log.Error($"{ex.Message} for more information {ex.StackTrace}");
+        _logger.LogError(ex, $"{ex.Message} for more information {ex.StackTrace}");
         context.Response.StatusCode = GetStatusCode(ex);
 
         if (context.Response.StatusCode == StatusCodes.Status500InternalServerError)

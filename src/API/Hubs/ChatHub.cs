@@ -9,24 +9,19 @@ namespace API.Hubs;
 /// <summary>
 /// Hub for managing incident-based chat groups and message distribution.
 /// </summary>
-public class ChatHub : Hub
+/// <remarks>
+/// Initializes ChatHub with required services.
+/// </remarks>
+/// <param name="logger">The logger interface</param>
+/// <param name="messageService">Service for message operations.</param>
+/// <param name="incidentService">Service for incident data.</param>
+/// <param name="userService">Service for user verification.</param>
+public class ChatHub(ILogger<ChatHub> logger, IMessageService messageService, IIncidentService incidentService, IUserService userService) : Hub
 {
-    private readonly IMessageService _messageService;
-    private readonly IIncidentService _incidentService;
-    private readonly IUserService _userService;
-
-    /// <summary>
-    /// Initializes ChatHub with required services.
-    /// </summary>
-    /// <param name="messageService">Service for message operations.</param>
-    /// <param name="incidentService">Service for incident data.</param>
-    /// <param name="userService">Service for user verification.</param>
-    public ChatHub(IMessageService messageService, IIncidentService incidentService, IUserService userService)
-    {
-        _messageService = messageService;
-        _incidentService = incidentService;
-        _userService = userService;
-    }
+    private readonly ILogger<ChatHub> _logger = logger;
+    private readonly IMessageService _messageService = messageService;
+    private readonly IIncidentService _incidentService = incidentService;
+    private readonly IUserService _userService = userService;
 
     /// <summary>
     /// Adds the connected user to incident groups on connection.

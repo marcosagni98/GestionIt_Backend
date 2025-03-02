@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,14 +18,15 @@ namespace Application.Utils;
 /// </summary>
 public class Jwt : IJwt
 {
-    private int _expirationTimeSec = 86400;
+    private readonly int _expirationTimeSec = 86400;
+    private readonly string secretKey = Environment.GetEnvironmentVariable("API_KEY");
 
     /// <inheritdoc/>
     public LoginResponseDto GenerateJwtToken(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         DateTime expirationDate = DateTime.UtcNow.AddSeconds(_expirationTimeSec);
-        var key = Encoding.ASCII.GetBytes("supersecretkeysupersecretkeysupersecretkey");
+        var key = Encoding.ASCII.GetBytes(secretKey);
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
         List<Claim> claims =
         [

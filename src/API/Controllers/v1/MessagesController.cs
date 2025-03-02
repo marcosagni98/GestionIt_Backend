@@ -14,11 +14,13 @@ namespace API.Controllers.v1;
 /// <remarks>
 /// Initializes a new instance of the <see cref="MessageController"/> class.
 /// </remarks>
+/// <param name="logger">Logger interface</param>
 /// <param name="messageService">The message service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class MessageController(IMessageService messageService) : BaseApiController
+public class MessageController(ILogger<MessageController> logger, IMessageService messageService) : BaseApiController
 {
+    private readonly ILogger<MessageController> _logger = logger;
     private readonly IMessageService _messageService = messageService;
 
     /// <summary>

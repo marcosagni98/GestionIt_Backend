@@ -15,11 +15,13 @@ namespace API.Controllers.v1;
 /// <remarks>
 /// Initializes a new instance of the <see cref="AuthController"/> class.
 /// </remarks>
+/// <param name="logger">Logger interface</param>
 /// <param name="authService">The auth service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class AuthController(IAuthService authService) : BaseApiController
+public class AuthController(ILogger<AuthController> logger, IAuthService authService) : BaseApiController
 {
+    private readonly ILogger<AuthController> _logger = logger;
     private readonly IAuthService _authService = authService;
     
     /// <summary>

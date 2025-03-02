@@ -62,6 +62,7 @@ services:
       - EMAIL=${EMAIL}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
       - BASE_URL=${BASE_URL}
+      - API_KEY=${API_KEY}
       - ASPNETCORE_ENVIRONMENT=Development
 
 volumes:

@@ -21,8 +21,9 @@ namespace API.Controllers.v1;
 /// <param name="incidentService">The incident service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class IncidentController(IIncidentService incidentService) : BaseApiController
+public class IncidentController(ILogger<IncidentController>  logger, IIncidentService incidentService) : BaseApiController
 {
+    private readonly ILogger<IncidentController> _logger = logger;
     private readonly IIncidentService _incidentService = incidentService;
 
     /// <summary>
