@@ -4,7 +4,6 @@ using Application.Dtos.CommonDtos;
 using Application.Dtos.CommonDtos.Response;
 using Application.Interfaces.Services;
 using Application.Interfaces.Utils;
-using Application.Validators.Auth;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
@@ -12,6 +11,7 @@ using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Utils;
 using FluentResults;
 using Application.Helpers.Utils;
+using Application.Helpers.Validators.Auth;
 
 namespace Application.Services;
 

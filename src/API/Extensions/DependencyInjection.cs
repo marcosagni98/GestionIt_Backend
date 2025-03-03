@@ -1,32 +1,41 @@
 ﻿using API.Helpers;
 using Microsoft.OpenApi.Models;
-using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.Extensions.Options;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace API.DependencyInjection;
 
+/// <summary>
+/// Provides extension methods for adding services to the IServiceCollection.
+/// </summary>
 public static class DependencyInjection
 {
-    public static IServiceCollection AddPresentation(this IServiceCollection services)
+    /// <summary>
+    /// Adds presentation layer services to the IServiceCollection.
+    /// </summary>
+    /// <param name="services">The IServiceCollection to add services to.</param>
+    /// <param name="configuration">Configuration interface</param>
+    /// <returns>The updated IServiceCollection.</returns>
+    public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddLogging();
-        services.AddAuthenticationJwt();
+        services.AddAuthenticationJwt(configuration);
+        services.AddSwaggerGen();
         services.AddControllers();
         services.AddSignalR();
         services.AddEndpointsApiExplorer();
         services.AddCors();
         services.AddExceptionHandler<ExceptionHandler>();
-        services.AddSwaggerGen();
+        
         return services;
     }
 
-
+    /// <summary>
+    /// Adds CORS services to the IServiceCollection.
+    /// </summary>
+    /// <param name="services">The IServiceCollection to add services to.</param>
+    /// <returns>The updated IServiceCollection.</returns>
     private static IServiceCollection AddCors(this IServiceCollection services)
     {
         services.AddCors(options =>
@@ -39,7 +48,11 @@ public static class DependencyInjection
         return services;
     }
 
-
+    /// <summary>
+    /// Adds Swagger generation services to the IServiceCollection.
+    /// </summary>
+    /// <param name="services">The IServiceCollection to add services to.</param>
+    /// <returns>The updated IServiceCollection.</returns>
     private static IServiceCollection AddSwaggerGen(this IServiceCollection services)
     {
         services.AddSwaggerGen(c =>
@@ -66,9 +79,14 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddAuthenticationJwt(this IServiceCollection services)
+    /// <summary>
+    /// Adds JWT authentication services to the IServiceCollection.
+    /// </summary>
+    /// <param name="services">The IServiceCollection to add services to.</param>
+    /// <returns>The updated IServiceCollection.</returns>
+    private static IServiceCollection AddAuthenticationJwt(this IServiceCollection services, IConfiguration configuration)
     {
-        var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("API_KEY"));
+        var jwtSettings = configuration.GetSection("JwtSettings");
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -81,17 +99,22 @@ public static class DependencyInjection
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings["Key"])),
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidIssuer = "gestionIt_api",
-                ValidAudience = "gestionIt_frontend",
+                ValidIssuer = jwtSettings["Issuer"],
+                ValidAudience = jwtSettings["Audience"],
                 ClockSkew = TimeSpan.Zero
             };
         });
         return services;
     }
 
+    /// <summary>
+    /// Adds logging services to the IServiceCollection.
+    /// </summary>
+    /// <param name="services">The IServiceCollection to add services to.</param>
+    /// <returns>The updated IServiceCollection.</returns>
     private static IServiceCollection AddLogging(this IServiceCollection services)
     {
         services.AddLogging(builder =>

@@ -24,7 +24,8 @@ public static class InfrastructureCollectionExtensions
         return services
             .AddDbContext(configuration)
             .AddRepositories()
-            .AddUnitOfWork();
+            .AddUnitOfWork()
+            .AddHelpers();
     }
 
     /// <summary>
@@ -61,7 +62,6 @@ public static class InfrastructureCollectionExtensions
             .AddScoped<IUserFeedbackRepository, UserFeedbackRepository>()
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IWorkLogRepository, WorkLogsRepository>()
-            .AddScoped<IUnitOfWork, EfUnitOfWork>()
             .AddTransient<IEmailSender, EmailSender>();
     }
 
@@ -73,6 +73,17 @@ public static class InfrastructureCollectionExtensions
     private static IServiceCollection AddUnitOfWork(this IServiceCollection services)
     {
         return services
-            .AddScoped<IUnitOfWork, IUnitOfWork>();
+            .AddScoped<IUnitOfWork, UnitOfWork>();
+    }
+
+    /// <summary>
+    /// Registers helper services, including background services such as the database initializer.
+    /// </summary>
+    /// <param name="services">The service collection to add dependencies to.</param>
+    /// <returns>The updated service collection.</returns>
+    private static IServiceCollection AddHelpers(this IServiceCollection services)
+    {
+        return services
+             .AddHostedService<DatabaseInitializer>();
     }
 }
