@@ -2,6 +2,7 @@
 using Application.Interfaces.Services;
 using Application.Interfaces.Utils;
 using Application.Services;
+using Application.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
