@@ -2,8 +2,6 @@
 using Application.Dtos.CRUD.WorkLogs;
 using Application.Dtos.CRUD.WorkLogs.Request;
 using Application.Interfaces.Services;
-using Domain.Dtos.CommonDtos.Request;
-using Domain.Dtos.CommonDtos.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

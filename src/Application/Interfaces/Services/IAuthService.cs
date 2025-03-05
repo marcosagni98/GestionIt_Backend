@@ -1,8 +1,8 @@
 ﻿using Application.Dtos.Auth.Requests;
 using Application.Dtos.Auth.Response;
-using FluentResults;
-using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CommonDtos;
+using Application.Dtos.CommonDtos.Response;
+using FluentResults;
 
 namespace Application.Interfaces.Services;
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Security.Cryptography;
 
 
 namespace Application.Helpers.Utils;
@@ -10,7 +8,7 @@ namespace Application.Helpers.Utils;
 /// </summary>
 public class PasswordHasher
 {
-    private const int SaltSize = 16; 
+    private const int SaltSize = 16;
     private const int HashSize = 20;
     private const int Iterations = 10000;
 

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities.Common;
 
-public class EntityId 
+public class EntityId
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

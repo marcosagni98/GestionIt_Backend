@@ -47,10 +47,10 @@ namespace Application.Services
         public async Task<Result<List<MessageDto>>> GetByIncidentIdAsync(long incidentId)
         {
             Incident? incident = await _incidentRepository.GetByIdAsync(incidentId);
-            if(incident == null) return Result.Fail<List<MessageDto>>("Incident not found.");
+            if (incident == null) return Result.Fail<List<MessageDto>>("Incident not found.");
 
             List<MessageDto> messages = _mapper.Map<List<MessageDto>>(await _messageRepository.GetByIncidentIdAsync(incidentId));
-            
+
             return Result.Ok(messages);
         }
     }

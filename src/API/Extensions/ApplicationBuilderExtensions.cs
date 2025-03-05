@@ -33,6 +33,6 @@ public static class ApplicationBuilderExtensions
         app.UseAuthorization();
 
         app.MapControllers();
-        app.MapHub<ChatHub>("/messagehub"); 
+        app.MapHub<ChatHub>("/messagehub");
     }
 }

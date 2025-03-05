@@ -1,9 +1,8 @@
 ﻿using API.Helpers;
-using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace API.DependencyInjection;
 
@@ -28,7 +27,7 @@ public static class DependencyInjection
         services.AddEndpointsApiExplorer();
         services.AddCors();
         services.AddExceptionHandler<ExceptionHandler>();
-        
+
         return services;
     }
 

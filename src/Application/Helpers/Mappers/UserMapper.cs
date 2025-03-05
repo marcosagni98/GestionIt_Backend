@@ -1,8 +1,8 @@
-﻿using AutoMapper;
-using Domain.Entities;
-using Application.Dtos.CRUD.Users.Request;
+﻿using Application.Dtos.Auth.Requests;
 using Application.Dtos.CRUD.Users;
-using Application.Dtos.Auth.Requests;
+using Application.Dtos.CRUD.Users.Request;
+using AutoMapper;
+using Domain.Entities;
 
 namespace Application.Helpers.Mappers;
 

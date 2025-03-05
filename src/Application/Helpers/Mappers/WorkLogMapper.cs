@@ -1,7 +1,6 @@
-﻿using Application.Dtos.CRUD.WorkLogs.Request;
-using Application.Dtos.CRUD.WorkLogs;
+﻿using Application.Dtos.CRUD.WorkLogs;
+using Application.Dtos.CRUD.WorkLogs.Request;
 using AutoMapper;
-
 using Domain.Entities;
 
 /// <summary>
@@ -17,7 +16,7 @@ public class WorkLogMapper : Profile
         CreateMap<WorkLog, WorkLogDto>()
             .ForMember(dest => dest.TechnicianName, opt => opt.MapFrom(src => src.Technician != null ? src.Technician.Name : string.Empty))
             .ReverseMap();
-        
+
         CreateMap<WorkLogAddRequestDto, WorkLog>().ReverseMap();
         CreateMap<WorkLogUpdateRequestDto, WorkLog>().ReverseMap();
     }

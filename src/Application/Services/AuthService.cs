@@ -2,6 +2,8 @@
 using Application.Dtos.Auth.Response;
 using Application.Dtos.CommonDtos;
 using Application.Dtos.CommonDtos.Response;
+using Application.Helpers.Utils;
+using Application.Helpers.Validators.Auth;
 using Application.Interfaces.Services;
 using Application.Interfaces.Utils;
 using AutoMapper;
@@ -10,8 +12,6 @@ using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Utils;
 using FluentResults;
-using Application.Helpers.Utils;
-using Application.Helpers.Validators.Auth;
 
 namespace Application.Services;
 
@@ -57,7 +57,7 @@ public class AuthService : IAuthService
         {
             return Result.Fail<LoginResponseDto>("Email or password incorrect.");
         }
-        
+
         User? user = await _userRepository.GetUserByEmailAsync(loginRequestDto.Email);
         if (user == null)
         {

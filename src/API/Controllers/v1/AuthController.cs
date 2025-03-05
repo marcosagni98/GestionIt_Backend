@@ -21,7 +21,7 @@ namespace API.Controllers.v1;
 public class AuthController(IAuthService authService) : BaseApiController
 {
     private readonly IAuthService _authService = authService;
-    
+
     /// <summary>
     /// Logs in the user and returns a jwt.
     /// </summary>
@@ -35,7 +35,7 @@ public class AuthController(IAuthService authService) : BaseApiController
         if (!loginResult.IsSuccess)
         {
             return BadRequest(loginResult.Errors);
-            
+
         }
         return Ok(loginResult.Value);
     }

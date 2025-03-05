@@ -14,7 +14,7 @@ public class IncidentHistoryRepository : IIncidentHistoryRepository
     private readonly DbSet<IncidentHistory> _dbSet;
     private readonly IMapper _mapper;
 
-    public IncidentHistoryRepository(AppDbContext context, IMapper mapper) 
+    public IncidentHistoryRepository(AppDbContext context, IMapper mapper)
     {
         _dbContext = context;
         _mapper = mapper;
@@ -44,7 +44,7 @@ public class IncidentHistoryRepository : IIncidentHistoryRepository
 
         return new PaginatedList<IncidentHistory>(items, totalCount);
     }
-    
+
     /// <inheritdoc/>
     public async Task<IncidentHistory?> GetByIdAsync(long id)
     {
@@ -90,5 +90,5 @@ public class IncidentHistoryRepository : IIncidentHistoryRepository
         return await query.CountAsync();
     }
 
-    
+
 }

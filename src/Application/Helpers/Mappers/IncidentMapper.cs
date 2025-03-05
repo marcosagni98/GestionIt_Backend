@@ -1,7 +1,6 @@
-﻿using Application.Dtos.CRUD.Incidents.Request;
-using Application.Dtos.CRUD.Incidents;
+﻿using Application.Dtos.CRUD.Incidents;
+using Application.Dtos.CRUD.Incidents.Request;
 using AutoMapper;
-
 using Domain.Entities;
 
 /// <summary>

@@ -18,6 +18,6 @@ public class Incident : Entity
     public ICollection<IncidentHistory> IncidentHistories { get; set; } = [];
     public ICollection<Message> Messages { get; set; } = [];
     public ICollection<WorkLog> WorkLogs { get; set; } = [];
-    public ICollection<UserFeedback> UserFeedbacks { get; set; } = []; 
+    public ICollection<UserFeedback> UserFeedbacks { get; set; } = [];
 }
 
