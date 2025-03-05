@@ -9,31 +9,28 @@ using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
     /// <summary>
     /// Service for managing work log-related operations.
     /// </summary>
-    public class WorkLogService : IWorkLogService
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="WorkLogService"/> class.
+    /// </remarks>
+    /// <param name="logger">Logger interface</param>
+    /// <param name="unitOfWork">The unit of work for database operations.</param>
+    /// <param name="mapper">The mapper for object mapping.</param>
+    /// <param name="workLogRepository">WorkLog repository</param>
+    /// <param name="incidentRepository">Incident repository</param>
+    public class WorkLogService(ILogger<WorkLogService> logger, IUnitOfWork unitOfWork, IMapper mapper, IWorkLogRepository workLogRepository, IIncidentRepository incidentRepository) : IWorkLogService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly IWorkLogRepository _workLogRepository;
-        private readonly IIncidentRepository _incidentRepository;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WorkLogService"/> class.
-        /// </summary>
-        /// <param name="unitOfWork">The unit of work for database operations.</param>
-        /// <param name="mapper">The mapper for object mapping.</param>
-        public WorkLogService(IUnitOfWork unitOfWork, IMapper mapper, IWorkLogRepository workLogRepository, IIncidentRepository incidentRepository)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _workLogRepository = workLogRepository;
-            _incidentRepository = incidentRepository;
-        }
+        private readonly ILogger<WorkLogService> _logger = logger;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IMapper _mapper = mapper;
+        private readonly IWorkLogRepository _workLogRepository = workLogRepository;
+        private readonly IIncidentRepository _incidentRepository = incidentRepository;
 
         /// <inheritdoc/>
         public async Task<Result<CreatedResponseDto>> AddAsync(WorkLogAddRequestDto addRequestDto)
@@ -51,7 +48,9 @@ namespace Application.Services
             var exists = await _workLogRepository.ExistsAsync(id);
             if (!exists)
             {
-                return Result.Fail<SuccessResponseDto>("Work log not found.");
+                string error = $"Work log with id {id} not found";
+                _logger.LogError(error);
+                return Result.Fail<SuccessResponseDto>(error);
             }
 
             await _workLogRepository.DeleteAsync(id);
@@ -67,7 +66,9 @@ namespace Application.Services
 
             if (paginatedList == null || paginatedList.Items == null)
             {
-                return Result.Fail<PaginatedList<WorkLogDto>>("Error retrieving work logs.");
+                string error = "Error retrieving work logs.";
+                _logger.LogError(error);
+                return Result.Fail<PaginatedList<WorkLogDto>>(error);
             }
 
             var workLogDtos = _mapper.Map<List<WorkLogDto>>(paginatedList.Items);
@@ -81,7 +82,9 @@ namespace Application.Services
             var workLog = await _workLogRepository.GetByIdAsync(id);
             if (workLog == null)
             {
-                return Result.Fail<WorkLogDto>("Work log not found.");
+                string error = $"Work log with id {id} not found";
+                _logger.LogError(error);
+                return Result.Fail<WorkLogDto>(error);
             }
 
             var response = _mapper.Map<WorkLogDto>(workLog);
@@ -94,7 +97,9 @@ namespace Application.Services
             var workLog = await _workLogRepository.GetByIdAsync(id);
             if (workLog == null)
             {
-                return Result.Fail<SuccessResponseDto>("Work log not found.");
+                string error = $"Work log with id {id} not found";
+                _logger.LogError(error);
+                return Result.Fail<SuccessResponseDto>(error);
             }
 
             _mapper.Map(updateRequestDto, workLog);
@@ -108,7 +113,12 @@ namespace Application.Services
         public async Task<Result<List<WorkLogDto>>> GetByIncidentIdAsync(long incidentId)
         {
             Incident? incident = await _incidentRepository.GetByIdAsync(incidentId);
-            if (incident == null) return Result.Fail("Incident not found");
+            if (incident == null)
+            {
+                string error = $"Incident with id {incidentId} not found";
+                _logger.LogError(error);
+                return Result.Fail<List<WorkLogDto>>(error);
+            }
 
             return _mapper.Map<List<WorkLogDto>>(await _workLogRepository.GetByIncidentIdAsync(incidentId));
         }

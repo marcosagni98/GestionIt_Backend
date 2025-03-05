@@ -11,11 +11,13 @@ namespace API.Controllers.v1;
 /// <remarks>
 /// Initializes a new instance of the <see cref="IncidentHistoryController"/> class.
 /// </remarks>
+/// <param name="logger"></param>
 /// <param name="incidentHistoryService">The incidenthistory service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class IncidentHistoryController(IIncidentHistoryService incidentHistoryService) : BaseApiController
+public class IncidentHistoryController(ILogger<IncidentHistoryController> logger, IIncidentHistoryService incidentHistoryService) : BaseApiController
 {
+    private readonly ILogger<IncidentHistoryController> _logger = logger;
     private readonly IIncidentHistoryService _incidentHistoryService = incidentHistoryService;
 
     /// <summary>

@@ -6,16 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.v1;
 
+/// <summary>
+/// Ollama controller for ollama related queries
+/// </summary>
+/// <param name="logger">Logger interface</param>
+/// <param name="ollamaService">Ollama service </param>
 [ApiController]
 [Route("api/[controller]")]
-public class OllamaController : BaseApiController
+public class OllamaController(ILogger<OllamaController> logger, IOllamaService ollamaService) : BaseApiController
 {
-    private readonly IOllamaService _ollamaService;
-
-    public OllamaController(IOllamaService ollamaService)
-    {
-        _ollamaService = ollamaService;
-    }
+    private readonly ILogger<OllamaController> _logger = logger;
+    private readonly IOllamaService _ollamaService = ollamaService;
 
     /// <summary>
     /// Endpoint to improve the description of an issue based on the provided title and current description.

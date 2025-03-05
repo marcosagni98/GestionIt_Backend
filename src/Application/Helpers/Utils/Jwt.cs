@@ -1,30 +1,32 @@
 ﻿using Application.Dtos.Auth.Response;
 using Application.Interfaces.Utils;
 using Domain.Entities;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Application.Helpers.Utils;
+namespace Application.Utils;
 
 /// <summary>
 /// Jwt related operations
 /// </summary>
-public class Jwt(IConfiguration configuration) : IJwt
+public class Jwt : IJwt
 {
-    private int _expirationTimeSec = 86400;
-    private readonly IConfiguration _configuration = configuration;
+    private readonly int _expirationTimeSec = 86400;
+    private readonly string secretKey = Environment.GetEnvironmentVariable("API_KEY");
 
     /// <inheritdoc/>
     public LoginResponseDto GenerateJwtToken(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         DateTime expirationDate = DateTime.UtcNow.AddSeconds(_expirationTimeSec);
-        var jwtSettings = _configuration.GetSection("JwtSettings");
-
-        var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
+        var key = Encoding.ASCII.GetBytes(secretKey);
         var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
         List<Claim> claims =
         [
@@ -36,11 +38,11 @@ public class Jwt(IConfiguration configuration) : IJwt
 
         var tokenDescriptor = new JwtSecurityToken
         (
-            issuer: jwtSettings["Issuer"],
+            issuer: "gestionIt_api",
             claims: claims,
             expires: expirationDate,
             signingCredentials: signingCredentials,
-            audience: jwtSettings["Audience"]
+            audience: "gestionIt_frontend"
         );
 
         var token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);

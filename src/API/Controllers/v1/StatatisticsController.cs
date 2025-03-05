@@ -12,11 +12,13 @@ namespace API.Controllers.v1;
 /// <remarks>
 /// Initializes a new instance of the <see cref="StatisticsController"/> class.
 /// </remarks>
+/// <param name="logger">Logger interface</param>
 /// <param name="statisticsService">The statistics service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class StatisticsController(IStatisticsService statisticsService) : BaseApiController
+public class StatisticsController(ILogger<StatisticsController> logger, IStatisticsService statisticsService) : BaseApiController
 {
+    private readonly ILogger _logger = logger;
     private readonly IStatisticsService _statisticsService = statisticsService;
 
 

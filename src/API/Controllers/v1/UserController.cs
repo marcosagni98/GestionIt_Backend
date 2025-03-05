@@ -18,8 +18,9 @@ namespace API.Controllers.v1;
 /// <param name="userService">The user service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class UserController(IUserService userService) : BaseApiController
+public class UserController(ILogger<UserController> logger, IUserService userService) : BaseApiController
 {
+    private readonly ILogger<UserController> _logger = logger;
     private readonly IUserService _userService = userService;
 
     /// <summary>

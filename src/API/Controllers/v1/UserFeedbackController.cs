@@ -19,8 +19,9 @@ namespace API.Controllers.v1;
 /// <param name="userfeedbackService">The userfeedback service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class UserFeedbackController(IUserFeedbackService userfeedbackService) : BaseApiController
+public class UserFeedbackController(ILogger<UserFeedbackController> logger, IUserFeedbackService userfeedbackService) : BaseApiController
 {
+    private readonly ILogger<UserFeedbackController> _logger = logger;
     private readonly IUserFeedbackService _userfeedbackService = userfeedbackService;
 
     /// <summary>

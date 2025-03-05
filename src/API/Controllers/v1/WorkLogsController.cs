@@ -17,8 +17,9 @@ namespace API.Controllers.v1;
 /// <param name="worklogService">The worklog service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class WorkLogController(IWorkLogService worklogService) : BaseApiController
+public class WorkLogController(ILogger<WorkLogController> logger, IWorkLogService worklogService) : BaseApiController
 {
+    private readonly ILogger<WorkLogController> _logger = logger;
     private readonly IWorkLogService _worklogService = worklogService;
 
     /// <summary>

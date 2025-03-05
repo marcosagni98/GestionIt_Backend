@@ -5,31 +5,29 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services;
 
-public class StatisticsService : IStatisticsService
+/// <summary>
+/// Initializes a new instance of the <see cref="StatisticsService"/> class.
+/// </summary>
+/// <param name="logger"></param>
+/// <param name="userRepository"></param>
+/// <param name="incidentRepository"></param>
+/// <param name="userFeedbackRepository"></param>
+public class StatisticsService(ILogger<StatisticsService> logger, IUserRepository userRepository, IIncidentRepository incidentRepository, IUserFeedbackRepository userFeedbackRepository) : IStatisticsService
 {
-
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-    private readonly IUserRepository _userRepository;
-    private readonly IIncidentRepository _incidentRepository;
-    private readonly IUserFeedbackRepository _userFeedbackRepository;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="StatisticsService"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work for database operations.</param>
-    /// <param name="mapper">The mapper for object mapping.</param>
-    public StatisticsService(IUnitOfWork unitOfWork, IMapper mapper, IUserRepository userRepository, IIncidentRepository incidentRepository, IUserFeedbackRepository userFeedbackRepository)
-    {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
-        _userRepository = userRepository;
-        _incidentRepository = incidentRepository;
-        _userFeedbackRepository = userFeedbackRepository;
-    }
+    private readonly ILogger<StatisticsService> _logger = logger;
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IIncidentRepository _incidentRepository = incidentRepository;
+    private readonly IUserFeedbackRepository _userFeedbackRepository = userFeedbackRepository;
 
     /// <inheritdoc/>
     public async Task<Result<ActiveIncidentsStatsResponseDto>> GetActiveIncidentsSevirityCount(long id)
@@ -37,12 +35,14 @@ public class StatisticsService : IStatisticsService
         User? user = await _userRepository.GetByIdAsync(id);
         if (user == null)
         {
-            return Result.Fail<ActiveIncidentsStatsResponseDto>("User not found");
+            string error = $"User with id {id} not found";
+            _logger.LogError(error);
+            return Result.Fail(error);
         }
 
         int totalCount, lowCount, mediumCount, highCount;
         double VariationFromLastMonth;
-        if (user.UserType == UserType.Admin)
+        if (user.UserType == UserType.Admin )
         {
             lowCount = await _incidentRepository.CountByPriorityAsync(Priority.Low);
             mediumCount = await _incidentRepository.CountByPriorityAsync(Priority.Medium);
@@ -60,7 +60,9 @@ public class StatisticsService : IStatisticsService
         }
         else
         {
-            return Result.Fail<ActiveIncidentsStatsResponseDto>("User not authorized");
+            string error = "User not authorized";
+            _logger.LogError(error);
+            return Result.Fail<ActiveIncidentsStatsResponseDto>(error);
         }
 
         return Result.Ok(new ActiveIncidentsStatsResponseDto(totalCount, highCount, mediumCount, lowCount, VariationFromLastMonth));
@@ -119,7 +121,7 @@ public class StatisticsService : IStatisticsService
             currentMonthResolutionTime = await _incidentRepository.GetAverageResolutionTimeAsync(startOfLast30Days, endOfLast30Days);
             previousMonthResolutionTime = await _incidentRepository.GetAverageResolutionTimeAsync(startOfPrevious30Days, endOfPrevious30Days);
         }
-        else if (user.UserType == UserType.Technician)
+        else if(user.UserType == UserType.Technician)
         {
             currentMonthResolutionTime = await _incidentRepository.GetAverageResolutionTimeAsync(startOfLast30Days, endOfLast30Days, id);
             previousMonthResolutionTime = await _incidentRepository.GetAverageResolutionTimeAsync(startOfPrevious30Days, endOfPrevious30Days, id);

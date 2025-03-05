@@ -55,14 +55,14 @@ public class OllamaService : IOllamaService
     private string CleanDescription(string rawDescription)
     {
         // Eliminar prefijos comunes
-        string[] prefixesToRemove = new[]
-        {
-        "Descripción:",
-        "Descripción mejorada:",
-        "Respuesta:",
-        "Generando descripción:",
-        "Informe técnico:"
-    };
+        string[] prefixesToRemove =
+        [
+            "Descripción:",
+            "Descripción mejorada:",
+            "Respuesta:",
+            "Generando descripción:",
+            "Informe técnico:"
+        ];
 
         string cleanedText = rawDescription;
 
@@ -91,5 +91,4 @@ public class OllamaService : IOllamaService
     {
         public string Response { get; set; }
     }
-
 }
