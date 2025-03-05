@@ -9,15 +9,14 @@ public static class ApplicationBuilderExtensions
     /// Configures the application's request pipeline, including middleware for exception handling,
     /// routing, CORS, authentication, authorization, and integration with Swagger and SignalR.
     /// </summary>
-    /// <param name="app">The <see cref="IApplicationBuilder"/> instance used to configure the application's request pipeline.</param>
-    /// <param name="env">The <see cref="IWebHostEnvironment"/> instance used to access environment-specific information (Development, Production, etc.).</param>
-    public static void ConfigureApplication(this IApplicationBuilder app, IWebHostEnvironment env)
+    /// <param name="app">The <see cref="WebApplication"/> instance used to configure the application's request pipeline.</param>
+    public static void ConfigureApplication(this WebApplication app)
     {
         // Exception handling middleware
         app.UseExceptionHandler(opt => { });
 
         // Swagger configuration for development environment
-        if (env.IsDevelopment())
+        if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Incident Management API"));
@@ -33,11 +32,7 @@ public static class ApplicationBuilderExtensions
         app.UseAuthentication();
         app.UseAuthorization();
 
-        // Endpoint and SignalR Hub mapping
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-            endpoints.MapHub<ChatHub>("/messagehub");
-        });
+        app.MapControllers();
+        app.MapHub<ChatHub>("/messagehub"); 
     }
 }
