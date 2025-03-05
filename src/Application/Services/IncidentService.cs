@@ -38,11 +38,11 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
     /// <inheritdoc/>
     public async Task<Result<CreatedResponseDto>> AddAsync(IncidentAddRequestDto addRequestDto)
     {
-        var incident = _mapper.Map<Incident>(addRequestDto); 
+        var incident = _mapper.Map<Incident>(addRequestDto);
         await _incidentRepository.AddAsync(incident);
         await _unitOfWork.SaveAsync();
 
-        return Result.Ok(new CreatedResponseDto (incident.Id));
+        return Result.Ok(new CreatedResponseDto(incident.Id));
     }
 
     /// <inheritdoc/>
@@ -66,15 +66,15 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
     public async Task<Result<PaginatedList<IncidentDto>>> GetAsync(QueryFilterDto queryFilter, long userId)
     {
         var user = await _userRepository.GetByIdAsync(userId);
-        if (user == null) 
+        if (user == null)
         {
             string error = $"User with id {userId} not found";
             _logger.LogError(error);
             return Result.Fail(error);
-        } 
+        }
 
         PaginatedList<Incident> paginatedList = new([], 0);
-        if(user.UserType == UserType.Admin)
+        if (user.UserType == UserType.Admin)
         {
             paginatedList = await _incidentRepository.GetAsync(queryFilter);
         }
@@ -138,7 +138,7 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
         {
             string error = $"Incident with id {id} not found";
             _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error;
+            return Result.Fail<SuccessResponseDto>(error);
         }
 
         _mapper.Map(updateRequestDto, incident);
@@ -196,7 +196,7 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
         {
             incidentList = await _incidentRepository.GetIdsByUserIdAsync(userId);
         }
-        
+
         if (incidentList == null || incidentList.Count == 0)
         {
             string error = $"Not incidents found for user {userId}";
@@ -219,14 +219,14 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
         }
 
         incident.TechnicianId = incidentUpdateTechnicianRequestDto.TechnicianId;
-        if(incident.Status == Status.Unassigned)
+        if (incident.Status == Status.Unassigned)
         {
             incident.Status = Status.Pending;
         }
 
         _incidentRepository.Update(incident);
         await _unitOfWork.SaveAsync();
-        
+
         return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
     }
 

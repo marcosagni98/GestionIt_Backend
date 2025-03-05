@@ -9,7 +9,6 @@ using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using FluentResults;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Services

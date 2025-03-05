@@ -1,8 +1,8 @@
 ﻿using Application.Helpers.Mappers;
-using Application.Helpers.Utils;
 using Application.Interfaces.Services;
 using Application.Interfaces.Utils;
 using Application.Services;
+using Application.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;

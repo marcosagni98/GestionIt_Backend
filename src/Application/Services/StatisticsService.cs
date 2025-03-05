@@ -1,17 +1,10 @@
 ﻿using Application.Dtos.Stats;
 using Application.Interfaces.Services;
-using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces.Repositories;
 using FluentResults;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services;
 
