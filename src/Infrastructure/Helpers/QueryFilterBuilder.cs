@@ -399,7 +399,7 @@ public class QueryFilterBuilder<T>
     {
         WhereActive();
         ApplyQueryFilter(queryFilter, filterParameters);
-        
+
         return this;
     }
 

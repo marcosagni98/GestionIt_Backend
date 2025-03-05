@@ -82,55 +82,40 @@ Se implementa **SignalR** para habilitar el chat en tiempo real entre los usuari
 
 ### Pasos para la Instalación
 
+Este proyecto está configurado para ejecutarse con Docker. Cada componente (API, frontend y base de datos) se ejecuta en un contenedor separado.
+
 1. Clonar el repositorio:
 
    ```bash
-   git clone https://github.com/marcosagni98/SISINF_Backend.git
+   git@github.com:marcosagni98/GestionIt_Backend.git
    
 2. Navegar al directorio del proyecto:
    
    ```bash
-   cd src/API
+   cd GestionIt_Backend
+       
+4. Configurar los JWTSettings en el archivo `SISINF_Backend\src\API\appsettings.json` de la capa API.
 
-3. Restaurar los paquetes NuGet:
+5. Configurar el `SISINF_Backend\.env`
+
+ejemplo:
+   ```bash
+   DB_USER=sa
+   DB_PASSWORD=password@12345#
+   EMAIL=correo@gmail.com
+   EMAIL_PASSWORD=contraseña
+   BASE_URL=https://localhost
+   REACT_APP_API_BASE_URL=http://localhost:5000
+   REACT_APP_DEBUG=true
+   ```
+
+6. Asegúrate de que Docker esté instalado y corriendo.
+7. Ejecuta el siguiente comando en la raíz del proyecto:
+
+8. Ejecutar el proyecto:
    
-     ```bash
-    dotnet restore
-     
-4. Configurar la cadena de conexión a la base de datos SQL Server en el archivo `appsettings.json` de la capa API.
-
-5. Ejecutar las migraciones para la base de datos:
-
-    ```bash
-   dotnet ef database update --project Infrastructure
-
-6. Ejecutar el proyecto:
-   
-    ```bash
-    dotnet run --project API
-## Docker
-
-Este proyecto está configurado para ejecutarse con Docker. Cada componente (API, frontend y base de datos) se ejecuta en un contenedor separado.
-
-### Docker Compose
-
-Para levantar todo el entorno usando Docker Compose:
-
-1. Asegúrate de que Docker esté instalado y corriendo.
-2. Ejecuta el siguiente comando en la raíz del proyecto:
-
     ```bash
     docker-compose up --build
-
- Esto levantará tres contenedores:
-
-   - API (Backend): La API de .NET 8.
-   - Frontend: La aplicación de React.
-   - Base de datos: Un contenedor de SQL Server.
-
-### Variables de Entorno
-
-Asegúrate de configurar las variables de entorno necesarias para la conexión a la base de datos y otros servicios en el archivo docker-compose.yml y appsettings.json.
 
 ## Pruebas
 

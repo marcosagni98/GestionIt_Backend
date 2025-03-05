@@ -1,6 +1,5 @@
 ﻿using Application.Dtos.CommonDtos.Response;
 using Application.Dtos.CRUD.Users;
-using Application.Dtos.CRUD.Users.Request;
 using Application.Interfaces.Services;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;

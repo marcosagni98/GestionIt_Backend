@@ -1,6 +1,6 @@
-﻿using AutoMapper;
+﻿using Application.Dtos.CRUD.IncidentHistories;
+using AutoMapper;
 using Domain.Entities;
-using Application.Dtos.CRUD.IncidentHistories;
 
 namespace Application.Helpers.Mappers;
 

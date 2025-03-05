@@ -1,16 +1,14 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Security.Cryptography;
 
 
-namespace Application.Utils;
+namespace Application.Helpers.Utils;
 
 /// <summary>
 /// Password hashing utility class.
 /// </summary>
 public class PasswordHasher
 {
-    private const int SaltSize = 16; 
+    private const int SaltSize = 16;
     private const int HashSize = 20;
     private const int Iterations = 10000;
 
@@ -69,7 +67,7 @@ public class PasswordHasher
     {
         uint diff = (uint)a.Length ^ (uint)b.Length;
         for (int i = 0; i < Math.Min(a.Length, b.Length); i++)
-            diff |= (uint)(a[i] ^ (b[i]));
+            diff |= (uint)(a[i] ^ b[i]);
         return diff == 0;
     }
 }

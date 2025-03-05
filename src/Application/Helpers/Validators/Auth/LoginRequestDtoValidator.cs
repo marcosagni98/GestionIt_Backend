@@ -1,7 +1,7 @@
 ﻿using Application.Dtos.Auth.Requests;
 using FluentValidation;
 
-namespace Application.Validators.Auth;
+namespace Application.Helpers.Validators.Auth;
 
 /// <summary>
 /// Validator for the <see cref="LoginRequestDto"/>.

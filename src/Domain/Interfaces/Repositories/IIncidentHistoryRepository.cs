@@ -1,7 +1,6 @@
 ﻿using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
-using Domain.Entities.Common;
 
 namespace Domain.Interfaces.Repositories;
 

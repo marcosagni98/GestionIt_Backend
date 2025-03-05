@@ -1,6 +1,5 @@
 ﻿using Application.Dtos.CRUD.Messages.Request;
 using Application.Interfaces.Services;
-using Azure.Identity;
 using FluentResults;
 using Microsoft.AspNetCore.SignalR;
 

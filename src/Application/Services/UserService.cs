@@ -35,12 +35,12 @@ namespace Application.Services
         public async Task<Result<CreatedResponseDto>> AddAsync(UserAddRequestDto addRequestDto)
         {
             var user = _mapper.Map<User>(addRequestDto);
-            if(await _userRepository.CountAsync() == 0)
+            if (await _userRepository.CountAsync() == 0)
             {
                 user.UserType = UserType.Admin;
             }
-            else 
-            { 
+            else
+            {
                 var result = await _userRepository.EmailExistsAsync(user.Email);
                 if (result)
                 {
@@ -147,7 +147,7 @@ namespace Application.Services
                 _logger.LogError(error);
                 return Result.Fail<long>(error);
             }
-            
+
             return Result.Ok(parsedUserId);
         }
 

@@ -2,10 +2,10 @@
 using Application.Dtos.Auth.Response;
 using Application.Dtos.CommonDtos;
 using Application.Dtos.CommonDtos.Response;
+using Application.Helpers.Utils;
+using Application.Helpers.Validators.Auth;
 using Application.Interfaces.Services;
 using Application.Interfaces.Utils;
-using Application.Validators.Auth;
-using Application.Utils;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
@@ -66,7 +66,7 @@ public class AuthService : IAuthService
             _logger.LogError(error);
             return Result.Fail<LoginResponseDto>(error);
         }
-        
+
         User? user = await _userRepository.GetUserByEmailAsync(loginRequestDto.Email);
         if (user == null)
         {

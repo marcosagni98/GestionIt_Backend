@@ -1,9 +1,9 @@
-﻿using Domain.Entities.Common;
-using Microsoft.EntityFrameworkCore;
-using Domain.Dtos.CommonDtos.Request;
+﻿using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
+using Domain.Entities.Common;
 using Domain.Interfaces.Repositories;
 using Infrastructure.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
@@ -67,7 +67,7 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
             entityToDeactivate.Deactivate();
         }
     }
-     
+
     /// <inheritdoc/>
     public virtual async Task<bool> ExistsAsync(long id)
     {
@@ -81,11 +81,11 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     {
         return await _dbSet.CountAsync();
     }
-    
+
     /// <inheritdoc/>
     public async Task<int> CountAsync(IQueryable<TEntity>? query, QueryFilterDto? queryFilter, List<string>? searchParameters)
     {
-        if(query == null)
+        if (query == null)
         {
             query = _dbSet.AsQueryable();
         }
@@ -108,17 +108,17 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     {
         IQueryable<TEntity> query = _dbSet.AsQueryable();
 
-        if(queryFilter != null && !string.IsNullOrEmpty(queryFilter.Search))
+        if (queryFilter != null && !string.IsNullOrEmpty(queryFilter.Search))
         {
             query = new QueryFilterBuilder<TEntity>(_dbSet)
             .Where(searchParameters, queryFilter.Search)
             .Build();
         }
-        
+
         query = new QueryFilterBuilder<TEntity>(_dbSet)
         .WhereActive()
         .Build();
-        
+
         return await query.CountAsync();
     }
 }

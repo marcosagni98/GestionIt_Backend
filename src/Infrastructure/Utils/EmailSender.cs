@@ -20,7 +20,8 @@ public class EmailSender : IEmailSender
         };
 
         var url = $"{baseUrl}/reset-password?token={token}";
-        try {
+        try
+        {
             await smtpClient.SendMailAsync(
                 new MailMessage(
                     from: mail,

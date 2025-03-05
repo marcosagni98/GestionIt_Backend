@@ -23,7 +23,7 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
 {
     private readonly ILogger<AuthController> _logger = logger;
     private readonly IAuthService _authService = authService;
-    
+
     /// <summary>
     /// Logs in the user and returns a jwt.
     /// </summary>
@@ -37,7 +37,7 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
         if (!loginResult.IsSuccess)
         {
             return BadRequest(loginResult.Errors);
-            
+
         }
         return Ok(loginResult.Value);
     }
