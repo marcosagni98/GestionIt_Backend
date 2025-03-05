@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Domain.Entities.Common;
+﻿namespace Domain.Entities.Common;
 
 public class Entity : EntityId
 {

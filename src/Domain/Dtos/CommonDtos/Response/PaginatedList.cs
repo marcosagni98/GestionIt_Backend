@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Domain.Dtos.CommonDtos.Response;
+﻿namespace Domain.Dtos.CommonDtos.Response;
 
 /// <summary>
 /// Represents a paginated list of items.

@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Domain.Interfaces.Utils;
+﻿namespace Domain.Interfaces.Utils;
 
 /// <summary>
 /// Email sender inteface

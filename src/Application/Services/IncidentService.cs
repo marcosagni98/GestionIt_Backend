@@ -41,11 +41,11 @@ namespace Application.Services
         /// <inheritdoc/>
         public async Task<Result<CreatedResponseDto>> AddAsync(IncidentAddRequestDto addRequestDto)
         {
-            var incident = _mapper.Map<Incident>(addRequestDto); 
+            var incident = _mapper.Map<Incident>(addRequestDto);
             await _incidentRepository.AddAsync(incident);
             await _unitOfWork.SaveAsync();
 
-            return Result.Ok(new CreatedResponseDto (incident.Id));
+            return Result.Ok(new CreatedResponseDto(incident.Id));
         }
 
         /// <inheritdoc/>
@@ -70,7 +70,7 @@ namespace Application.Services
             if (user == null) return Result.Fail("User not found");
 
             PaginatedList<Incident> paginatedList = new([], 0);
-            if(user.UserType == UserType.Admin)
+            if (user.UserType == UserType.Admin)
             {
                 paginatedList = await _incidentRepository.GetAsync(queryFilter);
             }
@@ -180,7 +180,7 @@ namespace Application.Services
             {
                 incidentList = await _incidentRepository.GetIdsByUserIdAsync(userId);
             }
-            
+
             if (incidentList == null || incidentList.Count == 0)
             {
                 return Result.Fail<List<long>>($"Not incidents found for user {userId}");
@@ -196,14 +196,14 @@ namespace Application.Services
             if (incident == null) return Result.Fail("Incident not found");
 
             incident.TechnicianId = incidentUpdateTechnicianRequestDto.TechnicianId;
-            if(incident.Status == Status.Unassigned)
+            if (incident.Status == Status.Unassigned)
             {
                 incident.Status = Status.Pending;
             }
 
             _incidentRepository.Update(incident);
             await _unitOfWork.SaveAsync();
-            
+
             return Result.Ok(new SuccessResponseDto { Message = "Incident updated successfully." });
         }
 

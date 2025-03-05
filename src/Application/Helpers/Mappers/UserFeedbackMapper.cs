@@ -1,7 +1,6 @@
-﻿using Application.Dtos.CRUD.UserFeedbacks.Request;
-using Application.Dtos.CRUD.UserFeedbacks;
+﻿using Application.Dtos.CRUD.UserFeedbacks;
+using Application.Dtos.CRUD.UserFeedbacks.Request;
 using AutoMapper;
-
 using Domain.Entities;
 
 /// <summary>

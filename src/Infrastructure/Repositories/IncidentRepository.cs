@@ -39,7 +39,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     public Task<int> CountByPriorityAsync(Priority priority, long technicianId)
     {
         return _dbSet
-            .CountAsync(x => x.Priority == priority && x.Active == true && (x.Status != Status.Completed && x.Status != Status.Closed) && x.Technician.Id == technicianId );
+            .CountAsync(x => x.Priority == priority && x.Active == true && (x.Status != Status.Completed && x.Status != Status.Closed) && x.Technician.Id == technicianId);
     }
 
     /// <inheritdoc/>
@@ -192,7 +192,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
                                 .OrderBy(ih => ih.ChangedAt)
                                 .FirstOrDefault()
             })
-            .Where(i => i.CompletedAt != null) 
+            .Where(i => i.CompletedAt != null)
 
             .ToList();
 
@@ -324,7 +324,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
-        var baseQuery = _dbSet.Where(x => (x.Priority == priority && (x.Status != Status.Completed && x.Status != Status.Closed)) )
+        var baseQuery = _dbSet.Where(x => (x.Priority == priority && (x.Status != Status.Completed && x.Status != Status.Closed)))
             .Include(i => i.User)
             .Include(i => i.Technician); ;
 
