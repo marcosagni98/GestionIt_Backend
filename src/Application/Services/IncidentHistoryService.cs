@@ -26,7 +26,12 @@ namespace Application.Services
         public async Task<Result<List<IncidentHistoryDto>>> GetByIncidentIdAsync(long incidentId)
         {
             Incident? incident = await _incidentRepository.GetByIdAsync(incidentId);
-            if (incident == null) return Result.Fail("Incident not found");
+            if (incident == null)
+            {
+                string error = $"Incident with id {incidentId} not found";
+                _logger.LogError(error);
+                return Result.Fail(error);
+            }
 
             return _mapper.Map<List<IncidentHistoryDto>>(await _incidentHistoryRepository.GetByIncidentIdAsync(incidentId));
         }

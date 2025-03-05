@@ -54,19 +54,25 @@ public class AuthService : IAuthService
         var validationResult = await validator.ValidateAsync(loginRequestDto);
         if (!validationResult.IsValid)
         {
-            return Result.Fail<LoginResponseDto>(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+            string error = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+            _logger.LogError(error);
+            return Result.Fail<LoginResponseDto>(error);
         }
 
         var hashedPassword = PasswordHasher.HashPassword(loginRequestDto.Password);
         if (!await _userRepository.LoginAsync(loginRequestDto.Email, hashedPassword))
         {
-            return Result.Fail<LoginResponseDto>("Email or password incorrect.");
+            string error = "Email or password incorrect.";
+            _logger.LogError(error);
+            return Result.Fail<LoginResponseDto>(error);
         }
         
         User? user = await _userRepository.GetUserByEmailAsync(loginRequestDto.Email);
         if (user == null)
         {
-            return Result.Fail<LoginResponseDto>("User does not exists.");
+            string error = $"User {loginRequestDto.Email} does not exists.";
+            _logger.LogError(error);
+            return Result.Fail<LoginResponseDto>(error);
         }
         return Result.Ok(_jwt.GenerateJwtToken(user));
     }
@@ -91,7 +97,9 @@ public class AuthService : IAuthService
             var result = await _userRepository.EmailExistsAsync(user.Email);
             if (result)
             {
-                return Result.Fail<CreatedResponseDto>("Email already exists.");
+                string error = $"Email {user.Email} already exists.";
+                _logger.LogError(error);
+                return Result.Fail<CreatedResponseDto>(error);
             }
         }
         user.Password = PasswordHasher.HashPassword(registerRequestDto.Password);
@@ -108,17 +116,23 @@ public class AuthService : IAuthService
         var validationResult = await validator.ValidateAsync(forgotPasswordRequestDto);
         if (!validationResult.IsValid)
         {
-            return Result.Fail<SuccessResponseDto>(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+            string error = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+            _logger.LogError(error);
+            return Result.Fail<SuccessResponseDto>(error);
         }
 
         if (!await _userRepository.EmailExistsAsync(forgotPasswordRequestDto.Email))
         {
-            return Result.Fail<SuccessResponseDto>("Email does not exists.");
+            string error = $"Email {forgotPasswordRequestDto.Email} does not exists.";
+            _logger.LogError(error);
+            return Result.Fail<SuccessResponseDto>(error);
         }
         User? user = await _userRepository.GetUserByEmailAsync(forgotPasswordRequestDto.Email);
         if (user == null)
         {
-            return Result.Fail<SuccessResponseDto>("User does not exists.");
+            string error = $"User {forgotPasswordRequestDto.Email} does not exists.";
+            _logger.LogError(error);
+            return Result.Fail<SuccessResponseDto>(error);
         }
         var token = _jwt.GenerateJwtToken(user).Token;
         await _emailSender.SendRecoverPasswordAsync(user.Email, token);
@@ -132,12 +146,16 @@ public class AuthService : IAuthService
         var validationResult = await validator.ValidateAsync(resetPasswordRequestDto);
         if (!validationResult.IsValid)
         {
-            return Result.Fail<SuccessResponseDto>(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+            string error = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+            _logger.LogError(error);
+            return Result.Fail<SuccessResponseDto>(error);
         }
 
         if (!await _userRepository.EmailExistsAsync(resetPasswordRequestDto.Email))
         {
-            return Result.Fail<SuccessResponseDto>("User not found.");
+            string error = $"User with email {resetPasswordRequestDto.Email} not found.";
+            _logger.LogError(error);
+            return Result.Fail<SuccessResponseDto>(error);
         }
         User? user = await _userRepository.GetUserByEmailAsync(resetPasswordRequestDto.Email);
         user.Password = PasswordHasher.HashPassword(resetPasswordRequestDto.Password);

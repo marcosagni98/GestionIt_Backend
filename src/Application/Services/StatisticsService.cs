@@ -33,9 +33,11 @@ public class StatisticsService(ILogger<StatisticsService> logger, IUserRepositor
     public async Task<Result<ActiveIncidentsStatsResponseDto>> GetActiveIncidentsSevirityCount(long id)
     {
         User? user = await _userRepository.GetByIdAsync(id);
-        if(user == null)
+        if (user == null)
         {
-            return Result.Fail<ActiveIncidentsStatsResponseDto>("User not found");
+            string error = $"User with id {id} not found";
+            _logger.LogError(error);
+            return Result.Fail(error);
         }
 
         int totalCount, lowCount, mediumCount, highCount;
@@ -58,7 +60,9 @@ public class StatisticsService(ILogger<StatisticsService> logger, IUserRepositor
         }
         else
         {
-            return Result.Fail<ActiveIncidentsStatsResponseDto>("User not authorized");
+            string error = "User not authorized";
+            _logger.LogError(error);
+            return Result.Fail<ActiveIncidentsStatsResponseDto>(error);
         }
 
         return Result.Ok(new ActiveIncidentsStatsResponseDto(totalCount, highCount, mediumCount, lowCount, VariationFromLastMonth));

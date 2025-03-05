@@ -51,7 +51,9 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
         var exists = await _incidentRepository.ExistsAsync(id);
         if (!exists)
         {
-            return Result.Fail<SuccessResponseDto>("Incident not found.");
+            string error = $"Incident with id {id} not found";
+            _logger.LogError(error);
+            return Result.Fail<SuccessResponseDto>(error);
         }
 
         await _incidentRepository.DeleteAsync(id);
@@ -64,7 +66,12 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
     public async Task<Result<PaginatedList<IncidentDto>>> GetAsync(QueryFilterDto queryFilter, long userId)
     {
         var user = await _userRepository.GetByIdAsync(userId);
-        if (user == null) return Result.Fail("User not found");
+        if (user == null) 
+        {
+            string error = $"User with id {userId} not found";
+            _logger.LogError(error);
+            return Result.Fail(error);
+        } 
 
         PaginatedList<Incident> paginatedList = new([], 0);
         if(user.UserType == UserType.Admin)
@@ -78,7 +85,9 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
 
         if (paginatedList.Items == null)
         {
-            return Result.Fail<PaginatedList<IncidentDto>>("Error retrieving incidents.");
+            string error = "Error retrieving incidents.";
+            _logger.LogError(error);
+            return Result.Fail<PaginatedList<IncidentDto>>(error);
         }
 
         var incidentDtos = _mapper.Map<List<IncidentDto>>(paginatedList.Items);
@@ -98,7 +107,9 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
         var paginatedList = await _incidentRepository.GetHistoricAsync(queryFilter);
         if (paginatedList == null || paginatedList.Items == null)
         {
-            return Result.Fail<PaginatedList<IncidentDto>>("Error retrieving incidnets.");
+            string error = "Error retrieving incidents.";
+            _logger.LogError(error);
+            return Result.Fail<PaginatedList<IncidentDto>>(error);
         }
         var incidetnsDtos = _mapper.Map<List<IncidentDto>>(paginatedList.Items);
         return Result.Ok(new PaginatedList<IncidentDto>(incidetnsDtos, paginatedList.TotalCount));
@@ -110,7 +121,9 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
         var incident = await _incidentRepository.GetByIdAsync(id);
         if (incident == null)
         {
-            return Result.Fail<IncidentDto>("Incident not found.");
+            string error = $"Incident with id {id} not found";
+            _logger.LogError(error);
+            return Result.Fail<IncidentDto>(error);
         }
 
         var response = _mapper.Map<IncidentDto>(incident);
@@ -123,7 +136,9 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
         var incident = await _incidentRepository.GetByIdAsync(id);
         if (incident == null)
         {
-            return Result.Fail<SuccessResponseDto>("Incident not found.");
+            string error = $"Incident with id {id} not found";
+            _logger.LogError(error);
+            return Result.Fail<SuccessResponseDto>(error;
         }
 
         _mapper.Map(updateRequestDto, incident);
@@ -139,7 +154,9 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
         var incident = await _incidentRepository.GetByIdAsync(id);
         if (incident == null)
         {
-            return Result.Fail<SuccessResponseDto>("Incident not found.");
+            string error = $"Incident with id {id} not found";
+            _logger.LogError(error);
+            return Result.Fail<SuccessResponseDto>(error);
         }
 
         IncidentHistory incidentHistory = new IncidentHistory
@@ -167,7 +184,9 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
         List<long>? incidentList;
         if (user == null)
         {
-            return Result.Fail("User not found");
+            string error = $"User with id {userId} not found";
+            _logger.LogError(error);
+            return Result.Fail(error);
         }
         else if (user.UserType == UserType.Admin)
         {
@@ -180,7 +199,9 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
         
         if (incidentList == null || incidentList.Count == 0)
         {
-            return Result.Fail<List<long>>($"Not incidents found for user {userId}");
+            string error = $"Not incidents found for user {userId}";
+            _logger.LogError(error);
+            return Result.Fail<List<long>>(error);
         }
 
         return Result.Ok(incidentList.ToList());
@@ -190,7 +211,12 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
     public async Task<Result<SuccessResponseDto>> UpdateTechnicianAsync(long id, IncidentUpdateTechnicianRequestDto incidentUpdateTechnicianRequestDto)
     {
         Incident? incident = await _incidentRepository.GetByIdAsync(id);
-        if (incident == null) return Result.Fail("Incident not found");
+        if (incident == null)
+        {
+            string error = $"Incident with id {id} not found";
+            _logger.LogError(error);
+            return Result.Fail(error);
+        }
 
         incident.TechnicianId = incidentUpdateTechnicianRequestDto.TechnicianId;
         if(incident.Status == Status.Unassigned)
@@ -208,7 +234,12 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
     public async Task<Result<SuccessResponseDto>> UpdateTitleAndDescription(long id, IncidentUpdateTitleDescriptionRequestDto updateTitleDescriptionRequestDto)
     {
         Incident? incident = await _incidentRepository.GetByIdAsync(id);
-        if (incident == null) return Result.Fail("Incident not found");
+        if (incident == null)
+        {
+            string error = $"Incident with id {id} not found";
+            _logger.LogError(error);
+            return Result.Fail(error);
+        }
 
         UpdateValuesOfIncident(updateTitleDescriptionRequestDto, incident);
 
@@ -241,7 +272,12 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
     public async Task<Result<PaginatedList<IncidentDto>>> GetByPriorityAsync(QueryFilterDto queryFilter, Priority priorityId, long userId)
     {
         var user = await _userRepository.GetByIdAsync(userId);
-        if (user == null) return Result.Fail("User not found");
+        if (user == null)
+        {
+            string error = $"User with id {userId} not found";
+            _logger.LogError(error);
+            return Result.Fail(error);
+        }
 
         PaginatedList<Incident> paginatedList = new([], 0);
         if (user.UserType == UserType.Admin)
@@ -255,7 +291,9 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
 
         if (paginatedList.Items == null)
         {
-            return Result.Fail<PaginatedList<IncidentDto>>("Error retrieving incidents.");
+            string error = "Error retrieving incidents.";
+            _logger.LogError(error);
+            return Result.Fail<PaginatedList<IncidentDto>>(error);
         }
 
         var incidentDtos = _mapper.Map<List<IncidentDto>>(paginatedList.Items);
@@ -269,7 +307,9 @@ public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork
         var incident = await _incidentRepository.GetByIdAsync(id);
         if (incident == null)
         {
-            return Result.Fail<SuccessResponseDto>("Incident not found.");
+            string error = $"Incident with id {id} not found";
+            _logger.LogError(error);
+            return Result.Fail<SuccessResponseDto>(error);
         }
 
         await _incidentRepository.UpdateIncidentPriorityAsync(id, priorityRequestDto.PriorityId);

@@ -44,7 +44,9 @@ namespace Application.Services
                 var result = await _userRepository.EmailExistsAsync(user.Email);
                 if (result)
                 {
-                    return Result.Fail<CreatedResponseDto>("Email already exists.");
+                    string error = $"Email {user.Email} already exists.";
+                    _logger.LogError(error);
+                    return Result.Fail<CreatedResponseDto>(error);
                 }
             }
             await _userRepository.AddAsync(user);
@@ -59,7 +61,9 @@ namespace Application.Services
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null)
             {
-                return Result.Fail<SuccessResponseDto>("User not found.");
+                string error = $"User with id {id} not found";
+                _logger.LogError(error);
+                return Result.Fail<SuccessResponseDto>(error);
             }
 
             _mapper.Map(updateRequestDto, user);
@@ -74,7 +78,9 @@ namespace Application.Services
         {
             if (!await _userRepository.ExistsAsync(id))
             {
-                return Result.Fail<SuccessResponseDto>("User not found.");
+                string error = $"User with id {id} not found";
+                _logger.LogError(error);
+                return Result.Fail<SuccessResponseDto>(error);
             }
 
             await _userRepository.DeleteAsync(id);
@@ -90,7 +96,9 @@ namespace Application.Services
 
             if (paginatedList == null || paginatedList.Items == null)
             {
-                return Result.Fail<PaginatedList<UserDto>>("Error retrieving users.");
+                string error = "Error retrieving users.";
+                _logger.LogError(error);
+                return Result.Fail<PaginatedList<UserDto>>(error);
             }
 
             var userDtos = _mapper.Map<List<UserDto>>(paginatedList.Items);
@@ -112,7 +120,9 @@ namespace Application.Services
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null)
             {
-                return Result.Fail<UserDto>("User not found.");
+                string error = $"User with id {id} not found";
+                _logger.LogError(error);
+                return Result.Fail<UserDto>(error);
             }
 
             var response = _mapper.Map<UserDto>(user);
@@ -124,14 +134,18 @@ namespace Application.Services
         {
             if (!long.TryParse(userId, out long parsedUserId))
             {
-                return Result.Fail<long>("Invalid user ID.");
+                string error = $"Invalid user ID: {userId} .";
+                _logger.LogError(error);
+                return Result.Fail<long>(error);
             }
 
             User? user = await _userRepository.GetByIdAsync(parsedUserId);
 
             if (user == null)
             {
-                return Result.Fail<long>("User not found.");
+                string error = $"User with id {parsedUserId} not found";
+                _logger.LogError(error);
+                return Result.Fail<long>(error);
             }
             
             return Result.Ok(parsedUserId);
@@ -144,7 +158,9 @@ namespace Application.Services
 
             if (user == null)
             {
-                return Result.Fail<SuccessResponseDto>("User not found.");
+                string error = $"User with id {userId} not found";
+                _logger.LogError(error);
+                return Result.Fail<SuccessResponseDto>(error);
             }
 
             user.UserType = userType;
