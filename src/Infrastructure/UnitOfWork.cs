@@ -2,7 +2,7 @@
 
 namespace Infrastructure;
 
-public class EfUnitOfWork(AppDbContext context) : IUnitOfWork
+public class UnitOfWork(AppDbContext context) : IUnitOfWork
 {
     public async Task SaveAsync()
     {

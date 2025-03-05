@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 
-namespace Application.Utils;
+namespace Application.Helpers.Utils;
 
 /// <summary>
 /// Password hashing utility class.
@@ -69,7 +69,7 @@ public class PasswordHasher
     {
         uint diff = (uint)a.Length ^ (uint)b.Length;
         for (int i = 0; i < Math.Min(a.Length, b.Length); i++)
-            diff |= (uint)(a[i] ^ (b[i]));
+            diff |= (uint)(a[i] ^ b[i]);
         return diff == 0;
     }
 }
