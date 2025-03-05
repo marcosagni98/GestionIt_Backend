@@ -37,7 +37,7 @@ namespace Application.Services
             await _userFeedbackRepository.AddAsync(userFeedback);
             await _unitOfWork.SaveAsync();
 
-            return Result.Ok(new CreatedResponseDto(userFeedback.Id));
+            return Result.Ok(new CreatedResponseDto (userFeedback.Id));
         }
 
         /// <inheritdoc/>

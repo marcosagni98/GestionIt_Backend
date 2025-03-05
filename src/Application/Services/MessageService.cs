@@ -52,7 +52,7 @@ namespace Application.Services
             }
 
             List<MessageDto> messages = _mapper.Map<List<MessageDto>>(await _messageRepository.GetByIncidentIdAsync(incidentId));
-
+            
             return Result.Ok(messages);
         }
     }
