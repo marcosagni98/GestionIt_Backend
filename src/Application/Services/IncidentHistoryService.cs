@@ -15,7 +15,7 @@ namespace Application.Services
     /// Initializes a new instance of the <see cref="IncidentHistoryService"/> class.
     /// </remarks>
     /// <param name="mapper">The mapper for object mapping.</param>
-    public class IncidentHistoryService(ILogger<IncidentHistoryService> logger,  IMapper mapper, IIncidentRepository incidentRepository, IIncidentHistoryRepository incidentHistoryRepository) : IIncidentHistoryService
+    public class IncidentHistoryService(ILogger<IncidentHistoryService> logger, IMapper mapper, IIncidentRepository incidentRepository, IIncidentHistoryRepository incidentHistoryRepository) : IIncidentHistoryService
     {
         private readonly ILogger<IncidentHistoryService> _logger = logger;
         private readonly IMapper _mapper = mapper;

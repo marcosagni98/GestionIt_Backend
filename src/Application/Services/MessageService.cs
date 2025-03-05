@@ -7,7 +7,6 @@ using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using FluentResults;
 using Microsoft.Extensions.Logging;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {
@@ -45,15 +44,15 @@ namespace Application.Services
         public async Task<Result<List<MessageDto>>> GetByIncidentIdAsync(long incidentId)
         {
             Incident? incident = await _incidentRepository.GetByIdAsync(incidentId);
-            if(incident == null)
-{
+            if (incident == null)
+            {
                 string error = $"Incident with id {incidentId} not found";
                 _logger.LogError(error);
                 return Result.Fail(error);
             }
 
             List<MessageDto> messages = _mapper.Map<List<MessageDto>>(await _messageRepository.GetByIncidentIdAsync(incidentId));
-            
+
             return Result.Ok(messages);
         }
     }

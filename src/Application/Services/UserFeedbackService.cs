@@ -9,7 +9,6 @@ using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using FluentResults;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Services
@@ -38,7 +37,7 @@ namespace Application.Services
             await _userFeedbackRepository.AddAsync(userFeedback);
             await _unitOfWork.SaveAsync();
 
-            return Result.Ok(new CreatedResponseDto (userFeedback.Id));
+            return Result.Ok(new CreatedResponseDto(userFeedback.Id));
         }
 
         /// <inheritdoc/>
