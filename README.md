@@ -58,7 +58,7 @@ Example:
 7. Execute the project:
    
     ```bash
-    docker-compose up --build
+    docker-compose up --pull always
     ```
 
 ## Architecture
