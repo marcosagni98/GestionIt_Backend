@@ -1,136 +1,138 @@
-# API de Gestión de Incidencias - Clean Architecture en .NET 8
+# Incident Management API - Clean Architecture in .NET 8
 
-Este repositorio contiene la API para una aplicación de gestión de incidencias, desarrollada en **.NET 8** siguiendo los principios de **Clean Architecture**. La API se comunica con un **frontend en React** (en un repositorio separado) y utiliza **SignalR** para implementar un chat en tiempo real. Tanto el backend, frontend como la base de datos están configurados para ejecutarse en **contenedores Docker** separados.
+This repository contains the API for an incident management application, developed in **.NET 8** following the principles of **Clean Architecture**. The API communicates with a **React frontend** (in a separate repository) and uses **SignalR** to implement real-time chat. The backend, frontend, and database are all configured to run in separate **Docker containers**.
 
-## Tabla de Contenidos
-1. [Instalación y Uso](#instalación-y-uso)
-2. [Arquitectura](#arquitectura)
-3. [Patrones Implementados](#patrones-implementados)
+## Table of Contents
+1. [Installation and Usage](#installation-and-usage)
+2. [Architecture](#architecture)
+3. [Implemented Patterns](#implemented-patterns)
    - [Repository Pattern](#repository-pattern)
-   - [Inyección de Dependencias](#inyección-de-dependencias)
-   - [Pattern Result](#pattern-result)
+   - [Dependency Injection](#dependency-injection)
+   - [Result Pattern](#result-pattern)
    - [Exception Handler](#exception-handler)
    - [Error Details](#error-details)
-   - [Repositorios Genéricos](#repositorios-genéricos)
+   - [Generic Repositories](#generic-repositories)
    - [AutoMapper](#automapper)
    - [Fluent Validation](#fluent-validation)
-   - [SignalR para Chat](#signalr-para-chat)
-4. [Estructura del Proyecto](#estructura-del-proyecto)
-5. [Contribuciones](#contribuciones)
+   - [SignalR for Chat](#signalr-for-chat)
+4. [Project Structure](#project-structure)
+5. [Contributions](#contributions)
    
-### Pasos para la Instalación
+### Installation Steps
 
-Este proyecto está configurado para ejecutarse con Docker. Cada componente (API, frontend y base de datos) se ejecuta en un contenedor separado.
+This project is configured to run with Docker. Each component (API, frontend, and database) runs in a separate container.
 
-1. Clonar el repositorio:
+1. Clone the repository:
 
    ```bash
    git@github.com:marcosagni98/GestionIt_Backend.git
+   ```
    
-2. Navegar al directorio del proyecto:
+2. Navigate to the project directory:
    
    ```bash
    cd GestionIt_Backend
+   ```
        
-4. Configurar los JWTSettings en el archivo `SISINF_Backend\src\API\appsettings.json` de la capa API.
+3. Configure the JWTSettings in the `SISINF_Backend\src\API\appsettings.json` file in the API layer.
 
-5. Configurar el `SISINF_Backend\.env`
+4. Configure the `SISINF_Backend\.env` file
 
-ejemplo:
+Example:
    ```bash
    DB_USER=sa
    DB_PASSWORD=password@12345#
-   EMAIL=correo@gmail.com
-   EMAIL_PASSWORD=contraseña
+   EMAIL=email@gmail.com
+   EMAIL_PASSWORD=password
    BASE_URL=https://localhost
    REACT_APP_API_BASE_URL=http://localhost:5000
    REACT_APP_DEBUG=true
    ```
 
-> **Nota:** Para el correo y la contraseña de correo seguir este tutorial: https://megacity20.com/support/106
+> **Note:** For the email and email password, [follow this tutorial
+](https://www.hostpapa.com/knowledgebase/how-to-create-and-use-google-app-passwords/)
+5. Make sure Docker is installed and running.
 
-6. Asegúrate de que Docker esté instalado y corriendo.
-7. Ejecuta el siguiente comando en la raíz del proyecto:
+6. Run the following command in the project root:
 
-8. Ejecutar el proyecto:
+7. Execute the project:
    
     ```bash
     docker-compose up --build
+    ```
 
-## Arquitectura
+## Architecture
 
-Este proyecto sigue la **Clean Architecture** para mantener un código modular y fácilmente testeable. Las responsabilidades están separadas en las siguientes capas:
+This project follows the **Clean Architecture** to maintain modular and easily testable code. Responsibilities are separated into the following layers:
 
-1. **API**: Capa de presentación que contiene los controladores y la configuración de SignalR.
-2. **Application**: Contiene la lógica de negocio, los servicios y validaciones.
-3. **Domain**: Define las entidades principales y las interfaces para los repositorios.
-4. **Infrastructure**: Implementa los detalles de acceso a datos, repositorios y otros servicios externos.
+1. **API**: Presentation layer containing controllers and SignalR configuration.
+2. **Application**: Contains business logic, services, and validations.
+3. **Domain**: Defines the main entities and interfaces for repositories.
+4. **Infrastructure**: Implements data access details, repositories, and other external services.
 
-## Patrones Implementados
+## Implemented Patterns
 
 ### Repository Pattern
 
-El **Repository Pattern** abstrae el acceso a la base de datos, permitiendo que la lógica de negocio no dependa de la infraestructura. Los repositorios se implementan en la capa de **Infrastructure** y sus interfaces están definidas en **Domain**.
+The **Repository Pattern** abstracts database access, allowing business logic to be independent of infrastructure. Repositories are implemented in the **Infrastructure** layer and their interfaces are defined in the **Domain**.
 
-### Inyección de Dependencias
+### Dependency Injection
 
-La **Inyección de Dependencias (DI)** se gestiona mediante el contenedor de dependencias de .NET 8. Se configuran todas las dependencias en el archivo `Program.cs` de la capa **API**.
+**Dependency Injection (DI)** is managed through the .NET 8 dependency container. All dependencies are configured in the `Program.cs` file of the **API** layer.
 
-### Pattern Result
+### Result Pattern
 
-El **Pattern Result** facilita el manejo de respuestas de las operaciones, permitiendo devolver tanto el resultado de una operación como su estado (éxito, error, etc.) mediante el tipo `Result<T>`.
+The **Result Pattern** facilitates handling operation responses, allowing both the result of an operation and its status (success, error, etc.) to be returned using the `Result<T>` type.
 
 ### Exception Handler
 
-Se ha implementado un **Exception Handler** global para capturar excepciones y devolver respuestas uniformes desde la API. Esto asegura un manejo centralizado de errores.
+A global **Exception Handler** has been implemented to capture exceptions and return uniform responses from the API. This ensures centralized error handling.
 
 ### Error Details
 
-El objeto `ErrorDetails` se utiliza para devolver detalles de los errores ocurridos en la API, siguiendo un formato estándar en las respuestas de error.
+The `ErrorDetails` object is used to return details of errors that occur in the API, following a standard format in error responses.
 
-### Repositorios Genéricos
+### Generic Repositories
 
-Se utilizan **Repositorios Genéricos** para implementar operaciones CRUD comunes para las entidades del dominio. Esto reduce la duplicación de código y centraliza la lógica de acceso a datos.
+**Generic Repositories** are used to implement common CRUD operations for domain entities. This reduces code duplication and centralizes data access logic.
 
 ### AutoMapper
 
-**AutoMapper** se utiliza para mapear entre entidades de dominio y DTOs. La configuración de AutoMapper se encuentra en `Program.cs` de la capa **API**.
+**AutoMapper** is used to map between domain entities and DTOs. The AutoMapper configuration is found in `Program.cs` of the **API** layer.
 
 ### Fluent Validation
 
-**Fluent Validation** se utiliza para validar los modelos de datos. Las reglas de validación están separadas de los controladores, siguiendo el principio de responsabilidad única.
+**Fluent Validation** is used to validate data models. Validation rules are separated from controllers, following the single responsibility principle.
 
-### SignalR para Chat
-/src /API - Controladores, configuración de SignalR y punto de entrada de la API. /Application - Lógica de negocio, validaciones y servicios. /Domain - Entidades principales y contratos de repositorios. /Infrastructure - Implementación de los repositorios, acceso a base de datos y otros servicios.
+### SignalR for Chat
+/src /API - Controllers, SignalR configuration, and API entry point. /Application - Business logic, validations, and services. /Domain - Main entities and repository contracts. /Infrastructure - Implementation of repositories, database access, and other services.
 
-Se implementa **SignalR** para habilitar el chat en tiempo real entre los usuarios de la aplicación. SignalR se configura en la capa **API**, y se comunica con el frontend en React.
+**SignalR** is implemented to enable real-time chat between application users. SignalR is configured in the **API** layer and communicates with the React frontend.
 
-## Estructura del Proyecto
+## Project Structure
 ![image](https://github.com/user-attachments/assets/a924da72-e3b0-4661-ab7f-bd18092b1ae0)
 
-## Instalación y Uso
+## Installation and Usage
 
-### Prerrequisitos
+### Prerequisites
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [Docker](https://www.docker.com/get-started)
-- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) como base de datos.
-- [Node.js](https://nodejs.org/) y [npm](https://www.npmjs.com/) para el frontend (si lo ejecutas localmente).
+- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) as the database.
+- [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) for the frontend (if running locally).
 
-
-
-## Pruebas
+## Testing
 
 To be implemented
 
-## Contribuciones
+## Contributions
 
-Si deseas contribuir a este proyecto, sigue estos pasos:
+If you want to contribute to this project, follow these steps:
 
-1. Haz un fork del repositorio.
-2. Crea una nueva rama (git checkout -b feature/nueva-funcionalidad).
-3. Realiza tus cambios y haz commit (git commit -m 'Añadir nueva funcionalidad').
-4. Haz push a la rama (git push origin feature/nueva-funcionalidad).
-5. Envía un pull request.
+1. Fork the repository.
+2. Create a new branch (git checkout -b feature/new-functionality).
+3. Make your changes and commit them (git commit -m 'Add new functionality').
+4. Push to the branch (git push origin feature/new-functionality).
+5. Submit a pull request.
 
-¡Tus contribuciones son bienvenidas!
+Your contributions are welcome!
