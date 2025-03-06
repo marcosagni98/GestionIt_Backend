@@ -3,9 +3,9 @@
 Este repositorio contiene la API para una aplicación de gestión de incidencias, desarrollada en **.NET 8** siguiendo los principios de **Clean Architecture**. La API se comunica con un **frontend en React** (en un repositorio separado) y utiliza **SignalR** para implementar un chat en tiempo real. Tanto el backend, frontend como la base de datos están configurados para ejecutarse en **contenedores Docker** separados.
 
 ## Tabla de Contenidos
-
-1. [Arquitectura](#arquitectura)
-2. [Patrones Implementados](#patrones-implementados)
+1. [Instalación y Uso](#instalación-y-uso)
+2. [Arquitectura](#arquitectura)
+3. [Patrones Implementados](#patrones-implementados)
    - [Repository Pattern](#repository-pattern)
    - [Inyección de Dependencias](#inyección-de-dependencias)
    - [Pattern Result](#pattern-result)
@@ -15,11 +15,45 @@ Este repositorio contiene la API para una aplicación de gestión de incidencias
    - [AutoMapper](#automapper)
    - [Fluent Validation](#fluent-validation)
    - [SignalR para Chat](#signalr-para-chat)
-3. [Estructura del Proyecto](#estructura-del-proyecto)
-4. [Instalación y Uso](#instalación-y-uso)
-5. [Docker](#docker)
-6. [Contribuciones](#contribuciones)
+4. [Estructura del Proyecto](#estructura-del-proyecto)
+5. [Contribuciones](#contribuciones)
+   
+### Pasos para la Instalación
 
+Este proyecto está configurado para ejecutarse con Docker. Cada componente (API, frontend y base de datos) se ejecuta en un contenedor separado.
+
+1. Clonar el repositorio:
+
+   ```bash
+   git@github.com:marcosagni98/GestionIt_Backend.git
+   
+2. Navegar al directorio del proyecto:
+   
+   ```bash
+   cd GestionIt_Backend
+       
+4. Configurar los JWTSettings en el archivo `SISINF_Backend\src\API\appsettings.json` de la capa API.
+
+5. Configurar el `SISINF_Backend\.env`
+
+ejemplo:
+   ```bash
+   DB_USER=sa
+   DB_PASSWORD=password@12345#
+   EMAIL=correo@gmail.com
+   EMAIL_PASSWORD=contraseña
+   BASE_URL=https://localhost
+   REACT_APP_API_BASE_URL=http://localhost:5000
+   REACT_APP_DEBUG=true
+   ```
+
+6. Asegúrate de que Docker esté instalado y corriendo.
+7. Ejecuta el siguiente comando en la raíz del proyecto:
+
+8. Ejecutar el proyecto:
+   
+    ```bash
+    docker-compose up --build
 
 ## Arquitectura
 
@@ -70,6 +104,7 @@ Se utilizan **Repositorios Genéricos** para implementar operaciones CRUD comune
 Se implementa **SignalR** para habilitar el chat en tiempo real entre los usuarios de la aplicación. SignalR se configura en la capa **API**, y se comunica con el frontend en React.
 
 ## Estructura del Proyecto
+![image](https://github.com/user-attachments/assets/a924da72-e3b0-4661-ab7f-bd18092b1ae0)
 
 ## Instalación y Uso
 
@@ -80,42 +115,7 @@ Se implementa **SignalR** para habilitar el chat en tiempo real entre los usuari
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) como base de datos.
 - [Node.js](https://nodejs.org/) y [npm](https://www.npmjs.com/) para el frontend (si lo ejecutas localmente).
 
-### Pasos para la Instalación
 
-Este proyecto está configurado para ejecutarse con Docker. Cada componente (API, frontend y base de datos) se ejecuta en un contenedor separado.
-
-1. Clonar el repositorio:
-
-   ```bash
-   git@github.com:marcosagni98/GestionIt_Backend.git
-   
-2. Navegar al directorio del proyecto:
-   
-   ```bash
-   cd GestionIt_Backend
-       
-4. Configurar los JWTSettings en el archivo `SISINF_Backend\src\API\appsettings.json` de la capa API.
-
-5. Configurar el `SISINF_Backend\.env`
-
-ejemplo:
-   ```bash
-   DB_USER=sa
-   DB_PASSWORD=password@12345#
-   EMAIL=correo@gmail.com
-   EMAIL_PASSWORD=contraseña
-   BASE_URL=https://localhost
-   REACT_APP_API_BASE_URL=http://localhost:5000
-   REACT_APP_DEBUG=true
-   ```
-
-6. Asegúrate de que Docker esté instalado y corriendo.
-7. Ejecuta el siguiente comando en la raíz del proyecto:
-
-8. Ejecutar el proyecto:
-   
-    ```bash
-    docker-compose up --build
 
 ## Pruebas
 
