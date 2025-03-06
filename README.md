@@ -47,6 +47,8 @@ ejemplo:
    REACT_APP_DEBUG=true
    ```
 
+> **Nota:** Para el correo y la contraseña de correo seguir este tutorial: https://megacity20.com/support/106
+
 6. Asegúrate de que Docker esté instalado y corriendo.
 7. Ejecuta el siguiente comando en la raíz del proyecto:
 
