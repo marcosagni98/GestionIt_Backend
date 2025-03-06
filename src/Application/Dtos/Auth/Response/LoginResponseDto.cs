@@ -25,9 +25,4 @@ public class LoginResponseDto
     /// Expiration date
     /// </summary>
     public DateTime ExpirationUtc { get; set; } = DateTime.UtcNow;
-
-    /*/// <summary>
-    /// Refresh token
-    /// </summary>
-    public string RefreshToken { get; set; } = string.Empty;*/
 }
