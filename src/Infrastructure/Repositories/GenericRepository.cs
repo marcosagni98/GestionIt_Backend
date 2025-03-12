@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
+public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : Entity
 {
     private readonly AppDbContext _dbContext;
     private readonly DbSet<TEntity> _dbSet;
@@ -27,26 +27,23 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     /// <inheritdoc/>
     public virtual async Task<PaginatedList<TEntity>> GetAsync(QueryFilterDto queryFilter)
     {
-        List<string> searchParameters = new List<string>();
-
-        var totalCount = await CountAsync(queryFilter, searchParameters);
-
         IQueryable<TEntity> query = _dbSet.AsQueryable();
 
-        query = new QueryFilterBuilder<TEntity>(_dbSet)
-            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build();
-
-        var items = await query.ToListAsync();
-
-        return new PaginatedList<TEntity>(items, totalCount);
+        return await query
+            .ToPaginatedListAsync(queryFilter);
     }
 
     /// <inheritdoc/>
     public virtual async Task<TEntity?> GetByIdAsync(long id)
     {
+        if (id <= 0)
+        {
+            throw new ArgumentException("The id must be higher than 0.", nameof(id));
+        }
+
         return await _dbSet
-            .Where(x => (x as Entity)!.Active == true && (x as Entity)!.Id == id)
+            .WhereId(id)
+            .WhereActive()
             .FirstOrDefaultAsync();
     }
 
@@ -80,45 +77,5 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     public async Task<int> CountAsync()
     {
         return await _dbSet.CountAsync();
-    }
-
-    /// <inheritdoc/>
-    public async Task<int> CountAsync(IQueryable<TEntity>? query, QueryFilterDto? queryFilter, List<string>? searchParameters)
-    {
-        if (query == null)
-        {
-            query = _dbSet.AsQueryable();
-        }
-        if (queryFilter != null && !string.IsNullOrEmpty(queryFilter.Search))
-        {
-            query = new QueryFilterBuilder<TEntity>(query)
-                .Where(searchParameters, queryFilter.Search)
-                .Build();
-        }
-
-        query = new QueryFilterBuilder<TEntity>(query)
-            .WhereActive()
-            .Build();
-
-        return await query.CountAsync();
-    }
-
-    /// <inheritdoc/>
-    public virtual async Task<int> CountAsync(QueryFilterDto? queryFilter, List<string>? searchParameters)
-    {
-        IQueryable<TEntity> query = _dbSet.AsQueryable();
-
-        if (queryFilter != null && !string.IsNullOrEmpty(queryFilter.Search))
-        {
-            query = new QueryFilterBuilder<TEntity>(_dbSet)
-            .Where(searchParameters, queryFilter.Search)
-            .Build();
-        }
-
-        query = new QueryFilterBuilder<TEntity>(_dbSet)
-        .WhereActive()
-        .Build();
-
-        return await query.CountAsync();
     }
 }

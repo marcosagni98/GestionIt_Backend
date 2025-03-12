@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class MessageRepository : GenericRepository<Message>, IMessageRepository
+public sealed class MessageRepository : GenericRepository<Message>, IMessageRepository
 {
 
     private readonly AppDbContext _dbContext;

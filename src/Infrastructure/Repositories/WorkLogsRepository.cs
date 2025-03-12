@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class WorkLogsRepository : GenericRepository<WorkLog>, IWorkLogRepository
+public sealed class WorkLogsRepository : GenericRepository<WorkLog>, IWorkLogRepository
 {
     private readonly AppDbContext _context;
     private DbSet<WorkLog> _dbSet;
@@ -26,16 +26,16 @@ public class WorkLogsRepository : GenericRepository<WorkLog>, IWorkLogRepository
     {
         List<string> searchParameters = new List<string>();
 
-        var totalCount = await CountAsync(queryFilter, searchParameters);
 
         IQueryable<WorkLog> query = _dbSet.AsQueryable();
 
-        query = new QueryFilterBuilder<WorkLog>(_dbSet)
-            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build()
-            .Include(x => x.Technician);
+        var totalCount = await query
+             .WhereActive()
+             .CountAsync(queryFilter, searchParameters);
 
-        var items = await query.ToListAsync();
+        var items = await query
+            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
+            .ToListAsync();
 
         return new PaginatedList<WorkLog>(items, totalCount);
     }

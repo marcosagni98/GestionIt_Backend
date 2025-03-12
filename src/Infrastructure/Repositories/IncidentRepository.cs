@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class IncidentRepository : GenericRepository<Incident>, IIncidentRepository
+public sealed class IncidentRepository : GenericRepository<Incident>, IIncidentRepository
 {
     private readonly AppDbContext _dbContext;
     private readonly DbSet<Incident> _dbSet;
@@ -25,7 +25,10 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public async Task<List<long>?> GetIdsAsync()
     {
-        return await _dbSet.Where(x => x.Active == true).Select(x => x.Id).ToListAsync();
+        return await _dbSet
+            .Where(x => x.Active == true)
+            .Select(x => x.Id)
+            .ToListAsync();
     }
 
     /// <inheritdoc/>
@@ -75,19 +78,13 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
-        IQueryable<Incident> query = _dbSet.Where(x => (x.Status != Status.Completed && x.Status != Status.Closed)).Include(i => i.User)
+        IQueryable<Incident> query =
+            _dbSet.Where(x => x.Status != Status.Completed && x.Status != Status.Closed)
+            .Include(i => i.User)
             .Include(i => i.Technician);
 
-        var totalCount = await CountAsync(query, queryFilter, searchParameters);
-
-
-        query = new QueryFilterBuilder<Incident>(query)
-            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build();
-
-        var items = await query.ToListAsync();
-
-        return new PaginatedList<Incident>(items, totalCount);
+        return await query
+            .ToPaginatedListAsync(queryFilter, searchParameters);
     }
 
 
@@ -128,7 +125,8 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     public override async Task<Incident?> GetByIdAsync(long id)
     {
         return await _dbSet
-            .Where(x => x.Active == true && x.Id == id)
+            .WhereId(id)
+            .WhereActive()
             .Include(i => i.User)
             .Include(i => i.Technician)
             .FirstOrDefaultAsync();
@@ -138,7 +136,7 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     public async Task<PaginatedList<Incident>> GetHistoricAsync(QueryFilterDto queryFilter)
     {
         List<string> searchParameters = [
-             "Title",
+            "Title",
             "Description",
             "User.Name",
             "Technician.Name"
@@ -146,27 +144,20 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
-        var baseQuery = _dbSet.Where(x => (x.Status == Status.Completed || x.Status == Status.Closed) && x.Active == true).Include(i => i.User)
-            .Include(i => i.Technician);
-
-        var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
-
-        var query = new QueryFilterBuilder<Incident>(baseQuery)
-            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build()
+        var query = _dbSet.Where(x => (x.Status == Status.Completed || x.Status == Status.Closed))
             .Include(i => i.User)
             .Include(i => i.Technician);
 
-        var items = await query.ToListAsync();
-
-        return new PaginatedList<Incident>(items, totalCount);
+        return await query
+            .ToPaginatedListAsync(queryFilter, searchParameters);
     }
 
     /// <inheritdoc/>
     public async Task<List<long>?> GetIdsByUserIdAsync(long userId)
     {
         return await _dbSet
-            .Where(x => x.UserId == userId || x.TechnicianId == userId && x.Active == true)
+            .Where(x => x.UserId == userId || x.TechnicianId == userId)
+            .WhereActive()
             .Include(i => i.User)
             .Include(i => i.Technician)
             .Select(x => x.Id)
@@ -177,7 +168,8 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     public async Task<double> GetAverageResolutionTimeAsync(DateTime startDate, DateTime endDate)
     {
         var incidents = await _dbContext.Incidents
-            .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate && i.Active == true)
+            .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate)
+            .WhereActive()
             .Include(i => i.IncidentHistories)
             .ToListAsync();
 
@@ -193,7 +185,6 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
                                 .FirstOrDefault()
             })
             .Where(i => i.CompletedAt != null)
-
             .ToList();
 
         var resolutionTimes = completedIncidents
@@ -211,7 +202,8 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     public async Task<double> GetAverageResolutionTimeAsync(DateTime startDate, DateTime endDate, long id)
     {
         var incidents = await _dbContext.Incidents
-            .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate && i.Technician.Id == id && i.Active == true)
+            .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate && i.Technician.Id == id)
+            .WhereActive()
             .Include(i => i.IncidentHistories)
             .ToListAsync();
 
@@ -227,7 +219,6 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
                                 .FirstOrDefault()
             })
             .Where(i => i.CompletedAt != null)
-
             .ToList();
 
         var resolutionTimes = completedIncidents
@@ -244,14 +235,18 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
     /// <inheritdoc/>
     public async Task UpdateIncidentStatusAsync(long id, Status newStatus)
     {
-        var incident = await _dbSet.FindAsync(id) ?? throw new KeyNotFoundException($"Incident with ID {id} not found.");
+        var incident = await _dbSet
+            .FindAsync(id) 
+            ?? throw new KeyNotFoundException($"Incident with ID {id} not found.");
         incident.Status = newStatus;
     }
 
     /// <inheritdoc/>
     public async Task UpdateIncidentPriorityAsync(long id, Priority newPriority)
     {
-        var incident = await _dbSet.FindAsync(id) ?? throw new KeyNotFoundException($"Incident with ID {id} not found.");
+        var incident = await _dbSet
+            .FindAsync(id) 
+            ?? throw new KeyNotFoundException($"Incident with ID {id} not found.");
         incident.Priority = newPriority;
     }
 
@@ -267,22 +262,13 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
-        var baseQuery = _dbSet
-            .Where(x => (x.UserId == userId || x.TechnicianId == userId) && x.Active == true && (x.Status != Status.Completed && x.Status != Status.Closed))
+        var query = _dbSet
+            .Where(x => (x.UserId == userId || x.TechnicianId == userId) && x.Status != Status.Completed && x.Status != Status.Closed)
             .Include(i => i.User)
             .Include(i => i.Technician);
 
-        var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
-
-        var query = new QueryFilterBuilder<Incident>(baseQuery)
-            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build()
-            .Include(i => i.User)
-            .Include(i => i.Technician);
-
-        var items = await query.ToListAsync();
-
-        return new PaginatedList<Incident>(items, totalCount);
+        return await query
+             .ToPaginatedListAsync(queryFilter, searchParameters);
     }
 
     /// <inheritdoc/>
@@ -297,19 +283,12 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
-        var baseQuery = _dbSet.Where(x => (x.Priority == priority && (x.Status != Status.Completed && x.Status != Status.Closed)))
+        var query = _dbSet.Where(x => (x.Priority == priority && (x.Status != Status.Completed && x.Status != Status.Closed)))
             .Include(i => i.User)
             .Include(i => i.Technician);
 
-        var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
-
-        var query = new QueryFilterBuilder<Incident>(baseQuery)
-            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build();
-
-        var items = await query.ToListAsync();
-
-        return new PaginatedList<Incident>(items, totalCount);
+        return await query
+            .ToPaginatedListAsync(queryFilter, searchParameters);
     }
 
     /// <inheritdoc/>
@@ -324,21 +303,12 @@ public class IncidentRepository : GenericRepository<Incident>, IIncidentReposito
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
-        var baseQuery = _dbSet.Where(x => (x.Priority == priority && (x.Status != Status.Completed && x.Status != Status.Closed)))
-            .Include(i => i.User)
-            .Include(i => i.Technician); ;
-
-        var totalCount = await CountAsync(baseQuery, queryFilter, searchParameters);
-
-        var query = new QueryFilterBuilder<Incident>(baseQuery)
-            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build()
+        var query = _dbSet.Where(x => (x.Priority == priority && (x.Status != Status.Completed && x.Status != Status.Closed)))
             .Include(i => i.User)
             .Include(i => i.Technician);
 
-        var items = await query.ToListAsync();
-
-        return new PaginatedList<Incident>(items, totalCount);
+        return await query
+             .ToPaginatedListAsync(queryFilter, searchParameters);
     }
 
     /// <inheritdoc/>

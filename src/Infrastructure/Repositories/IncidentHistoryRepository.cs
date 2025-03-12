@@ -2,13 +2,14 @@
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
+using Domain.Entities.Common;
 using Domain.Interfaces.Repositories;
 using Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class IncidentHistoryRepository : IIncidentHistoryRepository
+public sealed class IncidentHistoryRepository : IIncidentHistoryRepository 
 {
     private readonly AppDbContext _dbContext;
     private readonly DbSet<IncidentHistory> _dbSet;
@@ -22,7 +23,7 @@ public class IncidentHistoryRepository : IIncidentHistoryRepository
     }
 
     /// <inheritdoc/>
-    public virtual async Task AddAsync(IncidentHistory entity)
+    public async Task AddAsync(IncidentHistory entity)
     {
         await _dbSet.AddAsync(entity);
     }
@@ -32,24 +33,17 @@ public class IncidentHistoryRepository : IIncidentHistoryRepository
     {
         List<string> searchParameters = ["ChangedByUser.Name", "ResolutionDetails"];
 
-        var totalCount = await CountAsync(queryFilter, searchParameters);
-
         IQueryable<IncidentHistory> query = _dbSet.AsQueryable();
 
-        query = new QueryFilterBuilder<IncidentHistory>(_dbSet)
-            .ApplyQueryFilter(queryFilter, searchParameters)
-            .Build();
-
-        var items = await query.ToListAsync();
-
-        return new PaginatedList<IncidentHistory>(items, totalCount);
+        return await query
+            .ToPaginatedListNotActiveAsync(queryFilter, searchParameters);
     }
 
     /// <inheritdoc/>
     public async Task<IncidentHistory?> GetByIdAsync(long id)
     {
         return await _dbSet
-            .Where(x => x.Id == id)
+            .WhereId(id)
             .FirstOrDefaultAsync();
     }
 
@@ -71,24 +65,17 @@ public class IncidentHistoryRepository : IIncidentHistoryRepository
     public async Task<bool> ExistsAsync(long id)
     {
         return await _dbSet
-            .Where(x => x.Id == id)
+            .WhereId(id)
             .AnyAsync();
     }
 
     /// <inheritdoc/>
-    public virtual async Task<int> CountAsync(QueryFilterDto queryFilter, List<string>? searchParameters)
+    public async Task<int> CountAsync(QueryFilterDto queryFilter, List<string>? searchParameters)
     {
         IQueryable<IncidentHistory> query = _dbSet.AsQueryable();
 
-        if (!string.IsNullOrEmpty(queryFilter.Search))
-        {
-            query = new QueryFilterBuilder<IncidentHistory>(_dbSet)
-            .Where(searchParameters, queryFilter.Search)
-            .Build();
-        }
-
-        return await query.CountAsync();
+        return await query
+            .WhereFilter(searchParameters, queryFilter.Search)
+            .CountAsync();
     }
-
-
 }

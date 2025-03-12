@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class UserRepository : GenericRepository<User>, IUserRepository
+public sealed class UserRepository : GenericRepository<User>, IUserRepository
 {
     private readonly AppDbContext _dbContext;
     private readonly DbSet<User> _dbSet;
@@ -34,14 +34,13 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
         IQueryable<User> query = _dbSet.AsQueryable();
 
-        var totalCount = await CountAsync(query, queryFilter, searchParameters);
+        var totalCount = await query
+            .WhereActive()
+            .CountAsync(queryFilter, searchParameters);
 
-
-        query = new QueryFilterBuilder<User>(query)
+        var items = await query
             .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build();
-
-        var items = await query.ToListAsync();
+            .ToListAsync();
 
         return new PaginatedList<User>(items, totalCount);
     }

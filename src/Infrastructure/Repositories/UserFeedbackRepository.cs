@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeedbackRepository
+public sealed class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeedbackRepository
 {
     private readonly AppDbContext _dbContext;
     private readonly DbSet<UserFeedback> _dbSet;
@@ -28,17 +28,16 @@ public class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeed
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
-        var totalCount = await CountAsync(queryFilter, searchParameters);
-
         IQueryable<UserFeedback> query = _dbSet
             .Include(x => x.User);
 
-        query = new QueryFilterBuilder<UserFeedback>(query)
-            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
-            .Build()
-            .Include(x => x.User);
+        var totalCount = await query
+            .WhereActive()
+            .CountAsync(queryFilter, searchParameters);
 
-        var items = await query.ToListAsync();
+        var items = await query
+            .ApplyQueryFilterAndActive(queryFilter, searchParameters)
+            .ToListAsync();
 
         return new PaginatedList<UserFeedback>(items, totalCount);
     }
