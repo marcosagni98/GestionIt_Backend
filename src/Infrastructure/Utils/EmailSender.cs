@@ -4,7 +4,7 @@ using System.Net.Mail;
 
 namespace Infrastructure.Utils;
 
-public class EmailSender : IEmailSender
+public sealed class EmailSender : IEmailSender
 {
     public async Task SendRecoverPasswordAsync(string email, string token)
     {

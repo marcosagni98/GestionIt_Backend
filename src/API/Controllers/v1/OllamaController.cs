@@ -13,7 +13,7 @@ namespace API.Controllers.v1;
 /// <param name="ollamaService">Ollama service </param>
 [ApiController]
 [Route("api/[controller]")]
-public class OllamaController(ILogger<OllamaController> logger, IOllamaService ollamaService) : BaseApiController
+public sealed class OllamaController(ILogger<OllamaController> logger, IOllamaService ollamaService) : BaseApiController
 {
     private readonly ILogger<OllamaController> _logger = logger;
     private readonly IOllamaService _ollamaService = ollamaService;

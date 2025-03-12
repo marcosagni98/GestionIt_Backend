@@ -15,7 +15,7 @@ namespace Application.Services;
 /// <param name="userRepository"></param>
 /// <param name="incidentRepository"></param>
 /// <param name="userFeedbackRepository"></param>
-public class StatisticsService(ILogger<StatisticsService> logger, IUserRepository userRepository, IIncidentRepository incidentRepository, IUserFeedbackRepository userFeedbackRepository) : IStatisticsService
+public sealed class StatisticsService(ILogger<StatisticsService> logger, IUserRepository userRepository, IIncidentRepository incidentRepository, IUserFeedbackRepository userFeedbackRepository) : IStatisticsService
 {
     private readonly ILogger<StatisticsService> _logger = logger;
     private readonly IUserRepository _userRepository = userRepository;

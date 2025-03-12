@@ -19,7 +19,7 @@ namespace Application.Services;
 /// <summary>
 /// Auth related operations
 /// </summary>
-public class AuthService : IAuthService
+public sealed class AuthService : IAuthService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;

@@ -21,7 +21,7 @@ namespace API.Controllers.v1;
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
 
-public class IncidentController(ILogger<IncidentController> logger, IIncidentService incidentService) : BaseApiController
+public sealed class IncidentController(ILogger<IncidentController> logger, IIncidentService incidentService) : BaseApiController
 {
     private readonly ILogger<IncidentController> _logger = logger;
     private readonly IIncidentService _incidentService = incidentService;

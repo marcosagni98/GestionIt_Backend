@@ -26,7 +26,7 @@ namespace Application.Services;
 /// <param name="incidentRepository"></param>
 /// <param name="userRepository"></param>
 /// <param name="incidentHistoryRepository"></param>
-public class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork unitOfWork, IMapper mapper, IIncidentRepository incidentRepository, IUserRepository userRepository, IIncidentHistoryRepository incidentHistoryRepository) : IIncidentService
+public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork unitOfWork, IMapper mapper, IIncidentRepository incidentRepository, IUserRepository userRepository, IIncidentHistoryRepository incidentHistoryRepository) : IIncidentService
 {
     private readonly ILogger<IncidentHistoryService> _logger = logger;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;

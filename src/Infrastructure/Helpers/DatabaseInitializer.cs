@@ -1,9 +1,10 @@
-﻿using Infrastructure;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
+namespace Infrastructure.Helpers;
 
 /// <summary>
 /// Background service responsible for initializing the database at application startup.
@@ -14,7 +15,7 @@ using Microsoft.Extensions.Logging;
 /// </remarks>
 /// <param name="serviceProvider">The service provider to resolve dependencies.</param>
 /// <param name="logger">The logger instance for logging operations.</param>
-public class DatabaseInitializer(IServiceProvider serviceProvider, ILogger<DatabaseInitializer> logger) : IHostedService
+public sealed class DatabaseInitializer(IServiceProvider serviceProvider, ILogger<DatabaseInitializer> logger) : IHostedService
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly ILogger<DatabaseInitializer> _logger = logger;

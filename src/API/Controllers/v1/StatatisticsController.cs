@@ -16,7 +16,7 @@ namespace API.Controllers.v1;
 /// <param name="statisticsService">The statistics service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class StatisticsController(ILogger<StatisticsController> logger, IStatisticsService statisticsService) : BaseApiController
+public sealed class StatisticsController(ILogger<StatisticsController> logger, IStatisticsService statisticsService) : BaseApiController
 {
     private readonly ILogger _logger = logger;
     private readonly IStatisticsService _statisticsService = statisticsService;

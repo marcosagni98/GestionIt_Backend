@@ -18,7 +18,7 @@ namespace API.Controllers.v1;
 /// <param name="messageService">The message service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class MessageController(ILogger<MessageController> logger, IMessageService messageService) : BaseApiController
+public sealed class MessageController(ILogger<MessageController> logger, IMessageService messageService) : BaseApiController
 {
     private readonly ILogger<MessageController> _logger = logger;
     private readonly IMessageService _messageService = messageService;

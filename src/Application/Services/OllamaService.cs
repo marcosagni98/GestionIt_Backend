@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 
-public class OllamaService : IOllamaService
+public sealed class OllamaService : IOllamaService
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<OllamaService> _logger;

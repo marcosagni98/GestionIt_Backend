@@ -15,7 +15,7 @@ namespace API.Controllers.v1;
 /// <param name="incidentHistoryService">The incidenthistory service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class IncidentHistoryController(ILogger<IncidentHistoryController> logger, IIncidentHistoryService incidentHistoryService) : BaseApiController
+public sealed class IncidentHistoryController(ILogger<IncidentHistoryController> logger, IIncidentHistoryService incidentHistoryService) : BaseApiController
 {
     private readonly ILogger<IncidentHistoryController> _logger = logger;
     private readonly IIncidentHistoryService _incidentHistoryService = incidentHistoryService;
