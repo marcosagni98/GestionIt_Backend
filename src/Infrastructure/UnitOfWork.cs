@@ -4,8 +4,10 @@ namespace Infrastructure;
 
 public class UnitOfWork(AppDbContext context) : IUnitOfWork
 {
+    private readonly AppDbContext _context = context;
+
     public async Task SaveAsync()
     {
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 }
