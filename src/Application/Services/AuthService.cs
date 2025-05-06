@@ -70,9 +70,8 @@ public sealed class AuthService : IAuthService
         User? user = await _userRepository.GetUserByEmailAsync(loginRequestDto.Email);
         if (user == null)
         {
-            string error = $"User {loginRequestDto.Email} does not exists.";
-            _logger.LogError(error);
-            return Result.Fail<LoginResponseDto>(error);
+            _logger.LogError("User {Email} does not exists.", loginRequestDto.Email);
+            return Result.Fail<LoginResponseDto>("Email or password incorrect.");
         }
         return Result.Ok(_jwt.GenerateJwtToken(user));
     }
@@ -97,9 +96,8 @@ public sealed class AuthService : IAuthService
             var result = await _userRepository.EmailExistsAsync(user.Email);
             if (result)
             {
-                string error = $"Email {user.Email} already exists.";
-                _logger.LogError(error);
-                return Result.Fail<CreatedResponseDto>(error);
+                _logger.LogError("Email {Email} already exists.", user.Email);
+                return Result.Fail<CreatedResponseDto>("Email already exists");
             }
         }
         user.Password = PasswordHasher.HashPassword(registerRequestDto.Password);
@@ -123,16 +121,14 @@ public sealed class AuthService : IAuthService
 
         if (!await _userRepository.EmailExistsAsync(forgotPasswordRequestDto.Email))
         {
-            string error = $"Email {forgotPasswordRequestDto.Email} does not exists.";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("User {Email} does not exists.", forgotPasswordRequestDto.Email);
+            return Result.Fail<SuccessResponseDto>("Email or password incorrect.");
         }
         User? user = await _userRepository.GetUserByEmailAsync(forgotPasswordRequestDto.Email);
         if (user == null)
         {
-            string error = $"User {forgotPasswordRequestDto.Email} does not exists.";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("User {Email} does not exists.", forgotPasswordRequestDto.Email);
+            return Result.Fail<SuccessResponseDto>("Email or password incorrect.");
         }
         var token = _jwt.GenerateJwtToken(user).Token;
         await _emailSender.SendRecoverPasswordAsync(user.Email, token);
@@ -153,9 +149,8 @@ public sealed class AuthService : IAuthService
 
         if (!await _userRepository.EmailExistsAsync(resetPasswordRequestDto.Email))
         {
-            string error = $"User with email {resetPasswordRequestDto.Email} not found.";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("User {Email} does not exists.", resetPasswordRequestDto.Email);
+            return Result.Fail<SuccessResponseDto>("Email or password incorrect.");
         }
         User? user = await _userRepository.GetUserByEmailAsync(resetPasswordRequestDto.Email);
         user.Password = PasswordHasher.HashPassword(resetPasswordRequestDto.Password);

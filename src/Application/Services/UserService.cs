@@ -44,9 +44,8 @@ public sealed class UserService(ILogger<UserService> logger, IUnitOfWork unitOfW
             var result = await _userRepository.EmailExistsAsync(user.Email);
             if (result)
             {
-                string error = $"Email {user.Email} already exists.";
-                _logger.LogError(error);
-                return Result.Fail<CreatedResponseDto>(error);
+                _logger.LogError("Email {userEmail} already exists.", user.Email);
+                return Result.Fail<CreatedResponseDto>($"Email {user.Email} already exists.");
             }
         }
         await _userRepository.AddAsync(user);
@@ -61,9 +60,8 @@ public sealed class UserService(ILogger<UserService> logger, IUnitOfWork unitOfW
         var user = await _userRepository.GetByIdAsync(id);
         if (user == null)
         {
-            string error = $"User with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("User with id {UserId} not found", id);
+            return Result.Fail<SuccessResponseDto>("User not found");
         }
 
         _mapper.Map(updateRequestDto, user);
@@ -78,9 +76,8 @@ public sealed class UserService(ILogger<UserService> logger, IUnitOfWork unitOfW
     {
         if (!await _userRepository.ExistsAsync(id))
         {
-            string error = $"User with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("User with id {UserId} not found", id);
+            return Result.Fail<SuccessResponseDto>("User not found");
         }
 
         await _userRepository.DeleteAsync(id);
@@ -120,9 +117,8 @@ public sealed class UserService(ILogger<UserService> logger, IUnitOfWork unitOfW
         var user = await _userRepository.GetByIdAsync(id);
         if (user == null)
         {
-            string error = $"User with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<UserDto>(error);
+            _logger.LogError("User with id {UserId} not found", id);
+            return Result.Fail<UserDto>("User not found");
         }
 
         var response = _mapper.Map<UserDto>(user);
@@ -134,18 +130,16 @@ public sealed class UserService(ILogger<UserService> logger, IUnitOfWork unitOfW
     {
         if (!long.TryParse(userId, out long parsedUserId))
         {
-            string error = $"Invalid user ID: {userId} .";
-            _logger.LogError(error);
-            return Result.Fail<long>(error);
+            _logger.LogError("Invalid user ID: {UserId} .", userId);
+            return Result.Fail<long>($"User not found");
         }
 
         User? user = await _userRepository.GetByIdAsync(parsedUserId);
 
         if (user == null)
         {
-            string error = $"User with id {parsedUserId} not found";
-            _logger.LogError(error);
-            return Result.Fail<long>(error);
+            _logger.LogError("User with id {UserId} not found", parsedUserId);
+            return Result.Fail<long>($"User not found");
         }
 
         return Result.Ok(parsedUserId);
@@ -158,9 +152,8 @@ public sealed class UserService(ILogger<UserService> logger, IUnitOfWork unitOfW
 
         if (user == null)
         {
-            string error = $"User with id {userId} not found";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("User with id {UserId} not found", userId);
+            return Result.Fail<SuccessResponseDto>($"User not found");
         }
 
         user.UserType = userType;

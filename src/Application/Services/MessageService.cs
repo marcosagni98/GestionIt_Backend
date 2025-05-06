@@ -46,9 +46,8 @@ public sealed class MessageService(ILogger<MessageService> logger, IUnitOfWork u
         Incident? incident = await _incidentRepository.GetByIdAsync(incidentId);
         if (incident == null)
         {
-            string error = $"Incident with id {incidentId} not found";
-            _logger.LogError(error);
-            return Result.Fail(error);
+            _logger.LogError("Incident with id {IncidentId} not found", incidentId);
+            return Result.Fail<List<MessageDto>>("Incident not found");
         }
 
         List<MessageDto> messages = _mapper.Map<List<MessageDto>>(await _messageRepository.GetByIncidentIdAsync(incidentId));

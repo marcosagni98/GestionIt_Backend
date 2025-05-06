@@ -1,4 +1,5 @@
-﻿using Application.Dtos.Stats;
+﻿using Application.Dtos.CommonDtos.Response;
+using Application.Dtos.Stats;
 using Application.Interfaces.Services;
 using Domain.Entities;
 using Domain.Enums;
@@ -28,9 +29,8 @@ public sealed class StatisticsService(ILogger<StatisticsService> logger, IUserRe
         User? user = await _userRepository.GetByIdAsync(id);
         if (user == null)
         {
-            string error = $"User with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail(error);
+            _logger.LogError("User with id {UserId} not found", id);
+            return Result.Fail<ActiveIncidentsStatsResponseDto>("User not found");
         }
 
         int totalCount, lowCount, mediumCount, highCount;
@@ -53,9 +53,8 @@ public sealed class StatisticsService(ILogger<StatisticsService> logger, IUserRe
         }
         else
         {
-            string error = "User not authorized";
-            _logger.LogError(error);
-            return Result.Fail<ActiveIncidentsStatsResponseDto>(error);
+            _logger.LogError("User with id {UserId} not authorized", id);
+            return Result.Fail<ActiveIncidentsStatsResponseDto>("User not authorized");
         }
 
         return Result.Ok(new ActiveIncidentsStatsResponseDto(totalCount, highCount, mediumCount, lowCount, VariationFromLastMonth));
@@ -103,6 +102,7 @@ public sealed class StatisticsService(ILogger<StatisticsService> logger, IUserRe
         User? user = await _userRepository.GetByIdAsync(id);
         if (user == null)
         {
+            _logger.LogError("User with id {UserId} not found", id);
             return Result.Fail<AverageIncidencesResolutionTimeResponseDto>("User not found");
         }
         var (startOfLast30Days, endOfLast30Days) = GetDateRange(30, 0);
@@ -121,6 +121,7 @@ public sealed class StatisticsService(ILogger<StatisticsService> logger, IUserRe
         }
         else
         {
+            _logger.LogError("User with id {UserId} not authorized", id);
             return Result.Fail<AverageIncidencesResolutionTimeResponseDto>("User not authorized");
         }
 
@@ -135,6 +136,7 @@ public sealed class StatisticsService(ILogger<StatisticsService> logger, IUserRe
         User? user = await _userRepository.GetByIdAsync(id);
         if (user == null)
         {
+            _logger.LogError("User with id {UserId} not found", id);
             return Result.Fail<UserHappinessResponseDto>("User not found");
         }
 
@@ -154,6 +156,7 @@ public sealed class StatisticsService(ILogger<StatisticsService> logger, IUserRe
         }
         else
         {
+            _logger.LogError("User with id {UserId} not authorized", id);
             return Result.Fail<UserHappinessResponseDto>("User not authorized");
         }
 

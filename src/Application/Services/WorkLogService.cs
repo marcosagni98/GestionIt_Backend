@@ -48,9 +48,8 @@ public sealed class WorkLogService(ILogger<WorkLogService> logger, IUnitOfWork u
         var exists = await _workLogRepository.ExistsAsync(id);
         if (!exists)
         {
-            string error = $"Work log with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("Work log with id {WorkLogId} not found", id);
+            return Result.Fail<SuccessResponseDto>($"Worklog not found");
         }
 
         await _workLogRepository.DeleteAsync(id);
@@ -82,9 +81,8 @@ public sealed class WorkLogService(ILogger<WorkLogService> logger, IUnitOfWork u
         var workLog = await _workLogRepository.GetByIdAsync(id);
         if (workLog == null)
         {
-            string error = $"Work log with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<WorkLogDto>(error);
+            _logger.LogError("Work log with id {WorkLogId} not found", id);
+            return Result.Fail<WorkLogDto>($"Worklog not found");
         }
 
         var response = _mapper.Map<WorkLogDto>(workLog);
@@ -97,9 +95,8 @@ public sealed class WorkLogService(ILogger<WorkLogService> logger, IUnitOfWork u
         var workLog = await _workLogRepository.GetByIdAsync(id);
         if (workLog == null)
         {
-            string error = $"Work log with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("Work log with id {WorkLogId} not found", id);
+            return Result.Fail<SuccessResponseDto>($"Worklog  not found");
         }
 
         _mapper.Map(updateRequestDto, workLog);
@@ -115,9 +112,8 @@ public sealed class WorkLogService(ILogger<WorkLogService> logger, IUnitOfWork u
         Incident? incident = await _incidentRepository.GetByIdAsync(incidentId);
         if (incident == null)
         {
-            string error = $"Incident with id {incidentId} not found";
-            _logger.LogError(error);
-            return Result.Fail<List<WorkLogDto>>(error);
+            _logger.LogError("Work log with id {IncidentId} not found", incidentId);
+            return Result.Fail<List<WorkLogDto>>($"Worklog not found");
         }
 
         return _mapper.Map<List<WorkLogDto>>(await _workLogRepository.GetByIncidentIdAsync(incidentId));

@@ -1,4 +1,5 @@
-﻿using Application.Dtos.CRUD.IncidentHistories;
+﻿using Application.Dtos.CommonDtos.Response;
+using Application.Dtos.CRUD.IncidentHistories;
 using Application.Interfaces.Services;
 using AutoMapper;
 using Domain.Entities;
@@ -28,9 +29,8 @@ namespace Application.Services
             Incident? incident = await _incidentRepository.GetByIdAsync(incidentId);
             if (incident == null)
             {
-                string error = $"Incident with id {incidentId} not found";
-                _logger.LogError(error);
-                return Result.Fail(error);
+                _logger.LogError("Incident with id {IncidentId} not found", incidentId);
+                return Result.Fail<List<IncidentHistoryDto>>("Incident not found");
             }
 
             return _mapper.Map<List<IncidentHistoryDto>>(await _incidentHistoryRepository.GetByIncidentIdAsync(incidentId));

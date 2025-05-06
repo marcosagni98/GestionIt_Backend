@@ -56,9 +56,7 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     /// <inheritdoc/>
     public virtual async Task DeleteAsync(long id)
     {
-        var entity = await _dbSet.FindAsync(id);
-        if (entity == null) throw new KeyNotFoundException("Entity not found");
-
+        var entity = await _dbSet.FindAsync(id) ?? throw new KeyNotFoundException("Entity not found");
         if (entity is Entity entityToDeactivate)
         {
             entityToDeactivate.Deactivate();

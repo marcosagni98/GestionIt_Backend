@@ -46,9 +46,8 @@ public sealed class UserFeedbackService(ILogger<UserFeedbackService> logger, IUn
         var exists = await _userFeedbackRepository.ExistsAsync(id);
         if (!exists)
         {
-            string error = $"User feedback with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("User feedback with id {UserFeedbackId} not found", id);
+            return Result.Fail<SuccessResponseDto>($"User feedback not found");
         }
 
         await _userFeedbackRepository.DeleteAsync(id);
@@ -80,9 +79,8 @@ public sealed class UserFeedbackService(ILogger<UserFeedbackService> logger, IUn
         var userFeedback = await _userFeedbackRepository.GetByIdAsync(id);
         if (userFeedback == null)
         {
-            string error = $"User feedback with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<UserFeedbackDto>(error);
+            _logger.LogError("User feedback with id {UserFeedbackId} not found", id);
+            return Result.Fail<UserFeedbackDto>($"User feedback not found");
         }
 
         var response = _mapper.Map<UserFeedbackDto>(userFeedback);
@@ -90,14 +88,13 @@ public sealed class UserFeedbackService(ILogger<UserFeedbackService> logger, IUn
     }
 
     /// <inheritdoc/>
-    public async Task<Result<UserFeedbackDto>> GetByIncidentIdAsync(long incident)
+    public async Task<Result<UserFeedbackDto>> GetByIncidentIdAsync(long incidentId)
     {
-        var userFeedback = await _userFeedbackRepository.GetByIncidentIdAsync(incident);
+        var userFeedback = await _userFeedbackRepository.GetByIncidentIdAsync(incidentId);
         if (userFeedback == null)
         {
-            string error = $"User feedback with incident id {incident} not found";
-            _logger.LogError(error);
-            return Result.Fail<UserFeedbackDto>(error);
+            _logger.LogError("User feedback with incident id {IncidentId} not found", incidentId);
+            return Result.Fail<UserFeedbackDto>($"User feedback with incident not found");
         }
 
         var response = _mapper.Map<UserFeedbackDto>(userFeedback);
@@ -110,9 +107,8 @@ public sealed class UserFeedbackService(ILogger<UserFeedbackService> logger, IUn
         var userFeedback = await _userFeedbackRepository.GetByIdAsync(id);
         if (userFeedback == null)
         {
-            string error = $"User feedback with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("User feedback with id {UserFeedbackId} not found", id);
+            return Result.Fail<SuccessResponseDto>($"User feedback not found");
         }
 
         _mapper.Map(updateRequestDto, userFeedback);

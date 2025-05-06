@@ -51,9 +51,8 @@ public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUni
         var exists = await _incidentRepository.ExistsAsync(id);
         if (!exists)
         {
-            string error = $"Incident with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("Incident with id {IncidentId} not found", id);
+            return Result.Fail<SuccessResponseDto>("Incident not found");
         }
 
         await _incidentRepository.DeleteAsync(id);
@@ -68,9 +67,8 @@ public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUni
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
         {
-            string error = $"User with id {userId} not found";
-            _logger.LogError(error);
-            return Result.Fail(error);
+            _logger.LogError("User with id {UserId} not found", userId);
+            return Result.Fail<PaginatedList<IncidentDto>>($"User not found");
         }
 
         PaginatedList<Incident> paginatedList = new([], 0);
@@ -121,9 +119,8 @@ public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUni
         var incident = await _incidentRepository.GetByIdAsync(id);
         if (incident == null)
         {
-            string error = $"Incident with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<IncidentDto>(error);
+            _logger.LogError("Incident with id {IncidentId} not found", id);
+            return Result.Fail<IncidentDto>("Incident not found");
         }
 
         var response = _mapper.Map<IncidentDto>(incident);
@@ -136,9 +133,8 @@ public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUni
         var incident = await _incidentRepository.GetByIdAsync(id);
         if (incident == null)
         {
-            string error = $"Incident with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("Incident with id {IncidentId} not found", id);
+            return Result.Fail<SuccessResponseDto>("Incident not found");
         }
 
         _mapper.Map(updateRequestDto, incident);
@@ -154,9 +150,8 @@ public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUni
         var incident = await _incidentRepository.GetByIdAsync(id);
         if (incident == null)
         {
-            string error = $"Incident with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("Incident with id {IncidentId} not found", id);
+            return Result.Fail<SuccessResponseDto>("Incident not found");
         }
 
         IncidentHistory incidentHistory = new IncidentHistory
@@ -184,9 +179,8 @@ public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUni
         List<long>? incidentList;
         if (user == null)
         {
-            string error = $"User with id {userId} not found";
-            _logger.LogError(error);
-            return Result.Fail(error);
+            _logger.LogError("User with id {UserId} not found", userId);
+            return Result.Fail<List<long>>($"User not found");
         }
         else if (user.UserType == UserType.Admin)
         {
@@ -200,7 +194,7 @@ public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUni
         if (incidentList == null || incidentList.Count == 0)
         {
             string error = $"Not incidents found for user {userId}";
-            _logger.LogError(error);
+            _logger.LogError("Not incidents found for user {UserId}", userId);
             return Result.Fail<List<long>>(error);
         }
 
@@ -213,9 +207,8 @@ public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUni
         Incident? incident = await _incidentRepository.GetByIdAsync(id);
         if (incident == null)
         {
-            string error = $"Incident with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail(error);
+            _logger.LogError("Incident with id {IncidentId} not found", id);
+            return Result.Fail<SuccessResponseDto>("Incident not found");
         }
 
         incident.TechnicianId = incidentUpdateTechnicianRequestDto.TechnicianId;
@@ -236,9 +229,8 @@ public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUni
         Incident? incident = await _incidentRepository.GetByIdAsync(id);
         if (incident == null)
         {
-            string error = $"Incident with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail(error);
+            _logger.LogError("Incident with id {IncidentId} not found", id);
+            return Result.Fail<SuccessResponseDto>("Incident not found");
         }
 
         UpdateValuesOfIncident(updateTitleDescriptionRequestDto, incident);
@@ -274,9 +266,8 @@ public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUni
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
         {
-            string error = $"User with id {userId} not found";
-            _logger.LogError(error);
-            return Result.Fail(error);
+            _logger.LogError("User with id {UserId} not found", userId);
+            return Result.Fail<PaginatedList<IncidentDto>>($"User not found");
         }
 
         PaginatedList<Incident> paginatedList = new([], 0);
@@ -307,9 +298,8 @@ public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUni
         var incident = await _incidentRepository.GetByIdAsync(id);
         if (incident == null)
         {
-            string error = $"Incident with id {id} not found";
-            _logger.LogError(error);
-            return Result.Fail<SuccessResponseDto>(error);
+            _logger.LogError("Incident with id {IncidentId} not found", id);
+            return Result.Fail<SuccessResponseDto>("Incident not found");
         }
 
         await _incidentRepository.UpdateIncidentPriorityAsync(id, priorityRequestDto.PriorityId);
