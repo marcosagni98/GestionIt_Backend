@@ -1,7 +1,9 @@
 ﻿using Application.Helpers.Mappers;
 using Application.Interfaces.Services;
+using Application.Interfaces.UseCases.Auth;
 using Application.Interfaces.Utils;
 using Application.Services;
+using Application.UseCases.Auth;
 using Application.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,6 +23,7 @@ public static class ApplicationCollectionExtensions
     {
         return services
             .AddServices()
+            .AddUseCases()
             .AddHelpers();
     }
 
@@ -39,8 +42,32 @@ public static class ApplicationCollectionExtensions
         .AddScoped<IUserService, UserService>()
         .AddScoped<IWorkLogService, WorkLogService>()
         .AddScoped<IStatisticsService, StatisticsService>()
-        .AddScoped<IAuthService, AuthService>()
         .AddHttpClients();
+    }
+
+    /// <summary>
+    /// Adds the application's use cases to the dependency injection container
+    /// </summary>
+    /// <param name="services">The dependency injection container</param>
+    /// <returns>The dependency injection container with the use cases added</returns>
+    private static IServiceCollection AddUseCases(this IServiceCollection services)
+    {
+        return services
+            .AddAuthUseCases(); // Add authentication-related use cases
+    }
+
+    /// <summary>
+    /// Adds the authentication-related use cases to the dependency injection container
+    /// </summary>
+    /// <param name="services">The dependency injection container</param>
+    /// <returns>The dependency injection container with the authentication use cases added</returns>
+    private static IServiceCollection AddAuthUseCases(this IServiceCollection services)
+    {
+        return services
+            .AddScoped<ILoginUseCase, LoginUseCase>()
+            .AddScoped<IRegisterUseCase, RegisterUseCase>()
+            .AddScoped<IForgotPasswordUseCase, ForgotPasswordUseCase>()
+            .AddScoped<IRecoverPasswordUseCase, RecoverPasswordUseCase>();
     }
 
     /// <summary>

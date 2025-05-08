@@ -2,12 +2,11 @@
 using Application.Dtos.Auth.Response;
 using Application.Dtos.CommonDtos;
 using Application.Dtos.CommonDtos.Response;
-using Application.Interfaces.Services;
+using Application.Interfaces.UseCases.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.v1;
-
 
 /// <summary>
 /// Controller for managing user auth-related operations.
@@ -16,13 +15,25 @@ namespace API.Controllers.v1;
 /// Initializes a new instance of the <see cref="AuthController"/> class.
 /// </remarks>
 /// <param name="logger">Logger interface</param>
-/// <param name="authService">The auth service.</param>
+/// <param name="loginUseCase">The login use case.</param>
+/// <param name="registerUseCase">The register use case.</param>
+/// <param name="forgotPasswordUseCase">The forgot password use case.</param>
+/// <param name="recoverPasswordUseCase">The recover password use case.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public class AuthController(ILogger<AuthController> logger, IAuthService authService) : BaseApiController
+public class AuthController(
+    ILogger<AuthController> logger,
+    ILoginUseCase loginUseCase,
+    IRegisterUseCase registerUseCase,
+    IForgotPasswordUseCase forgotPasswordUseCase,
+    IRecoverPasswordUseCase recoverPasswordUseCase
+) : BaseApiController
 {
     private readonly ILogger<AuthController> _logger = logger;
-    private readonly IAuthService _authService = authService;
+    private readonly ILoginUseCase _loginUseCase = loginUseCase;
+    private readonly IRegisterUseCase _registerUseCase = registerUseCase;
+    private readonly IForgotPasswordUseCase _forgotPasswordUseCase = forgotPasswordUseCase;
+    private readonly IRecoverPasswordUseCase _recoverPasswordUseCase = recoverPasswordUseCase;
 
     /// <summary>
     /// Logs in the user and returns a jwt.
@@ -33,11 +44,10 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequestDto loginDto)
     {
-        var loginResult = await _authService.LoginAsync(loginDto);
+        var loginResult = await _loginUseCase.ExecuteAsync(loginDto);
         if (!loginResult.IsSuccess)
         {
             return BadRequest(loginResult.Errors);
-
         }
         return Ok(loginResult.Value);
     }
@@ -51,7 +61,7 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreatedResponseDto))]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequestDto registerRequestDto)
     {
-        var result = await _authService.RegisterAsync(registerRequestDto);
+        var result = await _registerUseCase.ExecuteAsync(registerRequestDto);
         if (result.IsFailed)
         {
             return BadRequest(result.Errors);
@@ -69,7 +79,7 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     public async Task<IActionResult> RecoverPasswordAsync([FromBody] ForgotPasswordRequestDto forgotPasswordRequestDto)
     {
-        var result = await _authService.ForgotPasswordAsync(forgotPasswordRequestDto);
+        var result = await _forgotPasswordUseCase.ExecuteAsync(forgotPasswordRequestDto);
         if (result.IsFailed)
         {
             return BadRequest(result.Errors);
@@ -85,10 +95,10 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
     /// <returns>a <see cref="SuccessResponseDto"/> indicating if it was able to recover password.</returns>
     [Authorize]
     [HttpPut("reset-password")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
     public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordRequestDto resetPasswordRequestDto)
     {
-        var result = await _authService.RecoverPasswordAsync(resetPasswordRequestDto);
+        var result = await _recoverPasswordUseCase.ExecuteAsync(resetPasswordRequestDto);
         if (result.IsFailed)
         {
             return BadRequest(result.Errors);
@@ -96,5 +106,4 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
 
         return Ok(result.Value);
     }
-
 }
