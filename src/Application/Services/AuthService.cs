@@ -131,7 +131,15 @@ public sealed class AuthService : IAuthService
             return Result.Fail<SuccessResponseDto>("Email or password incorrect.");
         }
         var token = _jwt.GenerateJwtToken(user).Token;
-        await _emailSender.SendRecoverPasswordAsync(user.Email, token);
+        try
+        {
+            await _emailSender.SendRecoverPasswordAsync(user.Email, token);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send recovery email to {Email}", user.Email);
+            return Result.Fail<SuccessResponseDto>("Failed to send recovery email. Please try again later.");
+        }
         return Result.Ok(new SuccessResponseDto());
     }
 
