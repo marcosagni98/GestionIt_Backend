@@ -2,8 +2,6 @@
 using Application.Dtos.CRUD.Messages.Request;
 using AutoMapper;
 
-using Domain.Entities;
-
 /// <summary>
 /// Message mapper
 /// </summary>

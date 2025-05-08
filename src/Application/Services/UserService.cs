@@ -1,16 +1,10 @@
-﻿using Application.Dtos.CommonDtos;
-using Application.Dtos.CommonDtos.Response;
-using Application.Dtos.CRUD.Users;
+﻿using Application.Dtos.CRUD.Users;
 using Application.Dtos.CRUD.Users.Request;
 using Application.Interfaces.Services;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
-using Domain.Entities;
 using Domain.Enums;
-using Domain.Interfaces.Repositories;
-using FluentResults;
-using Microsoft.Extensions.Logging;
 
 namespace Application.Services;
 

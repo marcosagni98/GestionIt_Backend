@@ -236,7 +236,7 @@ public sealed class IncidentRepository : GenericRepository<Incident>, IIncidentR
     public async Task UpdateIncidentStatusAsync(long id, Status newStatus)
     {
         var incident = await _dbSet
-            .FindAsync(id) 
+            .FindAsync(id)
             ?? throw new KeyNotFoundException($"Incident with ID {id} not found.");
         incident.Status = newStatus;
     }
@@ -245,7 +245,7 @@ public sealed class IncidentRepository : GenericRepository<Incident>, IIncidentR
     public async Task UpdateIncidentPriorityAsync(long id, Priority newPriority)
     {
         var incident = await _dbSet
-            .FindAsync(id) 
+            .FindAsync(id)
             ?? throw new KeyNotFoundException($"Incident with ID {id} not found.");
         incident.Priority = newPriority;
     }

@@ -1,11 +1,6 @@
-﻿using Application.Dtos.CommonDtos.Response;
-using Application.Dtos.Stats;
+﻿using Application.Dtos.Stats;
 using Application.Interfaces.Services;
-using Domain.Entities;
 using Domain.Enums;
-using Domain.Interfaces.Repositories;
-using FluentResults;
-using Microsoft.Extensions.Logging;
 
 namespace Application.Services;
 
@@ -35,7 +30,7 @@ public sealed class StatisticsService(ILogger<StatisticsService> logger, IUserRe
 
         int totalCount, lowCount, mediumCount, highCount;
         double VariationFromLastMonth;
-        if (user.UserType == UserType.Admin )
+        if (user.UserType == UserType.Admin)
         {
             lowCount = await _incidentRepository.CountByPriorityAsync(Priority.Low);
             mediumCount = await _incidentRepository.CountByPriorityAsync(Priority.Medium);
@@ -114,7 +109,7 @@ public sealed class StatisticsService(ILogger<StatisticsService> logger, IUserRe
             currentMonthResolutionTime = await _incidentRepository.GetAverageResolutionTimeAsync(startOfLast30Days, endOfLast30Days);
             previousMonthResolutionTime = await _incidentRepository.GetAverageResolutionTimeAsync(startOfPrevious30Days, endOfPrevious30Days);
         }
-        else if(user.UserType == UserType.Technician)
+        else if (user.UserType == UserType.Technician)
         {
             currentMonthResolutionTime = await _incidentRepository.GetAverageResolutionTimeAsync(startOfLast30Days, endOfLast30Days, id);
             previousMonthResolutionTime = await _incidentRepository.GetAverageResolutionTimeAsync(startOfPrevious30Days, endOfPrevious30Days, id);

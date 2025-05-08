@@ -1,12 +1,7 @@
-﻿using Application.Dtos.CommonDtos;
-using Application.Dtos.CRUD.Messages;
+﻿using Application.Dtos.CRUD.Messages;
 using Application.Dtos.CRUD.Messages.Request;
 using Application.Interfaces.Services;
 using AutoMapper;
-using Domain.Entities;
-using Domain.Interfaces.Repositories;
-using FluentResults;
-using Microsoft.Extensions.Logging;
 
 namespace Application.Services;
 
@@ -51,7 +46,7 @@ public sealed class MessageService(ILogger<MessageService> logger, IUnitOfWork u
         }
 
         List<MessageDto> messages = _mapper.Map<List<MessageDto>>(await _messageRepository.GetByIncidentIdAsync(incidentId));
-        
+
         return Result.Ok(messages);
     }
 }

@@ -40,8 +40,8 @@ public class RegisterUseCase(IUserRepository userRepository, IUnitOfWork unitOfW
                 return Result.Fail<CreatedResponseDto>("Email already exists");
             }
         }
+        user.Password = PasswordHasher.HashPassword(registerRequestDto.Password!);
 
-        user.Password = PasswordHasher.HashPassword(registerRequestDto.Password);
         await _userRepository.AddAsync(user);
         await _unitOfWork.SaveAsync();
 

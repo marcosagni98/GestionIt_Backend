@@ -1,8 +1,6 @@
-﻿using Application.Dtos.CommonDtos.Response;
-using Application.Dtos.CRUD.Users;
+﻿using Application.Dtos.CRUD.Users;
 using Application.Dtos.CRUD.Users.Request;
 using Domain.Enums;
-using FluentResults;
 
 namespace Application.Interfaces.Services;
 

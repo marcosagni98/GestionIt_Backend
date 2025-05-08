@@ -1,5 +1,4 @@
 ﻿using Application.Dtos.Stats;
-using FluentResults;
 
 namespace Application.Interfaces.Services;
 

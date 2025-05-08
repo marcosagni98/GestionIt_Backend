@@ -1,15 +1,9 @@
-﻿using Application.Dtos.CommonDtos;
-using Application.Dtos.CommonDtos.Response;
-using Application.Dtos.CRUD.UserFeedbacks;
+﻿using Application.Dtos.CRUD.UserFeedbacks;
 using Application.Dtos.CRUD.UserFeedbacks.Request;
 using Application.Interfaces.Services;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
-using Domain.Entities;
-using Domain.Interfaces.Repositories;
-using FluentResults;
-using Microsoft.Extensions.Logging;
 
 namespace Application.Services;
 
@@ -37,7 +31,7 @@ public sealed class UserFeedbackService(ILogger<UserFeedbackService> logger, IUn
         await _userFeedbackRepository.AddAsync(userFeedback);
         await _unitOfWork.SaveAsync();
 
-        return Result.Ok(new CreatedResponseDto (userFeedback.Id));
+        return Result.Ok(new CreatedResponseDto(userFeedback.Id));
     }
 
     /// <inheritdoc/>

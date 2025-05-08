@@ -1,10 +1,8 @@
-﻿using Application.Dtos.CommonDtos.Response;
-using Application.Dtos.CRUD.Incidents;
+﻿using Application.Dtos.CRUD.Incidents;
 using Application.Dtos.CRUD.Incidents.Request;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Enums;
-using FluentResults;
 
 namespace Application.Interfaces.Services;
 

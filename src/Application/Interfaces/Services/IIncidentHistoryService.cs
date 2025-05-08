@@ -1,5 +1,4 @@
 ﻿using Application.Dtos.CRUD.IncidentHistories;
-using FluentResults;
 
 namespace Application.Interfaces.Services;
 

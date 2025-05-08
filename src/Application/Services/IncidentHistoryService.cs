@@ -1,11 +1,6 @@
-﻿using Application.Dtos.CommonDtos.Response;
-using Application.Dtos.CRUD.IncidentHistories;
+﻿using Application.Dtos.CRUD.IncidentHistories;
 using Application.Interfaces.Services;
 using AutoMapper;
-using Domain.Entities;
-using Domain.Interfaces.Repositories;
-using FluentResults;
-using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {

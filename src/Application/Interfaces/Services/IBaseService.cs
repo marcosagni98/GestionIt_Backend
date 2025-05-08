@@ -1,8 +1,5 @@
-﻿using Application.Dtos.CommonDtos;
-using Application.Dtos.CommonDtos.Response;
-using Domain.Dtos.CommonDtos.Request;
+﻿using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
-using FluentResults;
 
 namespace Application.Interfaces.Services;
 

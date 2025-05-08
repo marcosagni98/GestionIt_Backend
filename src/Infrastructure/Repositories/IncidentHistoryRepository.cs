@@ -2,14 +2,13 @@
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
-using Domain.Entities.Common;
 using Domain.Interfaces.Repositories;
 using Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class IncidentHistoryRepository : IIncidentHistoryRepository 
+public sealed class IncidentHistoryRepository : IIncidentHistoryRepository
 {
     private readonly AppDbContext _dbContext;
     private readonly DbSet<IncidentHistory> _dbSet;

@@ -1,7 +1,6 @@
 ﻿using Application.Dtos.CRUD.WorkLogs;
 using Application.Dtos.CRUD.WorkLogs.Request;
 using AutoMapper;
-using Domain.Entities;
 
 /// <summary>
 /// WorkLog mapper

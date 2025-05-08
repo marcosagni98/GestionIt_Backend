@@ -1,6 +1,4 @@
 using Application.Dtos.Auth.Requests;
-using Application.Dtos.CommonDtos;
-using FluentResults;
 
 namespace Application.Interfaces.UseCases.Auth;
 

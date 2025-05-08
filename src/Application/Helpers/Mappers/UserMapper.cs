@@ -2,7 +2,6 @@
 using Application.Dtos.CRUD.Users;
 using Application.Dtos.CRUD.Users.Request;
 using AutoMapper;
-using Domain.Entities;
 
 namespace Application.Helpers.Mappers;
 

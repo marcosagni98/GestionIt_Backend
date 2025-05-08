@@ -1,7 +1,6 @@
 ﻿using Application.Helpers.Mappers;
 using Application.Interfaces.Services;
 using Application.Interfaces.UseCases.Auth;
-using Application.Interfaces.Utils;
 using Application.Services;
 using Application.UseCases.Auth;
 using Application.Utils;

@@ -1,5 +1,4 @@
 ﻿using Application.Dtos.Auth.Response;
-using Domain.Entities;
 
 namespace Application.Interfaces.Utils;
 
