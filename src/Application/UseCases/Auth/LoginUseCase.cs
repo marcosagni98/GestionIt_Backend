@@ -21,7 +21,7 @@ public class LoginUseCase(IUserRepository userRepository, IJwt jwt, ILogger<Logi
         var validationResult = await validator.ValidateAsync(loginRequestDto);
         if (!validationResult.IsValid)
         {
-            string error = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+            var error = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
             _logger.LogError(error);
             return Result.Fail<LoginResponseDto>(error);
         }
@@ -29,12 +29,12 @@ public class LoginUseCase(IUserRepository userRepository, IJwt jwt, ILogger<Logi
         var hashedPassword = PasswordHasher.HashPassword(loginRequestDto.Password);
         if (!await _userRepository.LoginAsync(loginRequestDto.Email, hashedPassword))
         {
-            string error = "Email or password incorrect.";
+            const string error = "Email or password incorrect.";
             _logger.LogError(error);
             return Result.Fail<LoginResponseDto>(error);
         }
 
-        User? user = await _userRepository.GetUserByEmailAsync(loginRequestDto.Email);
+        var user = await _userRepository.GetUserByEmailAsync(loginRequestDto.Email);
         if (user == null)
         {
             _logger.LogError("User {Email} does not exist.", loginRequestDto.Email);

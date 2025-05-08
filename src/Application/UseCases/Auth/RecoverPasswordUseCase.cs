@@ -20,20 +20,20 @@ public class RecoverPasswordUseCase(IUserRepository userRepository, IUnitOfWork 
         var validationResult = await validator.ValidateAsync(resetPasswordRequestDto);
         if (!validationResult.IsValid)
         {
-            string error = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+            var error = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
             _logger.LogError(error);
             return Result.Fail<SuccessResponseDto>(error);
         }
 
-        if (!await _userRepository.EmailExistsAsync(resetPasswordRequestDto.Email))
+        var user = await _userRepository.GetUserByEmailAsync(resetPasswordRequestDto.Email);
+        if (user == null)
         {
             _logger.LogError("User {Email} does not exist.", resetPasswordRequestDto.Email);
             return Result.Fail<SuccessResponseDto>("Email does not exist.");
         }
-
-        User? user = await _userRepository.GetUserByEmailAsync(resetPasswordRequestDto.Email);
         user.Password = PasswordHasher.HashPassword(resetPasswordRequestDto.Password);
         _userRepository.Update(user);
+
         await _unitOfWork.SaveAsync();
 
         return Result.Ok(new SuccessResponseDto());

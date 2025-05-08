@@ -21,8 +21,8 @@ public class ForgotPasswordUseCase(IUserRepository userRepository, IJwt jwt, IEm
         var validationResult = await validator.ValidateAsync(forgotPasswordRequestDto);
         if (!validationResult.IsValid)
         {
-            string error = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
-            _logger.LogError(error);
+            var error = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+            _logger.LogError(message: error);
             return Result.Fail<SuccessResponseDto>(error);
         }
 
@@ -32,7 +32,7 @@ public class ForgotPasswordUseCase(IUserRepository userRepository, IJwt jwt, IEm
             return Result.Fail<SuccessResponseDto>("Email does not exist.");
         }
 
-        User? user = await _userRepository.GetUserByEmailAsync(forgotPasswordRequestDto.Email);
+        var user = await _userRepository.GetUserByEmailAsync(forgotPasswordRequestDto.Email);
         if (user == null)
         {
             _logger.LogError("User {Email} does not exist.", forgotPasswordRequestDto.Email);
