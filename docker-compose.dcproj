@@ -16,13 +16,5 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
-    <None Include="src\Application\Interfaces\UseCases\Auth\IForgotPasswordUseCase.cs" />
-    <None Include="src\Application\Interfaces\UseCases\Auth\ILoginUseCase.cs" />
-    <None Include="src\Application\Interfaces\UseCases\Auth\IRecoverPasswordUseCase.cs" />
-    <None Include="src\Application\Interfaces\UseCases\Auth\IRegisterUseCase.cs" />
-    <None Include="src\Application\UseCases\Auth\ForgotPasswordUseCase.cs" />
-    <None Include="src\Application\UseCases\Auth\LoginUseCase.cs" />
-    <None Include="src\Application\UseCases\Auth\RecoverPasswordUseCase.cs" />
-    <None Include="src\Application\UseCases\Auth\RegisterUseCase.cs" />
   </ItemGroup>
 </Project>

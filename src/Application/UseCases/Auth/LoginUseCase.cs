@@ -3,6 +3,7 @@ using Application.Dtos.Auth.Response;
 using Application.Helpers.Utils;
 using Application.Helpers.Validators.Auth;
 using Application.Interfaces.UseCases.Auth;
+using Application.Interfaces.Utils;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Utils;
