@@ -1,31 +1,19 @@
 using Application.Dtos.Auth.Requests;
-using Application.Dtos.CommonDtos.Response;
-using Application.Helpers.Utils;
 using Application.Helpers.Validators.Auth;
 using Application.Interfaces.UseCases.Auth;
-using Domain.Entities;
-using Domain.Interfaces.Repositories;
-using FluentResults;
-using Microsoft.Extensions.Logging;
 
 namespace Application.UseCases.Auth;
 
 /// <summary>
 /// Use case for recovering a user's password.
 /// </summary>
-public class RecoverPasswordUseCase : IRecoverPasswordUseCase
+public class RecoverPasswordUseCase(IUserRepository userRepository, IUnitOfWork unitOfWork, ILogger<RecoverPasswordUseCase> logger) : IRecoverPasswordUseCase
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<RecoverPasswordUseCase> _logger;
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly ILogger<RecoverPasswordUseCase> _logger = logger;
 
-    public RecoverPasswordUseCase(IUserRepository userRepository, IUnitOfWork unitOfWork, ILogger<RecoverPasswordUseCase> logger)
-    {
-        _userRepository = userRepository;
-        _unitOfWork = unitOfWork;
-        _logger = logger;
-    }
-
+    /// <inheritdoc/>
     public async Task<Result<SuccessResponseDto>> ExecuteAsync(ResetPasswordRequestDto resetPasswordRequestDto)
     {
         var validator = new ResetPasswordRequestDtoValidator();

@@ -1,0 +1,9 @@
+﻿global using Domain.Interfaces.Utils;
+global using FluentResults;
+global using Microsoft.Extensions.Logging;
+global using Domain.Interfaces.Repositories;
+global using Application.Dtos.CommonDtos.Response;
+global using Domain.Entities;
+global using Application.Helpers.Utils;
+global using Application.Interfaces.Utils;
+global using Application.Dtos.CommonDtos;

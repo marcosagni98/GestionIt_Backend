@@ -1,33 +1,20 @@
 using Application.Dtos.Auth.Requests;
 using Application.Dtos.Auth.Response;
-using Application.Helpers.Utils;
 using Application.Helpers.Validators.Auth;
 using Application.Interfaces.UseCases.Auth;
-using Application.Interfaces.Utils;
-using Domain.Entities;
-using Domain.Interfaces.Repositories;
-using Domain.Interfaces.Utils;
-using FluentResults;
-using Microsoft.Extensions.Logging;
 
 namespace Application.UseCases.Auth;
 
 /// <summary>
 /// Use case for logging in a user.
 /// </summary>
-public class LoginUseCase : ILoginUseCase
+public class LoginUseCase(IUserRepository userRepository, IJwt jwt, ILogger<LoginUseCase> logger) : ILoginUseCase
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IJwt _jwt;
-    private readonly ILogger<LoginUseCase> _logger;
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IJwt _jwt = jwt;
+    private readonly ILogger<LoginUseCase> _logger = logger;
 
-    public LoginUseCase(IUserRepository userRepository, IJwt jwt, ILogger<LoginUseCase> logger)
-    {
-        _userRepository = userRepository;
-        _jwt = jwt;
-        _logger = logger;
-    }
-
+    /// <inheritdoc/>
     public async Task<Result<LoginResponseDto>> ExecuteAsync(LoginRequestDto loginRequestDto)
     {
         var validator = new LoginRequestDtoValidator();

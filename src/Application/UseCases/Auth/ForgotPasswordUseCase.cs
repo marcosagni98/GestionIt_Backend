@@ -1,33 +1,20 @@
 using Application.Dtos.Auth.Requests;
-using Application.Dtos.CommonDtos.Response;
 using Application.Helpers.Validators.Auth;
 using Application.Interfaces.UseCases.Auth;
-using Domain.Entities;
-using Domain.Interfaces.Repositories;
-using Domain.Interfaces.Utils;
-using FluentResults;
-using Microsoft.Extensions.Logging;
 
 namespace Application.UseCases.Auth;
 
 /// <summary>
 /// Use case for sending a password recovery email.
 /// </summary>
-public class ForgotPasswordUseCase : IForgotPasswordUseCase
+public class ForgotPasswordUseCase(IUserRepository userRepository, IJwt jwt, IEmailSender emailSender, ILogger<ForgotPasswordUseCase> logger) : IForgotPasswordUseCase
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IJwt _jwt;
-    private readonly IEmailSender _emailSender;
-    private readonly ILogger<ForgotPasswordUseCase> _logger;
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IJwt _jwt = jwt;
+    private readonly IEmailSender _emailSender = emailSender;
+    private readonly ILogger<ForgotPasswordUseCase> _logger = logger;
 
-    public ForgotPasswordUseCase(IUserRepository userRepository, IJwt jwt, IEmailSender emailSender, ILogger<ForgotPasswordUseCase> logger)
-    {
-        _userRepository = userRepository;
-        _jwt = jwt;
-        _emailSender = emailSender;
-        _logger = logger;
-    }
-
+    /// <inheritdoc/>
     public async Task<Result<SuccessResponseDto>> ExecuteAsync(ForgotPasswordRequestDto forgotPasswordRequestDto)
     {
         var validator = new ForgotPasswordRequestDtoValidator();

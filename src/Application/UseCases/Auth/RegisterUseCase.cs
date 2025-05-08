@@ -1,35 +1,23 @@
+
 using Application.Dtos.Auth.Requests;
-using Application.Dtos.CommonDtos.Response;
-using Application.Helpers.Utils;
 using Application.Helpers.Validators.Auth;
 using Application.Interfaces.UseCases.Auth;
 using AutoMapper;
-using Domain.Entities;
 using Domain.Enums;
-using Domain.Interfaces.Repositories;
-using FluentResults;
-using Microsoft.Extensions.Logging;
 
 namespace Application.UseCases.Auth;
 
 /// <summary>
 /// Use case for registering a new user.
 /// </summary>
-public class RegisterUseCase : IRegisterUseCase
+public class RegisterUseCase(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper, ILogger<RegisterUseCase> logger) : IRegisterUseCase
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-    private readonly ILogger<RegisterUseCase> _logger;
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMapper _mapper = mapper;
+    private readonly ILogger<RegisterUseCase> _logger = logger;
 
-    public RegisterUseCase(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper, ILogger<RegisterUseCase> logger)
-    {
-        _userRepository = userRepository;
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
-        _logger = logger;
-    }
-
+    /// <inheritdoc/>
     public async Task<Result<CreatedResponseDto>> ExecuteAsync(RegisterRequestDto registerRequestDto)
     {
         var validator = new RegisterRequestDtoValidator();
