@@ -1,5 +1,5 @@
 ﻿using Application.Dtos.CRUD.IncidentHistories;
-using Application.Interfaces.Services;
+using Application.Interfaces.UseCases.IncidentHistory;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,13 +12,13 @@ namespace API.Controllers.v1;
 /// Initializes a new instance of the <see cref="IncidentHistoryController"/> class.
 /// </remarks>
 /// <param name="logger"></param>
-/// <param name="incidentHistoryService">The incidenthistory service.</param>
+/// <param name="getByIncidentIdUseCase">The incidenthistory service.</param>
 [Produces("application/json")]
 [Route("api/v1/[controller]")]
-public sealed class IncidentHistoryController(ILogger<IncidentHistoryController> logger, IIncidentHistoryService incidentHistoryService) : BaseApiController
+public sealed class IncidentHistoryController(ILogger<IncidentHistoryController> logger, IGetByIncidentIdUseCase getByIncidentIdUseCase) : BaseApiController
 {
     private readonly ILogger<IncidentHistoryController> _logger = logger;
-    private readonly IIncidentHistoryService _incidentHistoryService = incidentHistoryService;
+    private readonly IGetByIncidentIdUseCase _getByIncidentIdUseCase = getByIncidentIdUseCase;
 
     /// <summary>
     /// Gets a incidenthistory by ID.
@@ -31,7 +31,7 @@ public sealed class IncidentHistoryController(ILogger<IncidentHistoryController>
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIncidentIdAsync(long incidentId)
     {
-        var result = await _incidentHistoryService.GetByIncidentIdAsync(incidentId);
+        var result = await _getByIncidentIdUseCase.GetByIncidentIdAsync(incidentId);
         if (result.IsFailed)
         {
             return NotFound(result.Errors);

@@ -1,4 +1,3 @@
-
 using Application.Dtos.Auth.Requests;
 using Application.Helpers.Validators.Auth;
 using Application.Interfaces.UseCases.Auth;
@@ -48,4 +47,3 @@ public class RegisterUseCase(IUserRepository userRepository, IUnitOfWork unitOfW
         return Result.Ok(new CreatedResponseDto(user.Id));
     }
 }
-

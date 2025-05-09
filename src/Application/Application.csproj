@@ -49,6 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Helpers\Validators\IncidentHistory\" />
     <Folder Include="Interfaces\UseCases\Auth\" />
   </ItemGroup>
 

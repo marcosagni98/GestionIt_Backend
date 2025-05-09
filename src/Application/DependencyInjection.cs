@@ -1,8 +1,10 @@
 ﻿using Application.Helpers.Mappers;
 using Application.Interfaces.Services;
 using Application.Interfaces.UseCases.Auth;
+using Application.Interfaces.UseCases.IncidentHistory;
 using Application.Services;
 using Application.UseCases.Auth;
+using Application.UseCases.IncidentHistory;
 using Application.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -34,7 +36,6 @@ public static class ApplicationCollectionExtensions
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
         return services
-        .AddScoped<IIncidentHistoryService, IncidentHistoryService>()
         .AddScoped<IIncidentService, IncidentService>()
         .AddScoped<IMessageService, MessageService>()
         .AddScoped<IUserFeedbackService, UserFeedbackService>()
@@ -52,7 +53,8 @@ public static class ApplicationCollectionExtensions
     private static IServiceCollection AddUseCases(this IServiceCollection services)
     {
         return services
-            .AddAuthUseCases(); // Add authentication-related use cases
+            .AddAuthUseCases()
+            .AddIncidenetHistoryCases();
     }
 
     /// <summary>
@@ -67,6 +69,17 @@ public static class ApplicationCollectionExtensions
             .AddScoped<IRegisterUseCase, RegisterUseCase>()
             .AddScoped<IForgotPasswordUseCase, ForgotPasswordUseCase>()
             .AddScoped<IRecoverPasswordUseCase, RecoverPasswordUseCase>();
+    }
+
+    /// <summary>
+    /// Adds the incidentHistory-related use cases to the dependency injection container
+    /// </summary>
+    /// <param name="services">The dependency injection container</param>
+    /// <returns>The dependency injection container with the incidentHistory use cases added</returns>
+    private static IServiceCollection AddIncidenetHistoryCases(this IServiceCollection services)
+    {
+        return services
+            .AddScoped<IGetByIncidentIdUseCase, GetByIncidentIdUseCase>();
     }
 
     /// <summary>

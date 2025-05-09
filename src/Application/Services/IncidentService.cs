@@ -1,6 +1,7 @@
 ﻿using Application.Dtos.CRUD.Incidents;
 using Application.Dtos.CRUD.Incidents.Request;
 using Application.Interfaces.Services;
+using Application.UseCases.IncidentHistory;
 using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
@@ -20,9 +21,9 @@ namespace Application.Services;
 /// <param name="incidentRepository"></param>
 /// <param name="userRepository"></param>
 /// <param name="incidentHistoryRepository"></param>
-public sealed class IncidentService(ILogger<IncidentHistoryService> logger, IUnitOfWork unitOfWork, IMapper mapper, IIncidentRepository incidentRepository, IUserRepository userRepository, IIncidentHistoryRepository incidentHistoryRepository) : IIncidentService
+public sealed class IncidentService(ILogger<GetByIncidentIdUseCase> logger, IUnitOfWork unitOfWork, IMapper mapper, IIncidentRepository incidentRepository, IUserRepository userRepository, IIncidentHistoryRepository incidentHistoryRepository) : IIncidentService
 {
-    private readonly ILogger<IncidentHistoryService> _logger = logger;
+    private readonly ILogger<GetByIncidentIdUseCase> _logger = logger;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
     private readonly IIncidentRepository _incidentRepository = incidentRepository;
