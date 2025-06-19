@@ -153,7 +153,7 @@ public static class QueryableExtensions
         if (pageNumber < 1 || pageSize < 1)
             return query;
 
-        return query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+        return query.Skip((pageNumber * pageSize) - 1).Take(pageSize);
     }
 
     /// <summary>
@@ -173,7 +173,7 @@ public static class QueryableExtensions
         if (!string.IsNullOrWhiteSpace(filter.OrderBy) && !string.IsNullOrWhiteSpace(filter.OrderDirection))
             query = query.OrderByDynamic(filter.OrderBy, filter.OrderDirection);
 
-        if (filter.PageNumber > 0 && filter.PageSize > 0)
+        if (filter is { PageNumber: > 0, PageSize: > 0 })
             query = query.Paginate(filter.PageNumber, filter.PageSize);
 
         return query;
