@@ -6,11 +6,14 @@ namespace Infrastructure;
 public class UnitOfWork(AppDbContext context) : IUnitOfWork
 {
     private IDbContextTransaction? _currentTransaction;
-
+    
+    /// <inheritdoc/>
     public bool IsTransactionActive => _currentTransaction != null;
 
+    /// <inheritdoc/>
     public async Task SaveAsync() => await context.SaveChangesAsync();
 
+    /// <inheritdoc/>
     public async Task BeginTransactionAsync()
     {
         if (_currentTransaction != null)
@@ -20,6 +23,7 @@ public class UnitOfWork(AppDbContext context) : IUnitOfWork
         _currentTransaction = await context.Database.BeginTransactionAsync();
     }
 
+    /// <inheritdoc/>
     public async Task CommitTransactionAsync()
     {
         if (_currentTransaction == null)
@@ -31,6 +35,7 @@ public class UnitOfWork(AppDbContext context) : IUnitOfWork
         _currentTransaction = null;
     }
 
+    /// <inheritdoc/>
     public async Task RollbackTransactionAsync()
     {
         if (_currentTransaction == null)
