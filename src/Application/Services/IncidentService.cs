@@ -50,7 +50,7 @@ public sealed class IncidentService(ILogger<GetByIncidentIdUseCase> logger, IUni
             return Result.Fail<SuccessResponseDto>("Incident not found");
         }
 
-        await _incidentRepository.DeleteAsync(id);
+        await _incidentRepository.SoftDelete(id);
         await _unitOfWork.SaveAsync();
 
         return Result.Ok(new SuccessResponseDto { Message = "Incident deleted successfully." });

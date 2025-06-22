@@ -17,33 +17,30 @@ namespace Infrastructure.Helpers;
 /// <param name="logger">The logger instance for logging operations.</param>
 public sealed class DatabaseInitializer(IServiceProvider serviceProvider, ILogger<DatabaseInitializer> logger) : IHostedService
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private readonly ILogger<DatabaseInitializer> _logger = logger;
-
     /// <summary>
     /// Starts the database initialization process asynchronously when the application starts.
     /// </summary>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        using var scope = _serviceProvider.CreateScope();
+        using var scope = serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         try
         {
             if (context.Database.GetService<IDatabaseCreator>() is RelationalDatabaseCreator databaseCreator)
             {
-                if (!databaseCreator.CanConnect())
+                if (!await databaseCreator.CanConnectAsync(cancellationToken))
                     await databaseCreator.CreateAsync(cancellationToken);
-                if (!databaseCreator.HasTables())
+                if (!await databaseCreator.HasTablesAsync(cancellationToken))
                     await databaseCreator.CreateTablesAsync(cancellationToken);
             }
 
-            _logger.LogInformation("Database successfully initialized.");
+            logger.LogInformation("Database successfully initialized.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occurred while initializing the database.");
+            logger.LogError(ex, "An error occurred while initializing the database.");
         }
     }
 

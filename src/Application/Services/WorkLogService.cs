@@ -46,7 +46,7 @@ public sealed class WorkLogService(ILogger<WorkLogService> logger, IUnitOfWork u
             return Result.Fail<SuccessResponseDto>($"Worklog not found");
         }
 
-        await _workLogRepository.DeleteAsync(id);
+        await _workLogRepository.SoftDelete(id);
         await _unitOfWork.SaveAsync();
 
         return Result.Ok(new SuccessResponseDto { Message = "Work log deleted successfully." });

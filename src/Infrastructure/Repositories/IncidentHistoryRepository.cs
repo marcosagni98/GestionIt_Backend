@@ -8,18 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class IncidentHistoryRepository : IIncidentHistoryRepository
+public sealed class IncidentHistoryRepository(AppDbContext context) : IIncidentHistoryRepository
 {
-    private readonly AppDbContext _dbContext;
-    private readonly DbSet<IncidentHistory> _dbSet;
-    private readonly IMapper _mapper;
-
-    public IncidentHistoryRepository(AppDbContext context, IMapper mapper)
-    {
-        _dbContext = context;
-        _mapper = mapper;
-        _dbSet = _dbContext.Set<IncidentHistory>();
-    }
+    private readonly DbSet<IncidentHistory> _dbSet = context.Set<IncidentHistory>();
 
     /// <inheritdoc/>
     public async Task AddAsync(IncidentHistory entity)
@@ -32,7 +23,7 @@ public sealed class IncidentHistoryRepository : IIncidentHistoryRepository
     {
         List<string> searchParameters = ["ChangedByUser.Name", "ResolutionDetails"];
 
-        IQueryable<IncidentHistory> query = _dbSet.AsQueryable();
+        var query = _dbSet.AsQueryable();
 
         return await query
             .ToPaginatedListNotActiveAsync(queryFilter, searchParameters);
@@ -71,7 +62,7 @@ public sealed class IncidentHistoryRepository : IIncidentHistoryRepository
     /// <inheritdoc/>
     public async Task<int> CountAsync(QueryFilterDto queryFilter, List<string>? searchParameters)
     {
-        IQueryable<IncidentHistory> query = _dbSet.AsQueryable();
+        var query = _dbSet.AsQueryable();
 
         return await query
             .WhereFilter(searchParameters, queryFilter.Search)

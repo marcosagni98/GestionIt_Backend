@@ -8,26 +8,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class WorkLogsRepository : GenericRepository<WorkLog>, IWorkLogRepository
+public sealed class WorkLogsRepository(AppDbContext context) : GenericRepository<WorkLog>(context), IWorkLogRepository
 {
-    private readonly AppDbContext _context;
-    private DbSet<WorkLog> _dbSet;
-    private readonly IMapper _mapper;
-
-    public WorkLogsRepository(AppDbContext context, IMapper mapper) : base(context)
-    {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-        _dbSet = _context.Set<WorkLog>();
-        _mapper = mapper;
-    }
+    private readonly DbSet<WorkLog> _dbSet = context.Set<WorkLog>();
 
     /// <inheritdoc/>
     public override async Task<PaginatedList<WorkLog>> GetAsync(QueryFilterDto queryFilter)
     {
-        List<string> searchParameters = new List<string>();
+        var searchParameters = new List<string>();
 
 
-        IQueryable<WorkLog> query = _dbSet.AsQueryable();
+        var query = _dbSet.AsQueryable();
 
         var totalCount = await query
              .WhereActive()

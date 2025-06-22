@@ -44,7 +44,7 @@ public sealed class UserFeedbackService(ILogger<UserFeedbackService> logger, IUn
             return Result.Fail<SuccessResponseDto>($"User feedback not found");
         }
 
-        await _userFeedbackRepository.DeleteAsync(id);
+        await _userFeedbackRepository.SoftDelete(id);
         await _unitOfWork.SaveAsync();
 
         return Result.Ok(new SuccessResponseDto { Message = "User feedback deleted successfully." });

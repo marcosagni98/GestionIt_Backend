@@ -7,16 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : Entity
+public abstract class GenericRepository<TEntity>(AppDbContext dbContext) : IGenericRepository<TEntity>
+    where TEntity : Entity
 {
-    private readonly AppDbContext _dbContext;
-    private readonly DbSet<TEntity> _dbSet;
-
-    public GenericRepository(AppDbContext dbContext)
-    {
-        _dbContext = dbContext;
-        _dbSet = _dbContext.Set<TEntity>();
-    }
+    private readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
 
     /// <inheritdoc/>
     public virtual async Task AddAsync(TEntity entity)
@@ -54,12 +48,12 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     }
 
     /// <inheritdoc/>
-    public virtual async Task DeleteAsync(long id)
+    public virtual async Task SoftDelete(long id)
     {
         var entity = await _dbSet.FindAsync(id) ?? throw new KeyNotFoundException("Entity not found");
         if (entity is Entity entityToDeactivate)
         {
-            entityToDeactivate.Deactivate();
+            entityToDeactivate.SoftDelete();
         }
     }
 
@@ -67,7 +61,7 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     public virtual async Task<bool> ExistsAsync(long id)
     {
         return await _dbSet
-            .Where(x => (x as Entity)!.Active == true && (x as Entity)!.Id == id)
+            .Where(x => x.Active == true && x.Id == id)
             .AnyAsync();
     }
 

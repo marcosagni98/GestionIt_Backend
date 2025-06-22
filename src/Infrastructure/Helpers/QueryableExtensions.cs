@@ -57,7 +57,6 @@ public static class QueryableExtensions
     public static async Task<int> CountAsync<T>(
         this IQueryable<T> query, QueryFilterDto? queryFilter, List<string>? searchParameters) where T : EntityId
     {
-        // Aplica el filtro de búsqueda y activo si es necesario
         if (queryFilter != null && !string.IsNullOrEmpty(queryFilter.Search))
         {
             query = query
@@ -153,7 +152,7 @@ public static class QueryableExtensions
         if (pageNumber < 1 || pageSize < 1)
             return query;
 
-        return query.Skip((pageNumber * pageSize) - 1).Take(pageSize);
+        return query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
     }
 
     /// <summary>

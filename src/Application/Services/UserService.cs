@@ -74,7 +74,7 @@ public sealed class UserService(ILogger<UserService> logger, IUnitOfWork unitOfW
             return Result.Fail<SuccessResponseDto>("User not found");
         }
 
-        await _userRepository.DeleteAsync(id);
+        await _userRepository.SoftDelete(id);
         await _unitOfWork.SaveAsync();
 
         return Result.Ok(new SuccessResponseDto { Message = "User deleted successfully." });

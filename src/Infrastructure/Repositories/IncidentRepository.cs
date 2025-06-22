@@ -1,4 +1,3 @@
-using AutoMapper;
 using Domain.Dtos.CommonDtos.Request;
 using Domain.Dtos.CommonDtos.Response;
 using Domain.Entities;
@@ -9,18 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class IncidentRepository : GenericRepository<Incident>, IIncidentRepository
+public sealed class IncidentRepository(AppDbContext context) : GenericRepository<Incident>(context), IIncidentRepository
 {
-    private readonly AppDbContext _dbContext;
-    private readonly DbSet<Incident> _dbSet;
-    private readonly IMapper _mapper;
-
-    public IncidentRepository(AppDbContext context, IMapper mapper) : base(context)
-    {
-        _dbContext = context;
-        _mapper = mapper;
-        _dbSet = _dbContext.Set<Incident>();
-    }
+    private readonly DbSet<Incident> _dbSet = context.Set<Incident>();
 
     /// <inheritdoc/>
     public async Task<List<long>?> GetIdsAsync()
@@ -167,7 +157,7 @@ public sealed class IncidentRepository : GenericRepository<Incident>, IIncidentR
     /// <inheritdoc/>
     public async Task<double> GetAverageResolutionTimeAsync(DateTime startDate, DateTime endDate)
     {
-        var incidents = await _dbContext.Incidents
+        var incidents = await _dbSet
             .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate)
             .WhereActive()
             .Include(i => i.IncidentHistories)
@@ -191,7 +181,7 @@ public sealed class IncidentRepository : GenericRepository<Incident>, IIncidentR
             .Select(i => (i.CompletedAt.ChangedAt - i.CreatedAt).TotalMinutes)
             .ToList();
 
-        double averageResolutionTime = resolutionTimes.Count > 0
+        var averageResolutionTime = resolutionTimes.Count > 0
             ? resolutionTimes.Average()
             : 0;
 
@@ -201,7 +191,7 @@ public sealed class IncidentRepository : GenericRepository<Incident>, IIncidentR
     /// <inheritdoc/>
     public async Task<double> GetAverageResolutionTimeAsync(DateTime startDate, DateTime endDate, long id)
     {
-        var incidents = await _dbContext.Incidents
+        var incidents = await _dbSet
             .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate && i.Technician.Id == id)
             .WhereActive()
             .Include(i => i.IncidentHistories)
@@ -225,7 +215,7 @@ public sealed class IncidentRepository : GenericRepository<Incident>, IIncidentR
             .Select(i => (i.CompletedAt.ChangedAt - i.CreatedAt).TotalMinutes)
             .ToList();
 
-        double averageResolutionTime = resolutionTimes.Count > 0
+        var averageResolutionTime = resolutionTimes.Count > 0
             ? resolutionTimes.Average()
             : 0;
 
@@ -317,7 +307,7 @@ public sealed class IncidentRepository : GenericRepository<Incident>, IIncidentR
         var dailyIncidences = await _dbSet
         .Where(i => i.CreatedAt.Year == year)
         .GroupBy(i => new { i.CreatedAt.Month, i.CreatedAt.Day })
-        .Where(g => g.Count() > 0)
+        .Where(g => g.Any())
         .Select(g => new
         {
             Date = new DateTime(year, g.Key.Month, g.Key.Day).ToString("yyyy-MM-dd"),
@@ -329,7 +319,5 @@ public sealed class IncidentRepository : GenericRepository<Incident>, IIncidentR
             .Select(x => (x.Date, x.Count))
             .ToList();
     }
-
-
 }
 

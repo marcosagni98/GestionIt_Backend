@@ -41,7 +41,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
     /// </summary>
     /// <param name="id">The unique identifier of the entity to delete.</param>
     /// <returns>A task representing the asynchronous delete operation.</returns>
-    Task DeleteAsync(long id);
+    Task SoftDelete(long id);
 
     /// <summary>
     /// Asynchronously counts all entities in the User table.

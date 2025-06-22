@@ -9,18 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class UserRepository : GenericRepository<User>, IUserRepository
+public sealed class UserRepository(AppDbContext context) : GenericRepository<User>(context), IUserRepository
 {
-    private readonly AppDbContext _dbContext;
-    private readonly DbSet<User> _dbSet;
-    private readonly IMapper _mapper;
-
-    public UserRepository(AppDbContext context, IMapper mapper) : base(context)
-    {
-        _dbContext = context;
-        _mapper = mapper;
-        _dbSet = _dbContext.Set<User>();
-    }
+    private readonly DbSet<User> _dbSet = context.Set<User>();
 
     /// <inheritdoc/>
     public override async Task<PaginatedList<User>> GetAsync(QueryFilterDto queryFilter)
@@ -32,7 +23,7 @@ public sealed class UserRepository : GenericRepository<User>, IUserRepository
 
         GetCorrectQueryFilterOrderBy(queryFilter);
 
-        IQueryable<User> query = _dbSet.AsQueryable();
+        var query = _dbSet.AsQueryable();
 
         var totalCount = await query
             .WhereActive()

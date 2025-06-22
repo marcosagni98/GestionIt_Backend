@@ -8,18 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class UserFeedbackRepository : GenericRepository<UserFeedback>, IUserFeedbackRepository
+public sealed class UserFeedbackRepository(AppDbContext context)
+    : GenericRepository<UserFeedback>(context), IUserFeedbackRepository
 {
-    private readonly AppDbContext _dbContext;
-    private readonly DbSet<UserFeedback> _dbSet;
-    private readonly IMapper _mapper;
-
-    public UserFeedbackRepository(AppDbContext context, IMapper mapper) : base(context)
-    {
-        _dbContext = context;
-        _mapper = mapper;
-        _dbSet = _dbContext.Set<UserFeedback>();
-    }
+    private readonly DbSet<UserFeedback> _dbSet = context.Set<UserFeedback>();
 
     /// <inheritdoc/>
     public override async Task<PaginatedList<UserFeedback>> GetAsync(QueryFilterDto queryFilter)

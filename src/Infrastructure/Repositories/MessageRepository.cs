@@ -4,17 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class MessageRepository : GenericRepository<Message>, IMessageRepository
+public sealed class MessageRepository(AppDbContext context) : GenericRepository<Message>(context), IMessageRepository
 {
-
-    private readonly AppDbContext _dbContext;
-    private readonly DbSet<Message> _dbSet;
-
-    public MessageRepository(AppDbContext context) : base(context)
-    {
-        _dbContext = context;
-        _dbSet = _dbContext.Set<Message>();
-    }
+    private readonly DbSet<Message> _dbSet = context.Set<Message>();
 
     /// <inheritdoc/>
     public async Task<List<Message>> GetByIncidentIdAsync(long incidentId)
